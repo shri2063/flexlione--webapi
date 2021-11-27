@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\bhole\AppData\Local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\bhole\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_m-sort-server.506163545.00" t="ExcludeRecursive" />
+    <e p="C:\Users\bhole\Desktop\M-Sort\m-sort-server-dev" t="IncludeRecursive">
+      <e p=".gitignore" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Communication_Server" t="Include">
+        <e p="__pycache__" t="Include">
+          <e p="BotManager.cpython-38.pyc" t="Include" />
+        </e>
+        <e p="bot_config.json" t="Include" />
+        <e p="bot_feedback.json" t="Include" />
+        <e p="bot_motor.json" t="Include" />
+        <e p="bot_position.json" t="Include" />
+        <e p="BotManager.py" t="Include" />
+        <e p="copy-bot_motor.json" t="Include" />
+        <e p="datagrams.log" t="Include" />
+        <e p="edge_json_model.json" t="Include" />
+        <e p="main.py" t="Include" />
+      </e>
+      <e p="Controller" t="Include">
+        <e p="BotCommandController.cs" t="Include" />
+        <e p="BotConfigController.cs" t="Include" />
+        <e p="GraphCreationController.cs" t="Include" />
+      </e>
+      <e p="data" t="Include">
+        <e p="bot-motor.json" t="Include" />
+        <e p="bot_config.json" t="Include" />
+      </e>
+      <e p="GraphCreationStrategy" t="Include">
+        <e p="ExtensionClass.cs" t="Include" />
+        <e p="GraphPlottingService.cs" t="Include" />
+        <e p="JsonGraphReader.cs" t="Include" />
+        <e p="MoveAlongCurve.cs" t="Include" />
+        <e p="MoveAlongLine.cs" t="Include" />
+      </e>
+      <e p="Interfaces" t="Include">
+        <e p="IBotCommand.cs" t="Include" />
+        <e p="IBotConfig.cs" t="Include" />
+        <e p="IBotHolder.cs" t="Include" />
+        <e p="IBotManager.cs" t="Include" />
+        <e p="IBotOperator.cs" t="Include" />
+        <e p="IGraphReader.cs" t="Include" />
+        <e p="ILogFileService.cs" t="Include" />
+        <e p="ISimulatorService.cs" t="Include" />
+        <e p="ITransportManager.cs" t="Include" />
+        <e p="ITransportOperator.cs" t="Include" />
+      </e>
+      <e p="m-sort-server.csproj" t="IncludeRecursive" />
+      <e p="m-sort-server.sln" t="IncludeFlat" />
+      <e p="Models" t="Include">
+        <e p="Bot.cs" t="Include" />
+        <e p="BotConfig.cs" t="Include" />
+        <e p="BotMotor.cs" t="Include" />
+        <e p="BotPosition.cs" t="Include" />
+        <e p="EdgeJsonModel.cs" t="Include" />
+        <e p="Error.cs" t="Include" />
+        <e p="Graph.cs" t="Include" />
+        <e p="NodeJsonModel.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp2.1" t="Include">
+            <e p="m-sort-server.AssemblyInfo.cs" t="Include" />
+            <e p="m-sort-server.RazorAssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="launchSettings.json" t="Include" />
+      </e>
+      <e p="README.md" t="Include" />
+      <e p="Services" t="Include">
+        <e p="BotCommandAutoMode.cs" t="Include" />
+        <e p="BotCommandManualMode.cs" t="Include" />
+        <e p="BotConfig.cs" t="Include" />
+        <e p="BotHolder.cs" t="Include" />
+        <e p="BotManagers.cs" t="Include" />
+        <e p="BotOperator.cs" t="Include" />
+        <e p="LogFileService.cs" t="Include" />
+        <e p="SimulatorService.cs" t="Include" />
+        <e p="TransportManager.cs" t="Include" />
+        <e p="TransportOperator.cs" t="Include" />
+      </e>
+      <e p="Startup.cs" t="Include" />
+      <e p="Utility" t="Include">
+        <e p="ActionDescriptorExtensions.cs" t="Include" />
+        <e p="ApiExceptionFilter.cs" t="Include" />
+        <e p="ApiVersionOperationFilter.cs" t="Include" />
+      </e>
+      <e p="wwwroot" t="Include" />
+    </e>
+  </component>
+</project>
