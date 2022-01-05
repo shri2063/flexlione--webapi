@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using m_sort_server.Interfaces;
-using m_sort_server.Services;
 using m_sort_server.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,19 +25,13 @@ namespace m_sort_server
         
         public Startup(IConfiguration configuration)
         {
+            ErpContext.SetConnectionString(configuration["dbConnectionString"]);
 
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ILogFileService, LogFileService>();
-            services.AddSingleton<IBotOperator, BotOperator>();
-            services.AddSingleton<IBotManager, BotManagers>();
-            services.AddSingleton<IBotConfig,BotConfig>();
-            services.AddSingleton<IBotHolder,BotHolder>();
-            services.AddSingleton<ITransportOperator,TransportOperator>();
-            services.AddSingleton<IBotCommand,BotCommandAutoMode>();
-            services.AddSingleton<ISimulatorService,SimulatorService>();
+            
             
              services.AddCors(options =>
             {
@@ -96,8 +85,8 @@ namespace m_sort_server
               
                 c.SwaggerDoc("v1.0",new Info()
                 {
-                    Title = "M-Sort Server",
-                    Description = "API for M-Sort server",
+                    Title = "ERP Server",
+                    Description = "API for ERP server",
                     Version = "v1.0"
                 });
 
