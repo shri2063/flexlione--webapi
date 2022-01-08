@@ -16,31 +16,31 @@ namespace m_sort_server.Controller
     [EnableCors("AllowOrigin")]
     [Produces("application/json")]
     
-    public class TaskManagerController : ControllerBase
+    public class CheckListController : ControllerBase
     {
         
-        [HttpGet("GetTaskList")]
+        [HttpGet("GetCheckList")]
         [Consumes("application/json")]
         
-        public List<TaskSheetEditModel> GetTaskList([FromQuery] string include,string taskId = null)
+        public List<CheckListItemEditModel> GetCheckList([FromQuery] string include,string taskId = null)
         {
-            return TaskManagerService.GetTaskList(taskId,include);
+            return CheckListService.GetCheckList(taskId,include);
         }
         
-        [HttpPut("CreateOrUpdateTask")]
+        [HttpPut("CreateOrUpdateCheckListItem")]
         [Consumes("application/json")]
         
-        public TaskSheetEditModel CreateOrUpdateTask(TaskSheetEditModel task)
+        public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemItem)
         {
-            return TaskManagerService.CreateOrUpdateTask(task);
+            return CheckListService.CreateOrUpdateCheckListItem(checkListItemItem);
         }
         
-        [HttpDelete("DeleteTask")]
+        [HttpDelete("DeleteCheckListItem")]
         [Consumes("application/json")]
         
-        public ActionResult<string> DeleteTask(string taskId)
+        public ActionResult<string> DeleteCheckListItem(string checkListId)
         {
-            TaskManagerService.DeleteTask(taskId);
+            CheckListService.DeleteCheckListItem(checkListId);
             return Ok();
         }
     }

@@ -28,13 +28,16 @@
         </e>
       </e>
       <e p="Controller" t="Include">
+        <e p="CheckListController.cs" t="Include" />
         <e p="TaskManagerController.cs" t="Include" />
       </e>
       <e p="DataModels" t="Include">
+        <e p="CheckList.cs" t="Include" />
         <e p="TaskSheet.cs" t="Include" />
       </e>
       <e p="EditModels" t="Include">
-        <e p="TaskSheetEditModel.cs" t="Include" />
+        <e p="CheckListItemEditModel.cs" t="Include" />
+        <e p="TaskSheetItemEditModel.cs" t="Include" />
       </e>
       <e p="ErpContext.cs" t="Include" />
       <e p="m-sort-server.csproj" t="IncludeRecursive" />
@@ -63,6 +66,7 @@
       </e>
       <e p="README.md" t="Include" />
       <e p="Services" t="Include">
+        <e p="CheckListService.cs" t="Include" />
         <e p="TaskManagerService.cs" t="Include" />
       </e>
       <e p="Startup.cs" t="Include" />

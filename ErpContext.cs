@@ -9,6 +9,8 @@ namespace m_sort_server
     public class ErpContext:DbContext
     {
         public DbSet<TaskSheet> TaskTree { get; set; }
+        
+        public DbSet<CheckList> CheckList { get; set; }
 
         // for logging sql queries
         private static readonly ILoggerFactory LoggerFactory  = new LoggerFactory().AddConsole((_,___) => true);

@@ -2,7 +2,7 @@
 
 namespace m_sort_server.EditModels
 {
-    public class TaskSheetEditModel
+    public class TaskSheetItemEditModel
     {
         public string TaskId { get; set; }
         

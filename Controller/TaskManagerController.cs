@@ -22,7 +22,7 @@ namespace m_sort_server.Controller
         [HttpGet("GetTaskList")]
         [Consumes("application/json")]
         
-        public List<TaskSheetEditModel> GetTaskList([FromQuery] string include,string taskId = null)
+        public List<TaskSheetItemEditModel> GetTaskList([FromQuery] string include,string taskId = null)
         {
             return TaskManagerService.GetTaskList(taskId,include);
         }
@@ -30,7 +30,7 @@ namespace m_sort_server.Controller
         [HttpPut("CreateOrUpdateTask")]
         [Consumes("application/json")]
         
-        public TaskSheetEditModel CreateOrUpdateTask(TaskSheetEditModel task)
+        public TaskSheetItemEditModel CreateOrUpdateTask(TaskSheetItemEditModel task)
         {
             return TaskManagerService.CreateOrUpdateTask(task);
         }

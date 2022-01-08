@@ -14,64 +14,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cc8ed13b-6b18-4c03-8a2a-6bbfe121587a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Controller/TaskManagerController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DataModels/TaskSheet.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/EditModels/TaskSheetEditModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ErpContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Services/TaskManagerService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EditModels/CheckListItemEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.m-sort-server/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.m-sort-server/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.m-sort-server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.m-sort-server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/config/applicationhost.config" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/UDP_Server.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/deployment.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/BotManager.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/bot_config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/bot_feedback.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/bot_motor.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/bot_position.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/copy-bot_motor.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/datagrams.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/edge_json_model.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Communication_Server/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/BotCommandController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/BotConfigController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/GraphCreationController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphCreationStrategy/ExtensionClass.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphCreationStrategy/GraphPlottingService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphCreationStrategy/JsonGraphReader.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphCreationStrategy/MoveAlongCurve.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphCreationStrategy/MoveAlongLine.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IBotCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IBotConfig.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IBotHolder.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IBotManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IBotOperator.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IGraphReader.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/ILogFileService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/ISimulatorService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/ITransportManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/ITransportOperator.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BotCommandAutoMode.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BotCommandManualMode.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BotConfig.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BotHolder.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BotManagers.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/BotOperator.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/LogFileService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/SimulatorService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TransportManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TransportOperator.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Startup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/bot-motor.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/bot_config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/m-sort-server.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/m-sort-server.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/CheckListController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/CheckListController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataModels/CheckList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DataModels/CheckList.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EditModels/CheckListEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EditModels/TaskSheetItemEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EditModels/TaskSheetEditModel.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ErpContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ErpContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/CheckListService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/CheckListService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagerService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,12 +40,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Models/BotCommand.cs" />
-        <option value="$PROJECT_DIR$/Interfaces/IBotHolder.cs" />
-        <option value="$PROJECT_DIR$/Models/Bot.cs" />
-        <option value="$PROJECT_DIR$/Models/BotPosition.cs" />
-        <option value="$PROJECT_DIR$/Interfaces/IBotOperator.cs" />
-        <option value="$PROJECT_DIR$/Services/BotOperator.cs" />
         <option value="$PROJECT_DIR$/Services/BotManagers.cs" />
         <option value="$PROJECT_DIR$/Interfaces/IBotManager.cs" />
         <option value="$PROJECT_DIR$/Services/BotHolder.cs" />
@@ -131,14 +77,20 @@
         <option value="$PROJECT_DIR$/EditModels/TaskTreeEditModel.cs" />
         <option value="$PROJECT_DIR$/DataModels/TaskTree.cs" />
         <option value="$PROJECT_DIR$/Models/Task.cs" />
-        <option value="$PROJECT_DIR$/ErpContext.cs" />
         <option value="$PROJECT_DIR$/EditModels/TaskSheetEditModel.cs" />
         <option value="$PROJECT_DIR$/DataModels/TaskSheet.cs" />
         <option value="$PROJECT_DIR$/EditModels/LinkedTaskList.cs" />
         <option value="$PROJECT_DIR$/EditModels/LinkedTaskListHead.cs" />
         <option value="$PROJECT_DIR$/Controller/TaskManagerController.cs" />
         <option value="$PROJECT_DIR$/Startup.cs" />
+        <option value="$PROJECT_DIR$/ErpContext.cs" />
+        <option value="$PROJECT_DIR$/EditModels/CheckListEditModel.cs" />
+        <option value="$PROJECT_DIR$/DataModels/CheckList.cs" />
+        <option value="$PROJECT_DIR$/Services/CheckListService.cs" />
         <option value="$PROJECT_DIR$/Services/TaskManagerService.cs" />
+        <option value="$PROJECT_DIR$/EditModels/TaskSheetItemEditModel.cs" />
+        <option value="$PROJECT_DIR$/EditModels/CheckListItemEditModel.cs" />
+        <option value="$PROJECT_DIR$/Controller/CheckListController.cs" />
       </list>
     </option>
   </component>
@@ -165,7 +117,7 @@
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
-    <configuration name="Publish m-sort-server to folder (4)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
+    <configuration name="Publish m-sort-server to folder (3)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
@@ -211,18 +163,18 @@
       <item itemvalue=".NET Launch Settings Profile.m-sort-server: IIS Express" />
       <item itemvalue=".NET Launch Settings Profile.m-sort-server: m_sort_server" />
       <item itemvalue="Publish to folder.Publish m-sort-server to folder (1)" />
-      <item itemvalue="Publish to folder.Publish m-sort-server to folder (4)" />
       <item itemvalue="Publish to folder.Publish m-sort-server to folder (5)" />
       <item itemvalue="Publish to folder.Publish m-sort-server to folder" />
       <item itemvalue="Publish to folder.Publish m-sort-server to folder (2)" />
+      <item itemvalue="Publish to folder.Publish m-sort-server to folder (3)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Publish to folder.Publish m-sort-server to folder (3)" />
         <item itemvalue="Publish to folder.Publish m-sort-server to folder (2)" />
         <item itemvalue="Publish to folder.Publish m-sort-server to folder" />
         <item itemvalue="Publish to folder.Publish m-sort-server to folder (1)" />
         <item itemvalue="Publish to folder.Publish m-sort-server to folder (5)" />
-        <item itemvalue="Publish to folder.Publish m-sort-server to folder (4)" />
       </list>
     </recent_temporary>
   </component>
@@ -270,7 +222,9 @@
       <workItem from="1641217584082" duration="391000" />
       <workItem from="1641279208129" duration="8608000" />
       <workItem from="1641360423838" duration="17000" />
-      <workItem from="1641375757491" duration="9175000" />
+      <workItem from="1641375757491" duration="9476000" />
+      <workItem from="1641557310265" duration="4467000" />
+      <workItem from="1641624721510" duration="2654000" />
     </task>
     <servers />
   </component>
@@ -303,86 +257,86 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="464" height="436" key="DebuggerActiveHint/0.0.1280.680@0.0.1280.680" timestamp="1641389394663" />
-    <state width="1222" height="29" key="GridCell.Tab.0.bottom" timestamp="1641389151521">
+    <state width="1222" height="2" key="GridCell.Tab.0.bottom" timestamp="1641627350563">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641389151521" />
-    <state width="1222" height="29" key="GridCell.Tab.0.center" timestamp="1641389151521">
+    <state width="1222" height="2" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641627350563" />
+    <state width="1222" height="2" key="GridCell.Tab.0.center" timestamp="1641627350563">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1641389151521" />
-    <state width="1222" height="29" key="GridCell.Tab.0.left" timestamp="1641389151521">
+    <state width="1222" height="2" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1641627350563" />
+    <state width="1222" height="2" key="GridCell.Tab.0.left" timestamp="1641627350563">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1641389151521" />
-    <state width="1222" height="29" key="GridCell.Tab.0.right" timestamp="1641389151521">
+    <state width="1222" height="2" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1641627350563" />
+    <state width="1222" height="2" key="GridCell.Tab.0.right" timestamp="1641627350563">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1641389151521" />
-    <state width="1222" height="29" key="GridCell.Tab.1.bottom" timestamp="1641389159512">
+    <state width="1222" height="2" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1641627350563" />
+    <state width="1222" height="214" key="GridCell.Tab.1.bottom" timestamp="1641626057393">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641389159512" />
-    <state width="1222" height="29" key="GridCell.Tab.1.center" timestamp="1641389159512">
+    <state width="1222" height="214" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641626057393" />
+    <state width="1222" height="214" key="GridCell.Tab.1.center" timestamp="1641626057393">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1641389159512" />
-    <state width="1222" height="29" key="GridCell.Tab.1.left" timestamp="1641389159511">
+    <state width="1222" height="214" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1641626057393" />
+    <state width="1222" height="214" key="GridCell.Tab.1.left" timestamp="1641626057393">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1641389159511" />
-    <state width="1222" height="29" key="GridCell.Tab.1.right" timestamp="1641389159512">
+    <state width="1222" height="214" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1641626057393" />
+    <state width="1222" height="214" key="GridCell.Tab.1.right" timestamp="1641626057393">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1641389159512" />
-    <state width="1222" height="29" key="GridCell.Tab.2.bottom" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1641626057393" />
+    <state width="1222" height="214" key="GridCell.Tab.2.bottom" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.2.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.2.center" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.2.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.2.center" timestamp="1641626057393">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.2.center/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.2.left" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.2.center/0.0.1280.680@0.0.1280.680" timestamp="1641626057393" />
+    <state width="1222" height="214" key="GridCell.Tab.2.left" timestamp="1641626057393">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.2.left/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.2.right" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.2.left/0.0.1280.680@0.0.1280.680" timestamp="1641626057393" />
+    <state width="1222" height="214" key="GridCell.Tab.2.right" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.2.right/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.3.bottom" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.2.right/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.3.bottom" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.3.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.3.center" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.3.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.3.center" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.3.center/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.3.left" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.3.center/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.3.left" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.3.left/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.3.right" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.3.left/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.3.right" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.3.right/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.4.bottom" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.3.right/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.4.bottom" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.4.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.4.center" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.4.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.4.center" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.4.center/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.4.left" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.4.center/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.4.left" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.4.left/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
-    <state width="1222" height="29" key="GridCell.Tab.4.right" timestamp="1641389151337">
+    <state width="1222" height="214" key="GridCell.Tab.4.left/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
+    <state width="1222" height="214" key="GridCell.Tab.4.right" timestamp="1641626057394">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1222" height="29" key="GridCell.Tab.4.right/0.0.1280.680@0.0.1280.680" timestamp="1641389151337" />
+    <state width="1222" height="214" key="GridCell.Tab.4.right/0.0.1280.680@0.0.1280.680" timestamp="1641626057394" />
     <state x="233" y="72" key="Rider.ProjectTemplateDialog.Size" timestamp="1633079649069">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -420,10 +374,10 @@
           <line>129</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="225">
             <startOffsets>
-              <option value="4232" />
+              <option value="4344" />
             </startOffsets>
             <endOffsets>
-              <option value="4285" />
+              <option value="4401" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="34" />
@@ -433,10 +387,10 @@
           <line>167</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="263">
             <startOffsets>
-              <option value="5641" />
+              <option value="5809" />
             </startOffsets>
             <endOffsets>
-              <option value="5867" />
+              <option value="6047" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="35" />
@@ -446,10 +400,10 @@
           <line>181</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="270">
             <startOffsets>
-              <option value="6249" />
+              <option value="6429" />
             </startOffsets>
             <endOffsets>
-              <option value="6282" />
+              <option value="6462" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="36" />
@@ -459,10 +413,10 @@
           <line>192</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="283">
             <startOffsets>
-              <option value="6583" />
+              <option value="6763" />
             </startOffsets>
             <endOffsets>
-              <option value="6618" />
+              <option value="6798" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="37" />
@@ -472,10 +426,10 @@
           <line>193</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="284">
             <startOffsets>
-              <option value="6635" />
+              <option value="6815" />
             </startOffsets>
             <endOffsets>
-              <option value="6652" />
+              <option value="6832" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="38" />
@@ -485,10 +439,10 @@
           <line>195</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="286">
             <startOffsets>
-              <option value="6670" />
+              <option value="6850" />
             </startOffsets>
             <endOffsets>
-              <option value="6696" />
+              <option value="6876" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="39" />
@@ -498,10 +452,10 @@
           <line>176</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="272">
             <startOffsets>
-              <option value="6059" />
+              <option value="6239" />
             </startOffsets>
             <endOffsets>
-              <option value="6107" />
+              <option value="6287" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="40" />
@@ -511,10 +465,10 @@
           <line>173</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="269">
             <startOffsets>
-              <option value="5979" />
+              <option value="6159" />
             </startOffsets>
             <endOffsets>
-              <option value="5980" />
+              <option value="6160" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="41" />
@@ -524,10 +478,10 @@
           <line>160</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\erp_webapi\Services\TaskManagerService.cs" initialLine="160">
             <startOffsets>
-              <option value="5334" />
+              <option value="5482" />
             </startOffsets>
             <endOffsets>
-              <option value="5434" />
+              <option value="5590" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="45" />
