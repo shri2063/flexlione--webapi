@@ -4,7 +4,7 @@ namespace m_sort_server.EditModels
 {
     public class CheckListItemEditModel
     {
-        public string CheckListId { get; set; }
+        public string CheckListItemId { get; set; }
         
         public string TaskId { get; set; }
         

@@ -2,11 +2,15 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\Users\bhole\AppData\Local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\bhole\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_m-sort-server.-1265474312.00" t="ExcludeRecursive" />
-    <e p="C:\Users\bhole\Desktop\ERP\erp_webapi" t="IncludeRecursive">
+    <e p="C:\Users\bhole\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_flexli-erp-webapi.523106656.00" t="ExcludeRecursive" />
+    <e p="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi" t="IncludeRecursive">
       <e p=".gitignore" t="Include" />
       <e p="appsettings.json" t="Include" />
       <e p="bin" t="ExcludeRecursive" />
+      <e p="BsonModels" t="Include">
+        <e p="SearchTag.cs" t="Include" />
+        <e p="TaskSearchView.cs" t="Include" />
+      </e>
       <e p="ClassLibrary1" t="Include">
         <e p="obj" t="Include">
           <e p="ClassLibrary1.csproj.nuget.dgspec.json" t="Include" />
@@ -30,6 +34,7 @@
       <e p="Controller" t="Include">
         <e p="CheckListController.cs" t="Include" />
         <e p="TaskManagerController.cs" t="Include" />
+        <e p="TaskSearchController.cs" t="Include" />
       </e>
       <e p="DataModels" t="Include">
         <e p="CheckList.cs" t="Include" />
@@ -40,12 +45,12 @@
         <e p="TaskSheetItemEditModel.cs" t="Include" />
       </e>
       <e p="ErpContext.cs" t="Include" />
+      <e p="flexli-erp-webapi.csproj" t="IncludeRecursive" />
+      <e p="flexli-erp-webapi.sln" t="IncludeFlat" />
       <e p="LinkedListModel" t="Include">
         <e p="LinkedChildTask.cs" t="Include" />
         <e p="LinkedChildTaskHead.cs" t="Include" />
       </e>
-      <e p="m-sort-server.csproj" t="IncludeRecursive" />
-      <e p="m-sort-server.sln" t="IncludeFlat" />
       <e p="Models" t="Include">
         <e p="Bot.cs" t="Include" />
         <e p="BotConfig.cs" t="Include" />
@@ -59,7 +64,7 @@
       <e p="obj" t="ExcludeRecursive">
         <e p="Debug" t="Include">
           <e p="netcoreapp2.1" t="Include">
-            <e p="m-sort-server.RazorAssemblyInfo.cs" t="Include" />
+            <e p="flexli-erp-webapi.RazorAssemblyInfo.cs" t="Include" />
           </e>
         </e>
       </e>
@@ -72,6 +77,7 @@
       <e p="Services" t="Include">
         <e p="CheckListService.cs" t="Include" />
         <e p="LinkedListService.cs" t="Include" />
+        <e p="TagManagementService.cs" t="Include" />
         <e p="TaskManagerService.cs" t="Include" />
       </e>
       <e p="Startup.cs" t="Include" />

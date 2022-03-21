@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using m_sort_server.DataModels;
 using m_sort_server.EditModels;
+using m_sort_server.LinkedListModel;
 
 
 namespace m_sort_server.Services
@@ -11,33 +12,74 @@ namespace m_sort_server.Services
     {
         public static List<TaskSheetItemEditModel> GetTaskList(string taskId, string include)
         {
-            List<TaskSheetItemEditModel> taskListEditView = new List<TaskSheetItemEditModel>();
-            using (var db = new ErpContext())
-            {
-               
                 if (include.Contains("children"))
                 {
-                    return GetChildTaskList(taskId);
+                   return GetRankedChildTaskList(taskId);
+                  
                 }
 
                 throw new KeyNotFoundException("Error in finding required task list");
-            }
+            
         }
         public static TaskSheetItemEditModel CreateOrUpdateTask(TaskSheetItemEditModel taskSheetItemEditModel)
         {
+            bool newTask = false; 
+            // Validation 1: Check if Position after is valid
 
-            // Get Position After for above task (And revise position of other tasks)
-            taskSheetItemEditModel.PositionAfter = UpdatePositionOfTasks(taskSheetItemEditModel);
+                // 1.1 -  Position After task Id exist 
+            if (!GetChildTaskIdList(taskSheetItemEditModel.ParentTaskId).Contains(taskSheetItemEditModel.PositionAfter))
+            {
+                if (!string.IsNullOrEmpty(taskSheetItemEditModel.PositionAfter))
+                {
+                    throw new KeyNotFoundException("Position after is invalid");
+                }
+              
+            }
+            // task is not positioned after itself
+            if (taskSheetItemEditModel.TaskId == taskSheetItemEditModel.PositionAfter)
+            {
+                throw new KeyNotFoundException("Task cannot be positioned after itself");
+            }
 
-            return CreateOrUpdateTaskInDb(taskSheetItemEditModel);
+            
+            // ToDo: Validation 2: Check if parent task id is valid
+            
+            // Check if task id already exist or needs to be assigned new
+            if (!GetChildTaskIdList(taskSheetItemEditModel.ParentTaskId).Contains(taskSheetItemEditModel.TaskId))
+            {
+                taskSheetItemEditModel.TaskId = GetNextAvailableId();
+                newTask = true;
+            }
+          
+            // All fields updated except rank
+            TaskSheetItemEditModel updatedTask = CreateOrUpdateTaskInDb(taskSheetItemEditModel);
+            
+           // Check if Ordering of position has been changed
+           // If No: Ignore
+           // If Yes: Change ranking of the task
+            // Update Ranks in db
 
+           if (CheckIfPositionHasChanged(taskSheetItemEditModel,newTask))
+           {
+               // dummy rank updated
+               UpdateRankInDb(updatedTask.TaskId,Int32.MaxValue);
+               List<TaskSheetItemEditModel> reorderedList = ReorderTaskList(taskSheetItemEditModel);
+
+               List<TaskSheetItemEditModel> rankedTask = UpdateRankOfReorderedList(reorderedList);
+
+               List<TaskSheetItemEditModel> positionedTask = UpdatePositionOfRankedTask(rankedTask);
+               
+               positionedTask.ForEach(x => UpdateRankInDb(x.TaskId,x.Rank));
+               positionedTask.ForEach(x => UpdatePositionInDb(x.TaskId,x.PositionAfter));
+           }
+            return GetTaskById(updatedTask.TaskId);
         }
 
         public static void DeleteTask(string taskId)
         {
             using (var db = new ErpContext())
             {
-                if ((GetTaskList(taskId, "child").Count > 0))
+                if ((GetTaskList(taskId, "children").Count > 0))
                 {
                     throw new KeyNotFoundException("Task cannot be deleted. Contains one or more child task");
                 }
@@ -66,158 +108,110 @@ namespace m_sort_server.Services
             }
         }
 
-        private static List<TaskSheetItemEditModel> CreateReorderedList(List<TaskSheetItemEditModel> tasks)
-        {
+      
+       
 
+        private static List<TaskSheetItemEditModel> ReorderTaskList(TaskSheetItemEditModel newTaskItemEditModel)
+        {
+            LinkedChildTaskHead head = LinkedListService.CreateLinkedList(
+                    GetTaskList(newTaskItemEditModel.ParentTaskId, "children"));
             List<TaskSheetItemEditModel> reorderedList = new List<TaskSheetItemEditModel>();
 
-
-            int i = 0;
-            TaskSheetItemEditModel currentTask = new TaskSheetItemEditModel();
-            TaskSheetItemEditModel previousTask = new TaskSheetItemEditModel();
-
-            while (i < tasks.Count)
-            {
-                if (i == 0)
-                {
-                    currentTask = GetTaskPositionAfter(tasks, null);
-
-                }
-                else
-                {
-                    currentTask = tasks
-                        .Find(x =>
-                            x.PositionAfter == previousTask.TaskId);
-                }
-
-                reorderedList.Add(currentTask);
-                previousTask = currentTask;
-                i = i + 1;
-            }
-
-            return reorderedList;
-
-        }
-
-        private static TaskSheetItemEditModel GetTaskPositionAfter(List<TaskSheetItemEditModel> tasks, string positionAfter)
-        {
-            return tasks
-                .Find(x =>
-                    x.PositionAfter == positionAfter);
-        }
-
-        private static string UpdatePositionOfTasks(TaskSheetItemEditModel newTaskItemEditModel)
-        {
-            List<TaskSheetItemEditModel> taskListEditModels = GetTaskList(newTaskItemEditModel.ParentTaskId, "child");
-
-            TaskSheetItemEditModel existingTaskAtNewPosItemEditModel = taskListEditModels
-                .Find(y => y.PositionAfter == newTaskItemEditModel.PositionAfter);
-
             
-            
-            // Case 1: Position After not mentioned
-            if (newTaskItemEditModel.PositionAfter == null || newTaskItemEditModel.PositionAfter == "")
-            {
-                // Case 1.A : If it is the first element
-                if (CreateReorderedList(taskListEditModels).Count == 0)
-                {
-                    return null;
-                }
 
-                // Case 1.B: If its not first element
-                // Dependency
-                // A. Is there any task positioned below desired task
-                UpdatePositionOfTaskBelowGivenTask(newTaskItemEditModel);
+            while (head.Pointer.Task.TaskId != null)
+            {
+                LinkedChildTask pointerNext = head.Pointer.Next;
+                if (head.Pointer.Task.TaskId == newTaskItemEditModel.PositionAfter)
+                {
+                    head.Pointer.Next = new LinkedChildTask()
+                    {
+                        Task = newTaskItemEditModel,
+                        Next = pointerNext
+                    };
+
+                }
+               
+                reorderedList.Add(head.Pointer.Task);
+                head.Pointer = head.Pointer.Next;
                 
-                return CreateReorderedList(taskListEditModels)
-                    .Last()
-                    .TaskId;
             }
-            // Case 2: Position after mentioned
-            // Dependency
-            // A. Is there any task positioned at new position
-            // B. Is there any task positioned below desired task
-
-            UpdatePositionOfTaskBelowGivenTask(newTaskItemEditModel);
-            // Case A.1: No existing task positioned at new Position
-
-            if (existingTaskAtNewPosItemEditModel == null)
+            // Remove Null list created at end
+            //reorderedList.RemoveAt(reorderedList.Count - 1);
+            // New task will be created (again) at last
+            // Why? Since we atr assigning int.max value as it rank
+            // If position_after  = null -> do nothing
+            // Else remove it
+            if (newTaskItemEditModel.PositionAfter != null)
             {
-                return newTaskItemEditModel.PositionAfter;
+                reorderedList.RemoveAt(reorderedList.Count - 1);
             }
-            else
-            {
-                // Case A.2: Some task is positioned
-                UpdatePositionedAfterInDB(
-                    existingTaskAtNewPosItemEditModel.TaskId, newTaskItemEditModel.TaskId);
-
-                return newTaskItemEditModel.PositionAfter;
-            }
+          
+            return reorderedList;
         }
 
-
-        private static string UpdatePositionOfTaskBelowGivenTask(TaskSheetItemEditModel taskSheetItemEditModel)
+        
+        private static List<TaskSheetItemEditModel> UpdateRankOfReorderedList(List<TaskSheetItemEditModel> task)
         {
-            List<TaskSheetItemEditModel> taskListEditModels = GetTaskList(taskSheetItemEditModel.ParentTaskId, "child");
+           List<TaskSheetItemEditModel> rankedTask = new List<TaskSheetItemEditModel>();
 
-           
-            TaskSheetItemEditModel taskPositionedBelowItemEditModel = taskListEditModels
-                .Find(y => y.PositionAfter == taskSheetItemEditModel.TaskId);
-            
-            
-            return (taskPositionedBelowItemEditModel == null) ? 
-                "":UpdatePositionedAfterInDB(
-                    taskPositionedBelowItemEditModel.TaskId,
-                    GetTaskById(taskSheetItemEditModel.TaskId).PositionAfter);
-        }
-        private static string UpdatePositionedAfterInDB(string taskId, string positionAfter)
-        {
-           // Check if task Id and position after is not the same
-
-           if (GetTaskById(taskId).PositionAfter == taskId)
+           int i = 1;
+           while (task.Count > 0)
            {
-               throw new  KeyNotFoundException("Task cannot be positioned after itself");
+               TaskSheetItemEditModel currentTask = task.First();
+               currentTask.Rank = i;
+               rankedTask.Add(currentTask);
+               
+               task.RemoveAt(0);
+               i = i + 1;
            }
-            
+
+           return rankedTask;
+        }
+
+
+        
+        private static void UpdateRankInDb(string taskId, int? rank)
+        {
+           
             using (var db = new ErpContext())
             {
-               
-
                 TaskSheet task = db.TaskTree
                     .FirstOrDefault(x => x.TaskId == taskId);
                 if (task == null)
                 {
-                    throw new KeyNotFoundException("Task does not exist");
+                    return;
                 }
 
-                task.PositionAfter = positionAfter;
+                task.Rank = rank;
                 db.SaveChanges();
+   
+            }
+            
+        }
+        
+        private static void UpdatePositionInDb(string taskId, string position)
+        {
+           
+            using (var db = new ErpContext())
+            {
+                TaskSheet task = db.TaskTree
+                    .FirstOrDefault(x => x.TaskId == taskId);
+                if (task == null)
+                {
+                    return;
+                }
 
-                return task.PositionAfter;
+                task.PositionAfter = position;
+                db.SaveChanges();
+   
             }
             
         }
 
         private static TaskSheetItemEditModel CreateOrUpdateTaskInDb(TaskSheetItemEditModel taskSheetItemEditModel)
         {
-            // Check if task Id and Position After is not the same
-
-            if (taskSheetItemEditModel.PositionAfter == taskSheetItemEditModel.TaskId)
-            {
-                throw new KeyNotFoundException("Task cannot be positioned after itself");
-            }
-            
-            // Check if position after is actually under the same parent
-            if (taskSheetItemEditModel.PositionAfter != null)
-            {
-                if (GetTaskById(taskSheetItemEditModel.PositionAfter).ParentTaskId != taskSheetItemEditModel.ParentTaskId)
-                {
-                    throw new KeyNotFoundException("Position after mentioned cannot be assigned");
-                }   
-            }
-
-
-            TaskSheet task;
+           TaskSheet task;
             using (var db = new ErpContext())
             {
                 task = db.TaskTree
@@ -227,11 +221,12 @@ namespace m_sort_server.Services
                 if (task != null) // update
                 {
                     task.ParentTaskId = taskSheetItemEditModel.ParentTaskId;
-                    task.CreatedAt = DateTime.Now;
                     task.CreatedBy = taskSheetItemEditModel.CreatedBy;
-                    task.OnHold = taskSheetItemEditModel.OnHold;
+                    task.Status = taskSheetItemEditModel.Status;
                     task.Description = taskSheetItemEditModel.Description;
-                    task.PositionAfter = taskSheetItemEditModel.PositionAfter;
+                    task.AssignedTo = taskSheetItemEditModel.AssignedTo;
+                    task.Deadline = taskSheetItemEditModel.Deadline;
+                    task.Score = taskSheetItemEditModel.Score;
 
                     db.SaveChanges();
                 }
@@ -239,13 +234,16 @@ namespace m_sort_server.Services
                 {
                     task = new TaskSheet
                     {
-                        TaskId = GetNextAvailableId(),
+                        TaskId = taskSheetItemEditModel.TaskId,
                         ParentTaskId = taskSheetItemEditModel.ParentTaskId,
                         CreatedAt = DateTime.Now,
                         CreatedBy = taskSheetItemEditModel.CreatedBy,
-                        OnHold = taskSheetItemEditModel.OnHold,
+                        Status = taskSheetItemEditModel.Status,
                         Description = taskSheetItemEditModel.Description,
-                        PositionAfter = taskSheetItemEditModel.PositionAfter
+                        AssignedTo = taskSheetItemEditModel.AssignedTo,
+                        Deadline = taskSheetItemEditModel.Deadline,
+                        Score = taskSheetItemEditModel.Score,
+                        
                     };
                     db.TaskTree.Add(task);
                     db.SaveChanges();
@@ -269,25 +267,36 @@ namespace m_sort_server.Services
           
         }
 
-        private static List<TaskSheetItemEditModel> GetChildTaskList(string  taskId)
+        private static List<string> GetChildTaskIdList(string parentTaskId)
+        {
+            using (var db = new ErpContext())
+            {
+                return db.TaskTree
+                    .Where(x => x.ParentTaskId == parentTaskId)
+                    .Select(t => t.TaskId)
+                    .ToList();
+            }
+        }
+        private static List<TaskSheetItemEditModel> GetRankedChildTaskList(string  taskId)
         {
 
             List<TaskSheetItemEditModel> taskListEditModels = new List<TaskSheetItemEditModel>();
-            using (var db = new ErpContext())
-            {
-                List<string> taskIdList = db.TaskTree
-                    .Where(x => x.ParentTaskId == taskId)
-                    .Select(t => t.TaskId)
-                    .ToList();
+
+            List<string> taskIdList = GetChildTaskIdList(taskId);
 
                 taskIdList.ForEach(
                     x => taskListEditModels.Add(
                         GetTaskById(x)));
 
-                return CreateReorderedList(taskListEditModels);
+                taskListEditModels = taskListEditModels
+                    .OrderBy(x => x.Rank)
+                    .ToList();
+                return taskListEditModels;
                 
-            }
+            
         }
+        
+        
         
         private static TaskSheetItemEditModel GetTaskById(string taskId)
         {
@@ -303,15 +312,51 @@ namespace m_sort_server.Services
                     TaskId = existingTask.TaskId,
                     ParentTaskId = existingTask.ParentTaskId,
                     CreatedAt = existingTask.CreatedAt,
+                    Deadline = existingTask.Deadline,
                     CreatedBy = existingTask.CreatedBy,
-                    OnHold = existingTask.OnHold,
+                    AssignedTo = existingTask.AssignedTo,
+                    Score = existingTask.Score,
+                    Status = existingTask.Status,
                     Description = existingTask.Description,
-                    PositionAfter = existingTask.PositionAfter
+                    PositionAfter = existingTask.PositionAfter,
+                    Rank = existingTask.Rank
                 };
 
                 return taskSheetItemEditModel;
             }
 
+        }
+
+        private static bool CheckIfPositionHasChanged(TaskSheetItemEditModel task,bool newTask)
+        {
+            if (newTask)
+            {
+                return true;
+            }
+            
+            if (task.PositionAfter != GetTaskById(task.TaskId).PositionAfter)
+            {
+                return true;
+            }
+
+            return false;
+         }
+
+        private static List<TaskSheetItemEditModel> UpdatePositionOfRankedTask(List<TaskSheetItemEditModel> rankedTask)
+        {
+            string previousTaskId = null;
+            List<TaskSheetItemEditModel> positionedTask = new List<TaskSheetItemEditModel>();
+            while (rankedTask.Count > 0)
+            {
+                TaskSheetItemEditModel task = rankedTask.First();
+                task.PositionAfter = previousTaskId;
+                positionedTask.Add(task);
+                
+                previousTaskId = task.TaskId;
+                rankedTask.RemoveAt(0);
+            }
+
+            return positionedTask;
         }
 
 

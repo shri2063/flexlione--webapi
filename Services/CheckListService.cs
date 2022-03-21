@@ -11,7 +11,7 @@ namespace m_sort_server.Services
     {
         public static List<CheckListItemEditModel> GetCheckList(string taskId, string include)
         {
-            List<CheckListItemEditModel> checkListEditView = new List<CheckListItemEditModel>();
+           
             using (var db = new ErpContext())
             {
                
@@ -31,7 +31,7 @@ namespace m_sort_server.Services
             
         }
 
-        public static void DeleteCheckListItem(string checkListId)
+        public static void DeleteCheckListItem(string checkListItemId)
         {
             using (var db = new ErpContext())
             {
@@ -39,7 +39,7 @@ namespace m_sort_server.Services
 
                 // Get Selected TasK
                 CheckList existingCheckList = db.CheckList
-                    .FirstOrDefault(x => x.CheckListItemId == checkListId);
+                    .FirstOrDefault(x => x.CheckListItemId == checkListItemId);
                 
 
 
@@ -66,13 +66,13 @@ namespace m_sort_server.Services
             using (var db = new ErpContext())
             {
                 checkList = db.CheckList
-                    .FirstOrDefault(x => x.CheckListItemId == checkListItemEditModel.CheckListId);
+                    .FirstOrDefault(x => x.CheckListItemId == checkListItemEditModel.CheckListItemId);
 
 
                 if (checkList != null) // update
                 {
 
-                    checkList.CheckListItemId = checkListItemEditModel.CheckListId;
+                    checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
                     checkList.Description = checkListItemEditModel.Description;
                     checkList.Status = checkListItemEditModel.Status;
                     checkList.TaskId = checkListItemEditModel.TaskId;
@@ -134,18 +134,18 @@ namespace m_sort_server.Services
             }
         }
         
-        private static CheckListItemEditModel GetCheckListById(string checkListId)
+        private static CheckListItemEditModel GetCheckListById(string checkListItemId)
         {
             using (var db = new ErpContext())
             {
                 
                 CheckList existingCheckList = db.CheckList
-                    .FirstOrDefault(x => x.CheckListItemId == checkListId);
+                    .FirstOrDefault(x => x.CheckListItemId == checkListItemId);
                 if (existingCheckList == null)
                     return null;
                 CheckListItemEditModel checkListItemEditModel = new CheckListItemEditModel()
                 {
-                    CheckListId = existingCheckList.CheckListItemId,
+                    CheckListItemId = existingCheckList.CheckListItemId,
                     TaskId = existingCheckList.TaskId,
                     Description = existingCheckList.Description,
                     Status = existingCheckList.Status,

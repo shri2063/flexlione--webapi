@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m-sort-server", "m-sort-server.csproj", "{CE16948D-502B-4DCC-943D-39EE9D75E7D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flexli-erp-webapi", "flexli-erp-webapi.csproj", "{CE16948D-502B-4DCC-943D-39EE9D75E7D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

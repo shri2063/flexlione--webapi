@@ -38,9 +38,9 @@ namespace m_sort_server.Controller
         [HttpDelete("DeleteCheckListItem")]
         [Consumes("application/json")]
         
-        public ActionResult<string> DeleteCheckListItem(string checkListId)
+        public ActionResult<string> DeleteCheckListItem(string checkListItemId)
         {
-            CheckListService.DeleteCheckListItem(checkListId);
+            CheckListService.DeleteCheckListItem(checkListItemId);
             return Ok();
         }
     }
