@@ -23,15 +23,21 @@ namespace m_sort_server.Controller
         [HttpGet("GetTaskList")]
         [Consumes("application/json")]
         
-        public List<TaskSheetItemEditModel> GetTaskList([FromQuery] string include,string taskId = null)
+        public List<TaskEditModel> GetTaskList([FromQuery] string include,string taskId = null)
         {
             return TaskManagerService.GetTaskList(taskId,include);
         }
         
+        /// <summary>
+        /// Create or update tasks
+        /// Note that if you are creating new task - what task Id you mention does not matter
+        /// It will assign serially
+        /// position after you can keep empty ("")
+        /// </summary>
         [HttpPut("CreateOrUpdateTask")]
         [Consumes("application/json")]
         
-        public TaskSheetItemEditModel CreateOrUpdateTask(TaskSheetItemEditModel task)
+        public ActionResult<TaskEditModel> CreateOrUpdateTask(TaskEditModel task)
         {
             return TaskManagerService.CreateOrUpdateTask(task);
         }
@@ -41,7 +47,7 @@ namespace m_sort_server.Controller
         
         public LinkedChildTaskHead GetLinkedList(string taskId = null)
         {
-            List<TaskSheetItemEditModel> taskList = TaskManagerService.GetTaskList(taskId, "children");
+            List<TaskEditModel> taskList = TaskManagerService.GetTaskList(taskId, "children");
             return LinkedListService.CreateLinkedList(taskList);
         }
 

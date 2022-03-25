@@ -7,10 +7,6 @@
       <e p=".gitignore" t="Include" />
       <e p="appsettings.json" t="Include" />
       <e p="bin" t="ExcludeRecursive" />
-      <e p="BsonModels" t="Include">
-        <e p="SearchTag.cs" t="Include" />
-        <e p="TaskSearchView.cs" t="Include" />
-      </e>
       <e p="ClassLibrary1" t="Include">
         <e p="obj" t="Include">
           <e p="ClassLibrary1.csproj.nuget.dgspec.json" t="Include" />
@@ -33,33 +29,33 @@
       </e>
       <e p="Controller" t="Include">
         <e p="CheckListController.cs" t="Include" />
-        <e p="TaskManagerController.cs" t="Include" />
-        <e p="TaskSearchController.cs" t="Include" />
-      </e>
-      <e p="DataModels" t="Include">
-        <e p="CheckList.cs" t="Include" />
-        <e p="TaskSheet.cs" t="Include" />
-      </e>
-      <e p="EditModels" t="Include">
-        <e p="CheckListItemEditModel.cs" t="Include" />
-        <e p="TaskSheetItemEditModel.cs" t="Include" />
+        <e p="SearchManagementController.cs" t="Include" />
+        <e p="TaskManagementController.cs" t="Include" />
       </e>
       <e p="ErpContext.cs" t="Include" />
       <e p="flexli-erp-webapi.csproj" t="IncludeRecursive" />
       <e p="flexli-erp-webapi.sln" t="IncludeFlat" />
-      <e p="LinkedListModel" t="Include">
-        <e p="LinkedChildTask.cs" t="Include" />
-        <e p="LinkedChildTaskHead.cs" t="Include" />
-      </e>
       <e p="Models" t="Include">
-        <e p="Bot.cs" t="Include" />
-        <e p="BotConfig.cs" t="Include" />
-        <e p="BotMotor.cs" t="Include" />
-        <e p="BotPosition.cs" t="Include" />
-        <e p="EdgeJsonModel.cs" t="Include" />
+        <e p="BsonModels" t="Include">
+          <e p="SearchTag.cs" t="Include" />
+          <e p="SearchTagResult.cs" t="Include" />
+          <e p="TaskSearchView.cs" t="Include" />
+        </e>
+        <e p="DataModels" t="Include">
+          <e p="CheckList.cs" t="Include" />
+          <e p="TaskSheet.cs" t="Include" />
+        </e>
+        <e p="EditModels" t="Include">
+          <e p="CheckListItemEditModel.cs" t="Include" />
+          <e p="SearchQueryEditModel.cs" t="Include" />
+          <e p="TaskEditModel.cs" t="Include" />
+        </e>
         <e p="Error.cs" t="Include" />
-        <e p="Graph.cs" t="Include" />
-        <e p="NodeJsonModel.cs" t="Include" />
+        <e p="LinkedListModel" t="Include">
+          <e p="LinkedChildTask.cs" t="Include" />
+          <e p="LinkedChildTaskHead.cs" t="Include" />
+        </e>
+        <e p="ViewModels" t="Include" />
       </e>
       <e p="obj" t="ExcludeRecursive">
         <e p="Debug" t="Include">
@@ -77,8 +73,9 @@
       <e p="Services" t="Include">
         <e p="CheckListService.cs" t="Include" />
         <e p="LinkedListService.cs" t="Include" />
+        <e p="SearchManagementService.cs" t="Include" />
         <e p="TagManagementService.cs" t="Include" />
-        <e p="TaskManagerService.cs" t="Include" />
+        <e p="TaskManagementService.cs" t="Include" />
       </e>
       <e p="Startup.cs" t="Include" />
       <e p="Utility" t="Include">

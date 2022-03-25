@@ -7,16 +7,16 @@ namespace m_sort_server.Services
 {
     public class LinkedListService
     {
-        public static LinkedChildTaskHead CreateLinkedList(List<TaskSheetItemEditModel> tasks)
+        public static LinkedChildTaskHead CreateLinkedList(List<TaskEditModel> tasks)
         {
-            List<TaskSheetItemEditModel> orderedTasks = tasks.OrderByDescending(x => x.Rank).ToList();
+            List<TaskEditModel> orderedTasks = tasks.OrderByDescending(x => x.Rank).ToList();
 
             LinkedChildTaskHead head = new LinkedChildTaskHead()
             {
               
                 Pointer = new LinkedChildTask()
                 {
-                    Task = new TaskSheetItemEditModel(),
+                    Task = new TaskEditModel(),
                     Next = new LinkedChildTask(),
                     Previous = new LinkedChildTask()
                 }
@@ -34,7 +34,7 @@ namespace m_sort_server.Services
             return head;
         }
 
-        public static void InsertFrontOnHead(LinkedChildTaskHead head, TaskSheetItemEditModel task)
+        public static void InsertFrontOnHead(LinkedChildTaskHead head, TaskEditModel task)
         {
            
             LinkedChildTask linkedTask = new LinkedChildTask()

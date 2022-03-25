@@ -1,0 +1,31 @@
+﻿using System;
+using System.Data;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace m_sort_server.BsonModels
+{
+    [BsonDiscriminator("tasks")]
+    public class TaskSearchView
+    {
+        
+        
+            [BsonElement("task_id")]
+            public string TaskId { get; set; }
+
+            [BsonElement("created_by")]
+            public string CreatedBy { get; set; }
+            
+            [BsonElement("description")]
+            public string Description{ get; set; }
+            
+            [BsonElement("assigned_to")]
+            public string AssignedTo{ get; set; }
+            
+            [BsonElement("deadline")]
+            public DateTime? Deadline{ get; set; }
+            
+            [BsonElement("status")]
+            public string Status{ get; set; }
+        
+    }
+}

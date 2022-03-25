@@ -4,7 +4,7 @@ namespace m_sort_server.LinkedListModel
 {
     public class LinkedChildTask
     {
-        public  TaskSheetItemEditModel Task { get; set; }
+        public  TaskEditModel Task { get; set; }
         
        
         public  LinkedChildTask Next { get; set; }

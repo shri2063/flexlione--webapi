@@ -9,12 +9,11 @@ namespace m_sort_server.BsonModels
     public class SearchTag
     {
             [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
-            public string Id { get; set; }
+            public int Id { get; set; }
 
             [BsonElement("description")]
             public string Description { get; set; }
-            [BsonElement("tasks")]
-            public IList<TaskSearchView> Tasks{ get; set; } 
+           
         }
     
 }

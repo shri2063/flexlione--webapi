@@ -2,7 +2,9 @@
 
 namespace m_sort_server.EditModels
 {
-    public class TaskSheetItemEditModel
+   
+    public enum EStatus { yetToStart, ongoing, completed,onHold,dropped };
+    public class TaskEditModel
     {
         public string TaskId { get; set; }
         
@@ -20,7 +22,7 @@ namespace m_sort_server.EditModels
         
         public DateTime?  Deadline { get; set; }
         
-        public string Status { get; set; }
+        public EStatus Status { get; set; }
         
         public int? Score { get; set; }
         
