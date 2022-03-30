@@ -29,8 +29,10 @@
       </e>
       <e p="Controller" t="Include">
         <e p="CheckListController.cs" t="Include" />
-        <e p="SearchManagementController.cs" t="Include" />
-        <e p="TaskManagementController.cs" t="Include" />
+        <e p="CommentController.cs" t="Include" />
+        <e p="DependencyController.cs" t="Include" />
+        <e p="SearchController.cs" t="Include" />
+        <e p="TaskController.cs" t="Include" />
       </e>
       <e p="ErpContext.cs" t="Include" />
       <e p="flexli-erp-webapi.csproj" t="IncludeRecursive" />
@@ -43,10 +45,14 @@
         </e>
         <e p="DataModels" t="Include">
           <e p="CheckList.cs" t="Include" />
+          <e p="Comment.cs" t="Include" />
+          <e p="Dependency.cs" t="Include" />
           <e p="TaskSheet.cs" t="Include" />
         </e>
         <e p="EditModels" t="Include">
           <e p="CheckListItemEditModel.cs" t="Include" />
+          <e p="CommentEditModel.cs" t="Include" />
+          <e p="DependencyEditModel.cs" t="Include" />
           <e p="SearchQueryEditModel.cs" t="Include" />
           <e p="TaskEditModel.cs" t="Include" />
         </e>
@@ -71,7 +77,9 @@
       </e>
       <e p="README.md" t="Include" />
       <e p="Services" t="Include">
-        <e p="CheckListService.cs" t="Include" />
+        <e p="CheckListManagementService.cs" t="Include" />
+        <e p="CommentManagementService.cs" t="Include" />
+        <e p="DependencyManagementService.cs" t="Include" />
         <e p="LinkedListService.cs" t="Include" />
         <e p="SearchManagementService.cs" t="Include" />
         <e p="TagManagementService.cs" t="Include" />

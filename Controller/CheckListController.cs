@@ -24,7 +24,7 @@ namespace m_sort_server.Controller
         
         public List<CheckListItemEditModel> GetCheckList([FromQuery] string include,string taskId = null)
         {
-            return CheckListService.GetCheckList(taskId,include);
+            return CheckListManagementService.GetCheckList(taskId,include);
         }
         
         [HttpPut("CreateOrUpdateCheckListItem")]
@@ -32,7 +32,7 @@ namespace m_sort_server.Controller
         
         public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemItem)
         {
-            return CheckListService.CreateOrUpdateCheckListItem(checkListItemItem);
+            return CheckListManagementService.CreateOrUpdateCheckListItem(checkListItemItem);
         }
         
         [HttpDelete("DeleteCheckListItem")]
@@ -40,7 +40,7 @@ namespace m_sort_server.Controller
         
         public ActionResult<string> DeleteCheckListItem(string checkListItemId)
         {
-            CheckListService.DeleteCheckListItem(checkListItemId);
+            CheckListManagementService.DeleteCheckListItem(checkListItemId);
             return Ok();
         }
     }

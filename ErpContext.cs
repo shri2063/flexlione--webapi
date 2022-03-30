@@ -11,6 +11,10 @@ namespace m_sort_server
         public DbSet<TaskSheet> TaskTree { get; set; }
         
         public DbSet<CheckList> CheckList { get; set; }
+        
+        public DbSet<Dependency> Dependency { get; set; }
+        
+        public DbSet<Comment> Comment { get; set; }
 
         // for logging sql queries
         private static readonly ILoggerFactory LoggerFactory  = new LoggerFactory().AddConsole((_,___) => true);

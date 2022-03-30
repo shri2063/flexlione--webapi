@@ -16,7 +16,7 @@ namespace m_sort_server.Controller
     [EnableCors("AllowOrigin")]
     [Produces("application/json")]
 
-    public class SearchManagementController : ControllerBase
+    public class SearchController : ControllerBase
     {
 
         [HttpPost("AddOrUpdateTagWithResult")]

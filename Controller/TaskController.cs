@@ -17,15 +17,15 @@ namespace m_sort_server.Controller
     [EnableCors("AllowOrigin")]
     [Produces("application/json")]
     
-    public class TaskManagerController : ControllerBase
+    public class TaskController : ControllerBase
     {
         
-        [HttpGet("GetTaskList")]
+        [HttpGet("GetTaskById")]
         [Consumes("application/json")]
         
-        public List<TaskEditModel> GetTaskList([FromQuery] string include,string taskId = null)
+        public TaskEditModel GetTaskById([FromQuery] string taskId,string include = null)
         {
-            return TaskManagerService.GetTaskList(taskId,include);
+            return TaskManagerService.GetTaskById(taskId,include);
         }
         
         /// <summary>
@@ -47,7 +47,7 @@ namespace m_sort_server.Controller
         
         public LinkedChildTaskHead GetLinkedList(string taskId = null)
         {
-            List<TaskEditModel> taskList = TaskManagerService.GetTaskList(taskId, "children");
+            List<TaskEditModel> taskList = TaskManagerService.GetTaskById(taskId, "children").Children;
             return LinkedListService.CreateLinkedList(taskList);
         }
 

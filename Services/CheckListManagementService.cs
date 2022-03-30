@@ -7,7 +7,7 @@ using m_sort_server.EditModels;
 
 namespace m_sort_server.Services
 {
-    public class CheckListService
+    public class CheckListManagementService
     {
         public static List<CheckListItemEditModel> GetCheckList(string taskId, string include)
         {

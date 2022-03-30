@@ -11,16 +11,39 @@ namespace m_sort_server.Services
 {
     public class TaskManagerService
     {
-        public static List<TaskEditModel> GetTaskList(string taskId, string include)
+        public static TaskEditModel GetTaskById(string taskId, string include = null)
         {
-                if (include.Contains("children"))
-                {
-                   return GetRankedChildTaskList(taskId);
-                  
-                }
+            TaskEditModel task = GetTaskById(taskId);
 
+            if (task == null)
+            {
                 throw new KeyNotFoundException("Error in finding required task list");
+            }
+
+            if (include == null)
+            {
+                return task;
+            }
             
+            if (include.Contains("children"))
+            { 
+                task.Children =  GetRankedChildTaskList(taskId);
+            }
+            if (include.Contains("siblings"))
+            { 
+                task.Siblings =  GetRankedChildTaskList(task.ParentTaskId);
+            }
+            
+            if (include.Contains("dependency"))
+            {
+                task.UpStreamDependencies = DependencyManagementService
+                    .GetUpstreamDependenciesByTaskId(taskId,"task");
+                task.DownStreamDependencies = DependencyManagementService
+                    .GetDownstreamDependenciesByTaskId(taskId,"task");
+            }
+
+            return task;
+
         }
         public static TaskEditModel CreateOrUpdateTask(TaskEditModel taskEditModel)
         {
@@ -84,7 +107,7 @@ namespace m_sort_server.Services
         {
             using (var db = new ErpContext())
             {
-                if ((GetTaskList(taskId, "children").Count > 0))
+                if ((GetTaskById(taskId, "children").Children.Count > 0))
                 {
                     throw new KeyNotFoundException("Task cannot be deleted. Contains one or more child task");
                 }
@@ -119,7 +142,7 @@ namespace m_sort_server.Services
         private static List<TaskEditModel> ReorderTaskList(TaskEditModel newTaskItemEditModel)
         {
             LinkedChildTaskHead head = LinkedListService.CreateLinkedList(
-                    GetTaskList(newTaskItemEditModel.ParentTaskId, "children"));
+                    GetTaskById(newTaskItemEditModel.ParentTaskId, "children").Children);
             List<TaskEditModel> reorderedList = new List<TaskEditModel>();
 
             

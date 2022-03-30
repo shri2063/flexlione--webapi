@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace m_sort_server.EditModels
 {
@@ -27,5 +28,13 @@ namespace m_sort_server.EditModels
         public int? Score { get; set; }
         
         public int? Rank { get; set; }
+        
+        public List<TaskEditModel> Children { get; set; }
+        
+        public List<DependencyEditModel> DownStreamDependencies { get; set; }
+        
+        public List<DependencyEditModel> UpStreamDependencies { get; set; }
+        
+        public List<TaskEditModel> Siblings { get; set; }
     }
 }

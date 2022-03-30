@@ -23,34 +23,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Controller/SearchManagementController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/BsonModels/SearchTagResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/EditModels/SearchQueryEditModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Services/SearchManagementService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Controller/CommentController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Controller/DependencyController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/DataModels/Comment.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/DataModels/Dependency.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/EditModels/CommentEditModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/EditModels/DependencyEditModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Services/CommentManagementService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Services/DependencyManagementService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BsonModels/SearchTag.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/BsonModels/SearchTag.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BsonModels/TaskSearchView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/BsonModels/TaskSearchView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/TaskManagerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskManagementController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/TaskSearchController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataModels/CheckList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataModels/TaskSheet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/TaskSheet.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EditModels/CheckListItemEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EditModels/TaskSheetItemEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskEditModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LinkedListModel/LinkedChildTask.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/LinkedListModel/LinkedChildTask.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LinkedListModel/LinkedChildTaskHead.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/LinkedListModel/LinkedChildTaskHead.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Bot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/BotConfig.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/BotMotor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/BotPosition.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/EdgeJsonModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/Graph.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/NodeJsonModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/LinkedListService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/LinkedListService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TagManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TagManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TaskManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flexli-erp-webapi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/flexli-erp-webapi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/CheckListController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/CheckListController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/SearchManagementController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SearchController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/TaskManagementController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ErpContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ErpContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/CheckListService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/CheckListManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,16 +61,28 @@
         <option value="$PROJECT_DIR$/Controller/TagManagementController.cs" />
         <option value="$PROJECT_DIR$/EditModels/TaskEditModel.cs" />
         <option value="$PROJECT_DIR$/Models/ViewModels/TaskViewModel.cs" />
-        <option value="$PROJECT_DIR$/Controller/TaskManagementController.cs" />
         <option value="$PROJECT_DIR$/Models/EditModels/SearchEditModel.cs" />
         <option value="$PROJECT_DIR$/Models/EditModels/SearchQueryEditModel.cs" />
         <option value="$PROJECT_DIR$/Models/BsonModels/TaskSearchView.cs" />
         <option value="$PROJECT_DIR$/Services/SearchManagementService.cs" />
-        <option value="$PROJECT_DIR$/Models/EditModels/TaskEditModel.cs" />
-        <option value="$PROJECT_DIR$/Services/TaskManagementService.cs" />
         <option value="$PROJECT_DIR$/Services/TagManagementService.cs" />
         <option value="$PROJECT_DIR$/Controller/SearchManagementController.cs" />
         <option value="$PROJECT_DIR$/Properties/launchSettings.json" />
+        <option value="$PROJECT_DIR$/Models/DataModels/Dependencies.cs" />
+        <option value="$PROJECT_DIR$/Models/DataModels/Dependency.cs" />
+        <option value="$PROJECT_DIR$/Models/EditModels/DependencyEditModel.cs" />
+        <option value="$PROJECT_DIR$/Controller/DependencyController.cs" />
+        <option value="$PROJECT_DIR$/Models/EditModels/TaskEditModel.cs" />
+        <option value="$PROJECT_DIR$/Services/TaskManagementService.cs" />
+        <option value="$PROJECT_DIR$/Models/DataModels/Comment.cs" />
+        <option value="$PROJECT_DIR$/Models/EditModels/CommentEditModel.cs" />
+        <option value="$PROJECT_DIR$/ErpContext.cs" />
+        <option value="$PROJECT_DIR$/Controller/SearchController.cs" />
+        <option value="$PROJECT_DIR$/Controller/TaskManagementController.cs" />
+        <option value="$PROJECT_DIR$/Services/CheckListManagementService.cs" />
+        <option value="$PROJECT_DIR$/Controller/CommentController.cs" />
+        <option value="$PROJECT_DIR$/Services/DependencyManagementService.cs" />
+        <option value="$PROJECT_DIR$/Services/CommentManagementService.cs" />
       </list>
     </option>
   </component>
@@ -104,7 +105,7 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected="Publish to folder.Publish flexli-erp-webapi to folder (3)">
+  <component name="RunManager" selected=".NET Launch Settings Profile.flexStore">
     <configuration name="Publish flexli-erp-webapi to folder (1)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
@@ -202,6 +203,7 @@
       <workItem from="1647930917093" duration="17441000" />
       <workItem from="1648014264005" duration="5299000" />
       <workItem from="1648023630846" duration="3205000" />
+      <workItem from="1648617200535" duration="13920000" />
     </task>
     <servers />
   </component>
@@ -231,94 +233,94 @@
     </state>
     <state x="95" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.672@0.0.1280.672" timestamp="1648018969606" />
     <state x="95" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1641995013560" />
-    <state width="494" height="464" key="DebuggerActiveHint" timestamp="1648015901489">
+    <state width="517" height="464" key="DebuggerActiveHint" timestamp="1648627828139">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="494" height="464" key="DebuggerActiveHint/0.0.1280.672@0.0.1280.672" timestamp="1648015901489" />
-    <state width="1222" height="144" key="GridCell.Tab.0.bottom" timestamp="1648020516439">
+    <state width="517" height="464" key="DebuggerActiveHint/0.0.1280.672@0.0.1280.672" timestamp="1648627828139" />
+    <state width="1222" height="84" key="GridCell.Tab.0.bottom" timestamp="1648634358706">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.0.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
+    <state width="1222" height="84" key="GridCell.Tab.0.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648634358706" />
     <state width="1222" height="160" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1641985745565" />
-    <state width="1222" height="144" key="GridCell.Tab.0.center" timestamp="1648020516439">
+    <state width="1222" height="84" key="GridCell.Tab.0.center" timestamp="1648634358706">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.0.center/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
+    <state width="1222" height="84" key="GridCell.Tab.0.center/0.0.1280.672@0.0.1280.672" timestamp="1648634358706" />
     <state width="1222" height="160" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1641985745565" />
-    <state width="1222" height="144" key="GridCell.Tab.0.left" timestamp="1648020516439">
+    <state width="1222" height="84" key="GridCell.Tab.0.left" timestamp="1648634358706">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.0.left/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
+    <state width="1222" height="84" key="GridCell.Tab.0.left/0.0.1280.672@0.0.1280.672" timestamp="1648634358706" />
     <state width="1222" height="160" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1641985745565" />
-    <state width="1222" height="144" key="GridCell.Tab.0.right" timestamp="1648020516439">
+    <state width="1222" height="84" key="GridCell.Tab.0.right" timestamp="1648634358706">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.0.right/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
+    <state width="1222" height="84" key="GridCell.Tab.0.right/0.0.1280.672@0.0.1280.672" timestamp="1648634358706" />
     <state width="1222" height="160" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1641985745565" />
-    <state width="1222" height="144" key="GridCell.Tab.1.bottom" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.1.bottom" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.1.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.1.center" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.1.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.1.center" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.1.center/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.1.left" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.1.center/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.1.left" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.1.left/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.1.right" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.1.left/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.1.right" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.1.right/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.2.bottom" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.1.right/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.2.bottom" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.2.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.2.center" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.2.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.2.center" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.2.center/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.2.left" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.2.center/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.2.left" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.2.left/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.2.right" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.2.left/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.2.right" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.2.right/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.3.bottom" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.2.right/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.3.bottom" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.3.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.3.center" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.3.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.3.center" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.3.center/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.3.left" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.3.center/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.3.left" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.3.left/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.3.right" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.3.left/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.3.right" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.3.right/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.4.bottom" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.3.right/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.4.bottom" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.4.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.4.center" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.4.bottom/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.4.center" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.4.center/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.4.left" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.4.center/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.4.left" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.4.left/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
-    <state width="1222" height="144" key="GridCell.Tab.4.right" timestamp="1648020516439">
+    <state width="1222" height="144" key="GridCell.Tab.4.left/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
+    <state width="1222" height="144" key="GridCell.Tab.4.right" timestamp="1648627898393">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="144" key="GridCell.Tab.4.right/0.0.1280.672@0.0.1280.672" timestamp="1648020516439" />
+    <state width="1222" height="144" key="GridCell.Tab.4.right/0.0.1280.672@0.0.1280.672" timestamp="1648627898393" />
     <state x="233" y="68" key="Rider.ProjectTemplateDialog.Size" timestamp="1647839207239">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
@@ -342,16 +344,68 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>30</line>
+          <line>53</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="30">
             <startOffsets>
-              <option value="906" />
+              <option value="1640" />
             </startOffsets>
             <endOffsets>
-              <option value="996" />
+              <option value="1730" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
+          <line>19</line>
+          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="19">
+            <startOffsets>
+              <option value="488" />
+            </startOffsets>
+            <endOffsets>
+              <option value="558" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
+          <line>352</line>
+          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="348">
+            <startOffsets>
+              <option value="11736" />
+            </startOffsets>
+            <endOffsets>
+              <option value="11748" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/DependencyManagementService.cs</url>
+          <line>76</line>
+          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\DependencyManagementService.cs" initialLine="76">
+            <startOffsets>
+              <option value="2438" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2468" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
+          <line>42</line>
+          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="38">
+            <startOffsets>
+              <option value="1341" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1342" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
