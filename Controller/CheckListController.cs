@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace m_sort_server.Controller
 {
-    [Route("api/v1")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
     [EnableCors("AllowOrigin")]

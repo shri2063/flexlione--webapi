@@ -34,6 +34,7 @@
         <e p="SearchController.cs" t="Include" />
         <e p="TaskController.cs" t="Include" />
       </e>
+      <e p="db_queries.txt" t="Include" />
       <e p="ErpContext.cs" t="Include" />
       <e p="flexli-erp-webapi.csproj" t="IncludeRecursive" />
       <e p="flexli-erp-webapi.sln" t="IncludeFlat" />

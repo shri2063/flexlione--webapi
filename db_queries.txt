@@ -1,0 +1,6 @@
+INSERT INTO task_sheet (task_id, parent_task_id, created_at,deadline,status,description)
+VALUES ('1', '0', NOW(),NOW(), 'yetToStart','dump');
+
+update task_sheet
+set status = 'yetToStart'
+where task_id = '0'
