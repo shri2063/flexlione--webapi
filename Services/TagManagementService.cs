@@ -31,12 +31,12 @@ namespace m_sort_server.Services
             
         }
         
-        public static List<SearchTag> UpdateTagsContainingTask(TaskEditModel task)
+        public static List<SearchTag> UpdateTagsContainingTask(TaskDetailEditModel taskDetail)
         {
             List<SearchTag> searchTags = GetSearchTagList();
             foreach (var searchTag in searchTags)
             {
-                if (CheckIfTaskContainsTag(task, searchTag.Description))
+                if (CheckIfTaskContainsTag(taskDetail, searchTag.Description))
                 {
                     UpdateTaskListOfSearchTagResult(searchTag.Description);
                 }
@@ -110,9 +110,9 @@ namespace m_sort_server.Services
            
         }
 
-        private static bool CheckIfTaskContainsTag(TaskEditModel task, string tag)
+        private static bool CheckIfTaskContainsTag(TaskDetailEditModel taskDetail, string tag)
         {
-            if (task.Description.ToLower().Contains(tag.ToLower()))
+            if (taskDetail.Description.ToLower().Contains(tag.ToLower()))
             {
                 return true;
             }
@@ -196,12 +196,12 @@ namespace m_sort_server.Services
 
         private static List<TaskSearchView> GetTaskListForSearchParameter(string search)
         {
-            List<string> taskIds = TaskManagerService.GetTaskIdList();
-           List<TaskEditModel> taskList = new List<TaskEditModel>();
+            List<string> taskIds = TaskManagementService.GetTaskIdList();
+           List<TaskDetailEditModel> taskList = new List<TaskDetailEditModel>();
            List<TaskSearchView> taskListContainingSearch = new List<TaskSearchView>();
            foreach (var taskId in taskIds)
            {
-               taskList.Add(TaskManagerService.GetTaskById(taskId));
+               taskList.Add(TaskManagementService.GetTaskById(taskId));
            }
 
            foreach (var task in taskList)
@@ -215,7 +215,8 @@ namespace m_sort_server.Services
                        CreatedBy = task.CreatedBy,
                        AssignedTo = task.AssignedTo,
                        Deadline = task.Deadline,
-                       Status = task.Status.ToString()
+                       Status = task.Status.ToString(),
+                       IsRemoved = task.IsRemoved
                    });
                }   
            }

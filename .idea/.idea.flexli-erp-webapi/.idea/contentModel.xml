@@ -31,8 +31,13 @@
         <e p="CheckListController.cs" t="Include" />
         <e p="CommentController.cs" t="Include" />
         <e p="DependencyController.cs" t="Include" />
+        <e p="ProfileController.cs" t="Include" />
         <e p="SearchController.cs" t="Include" />
+        <e p="SprintController.cs" t="Include" />
         <e p="TaskController.cs" t="Include" />
+        <e p="TaskHierarchyController.cs" t="Include" />
+        <e p="TaskScheduleController.cs" t="Include" />
+        <e p="TaskSummaryController.cs" t="Include" />
       </e>
       <e p="db_queries.txt" t="Include" />
       <e p="ErpContext.cs" t="Include" />
@@ -48,14 +53,24 @@
           <e p="CheckList.cs" t="Include" />
           <e p="Comment.cs" t="Include" />
           <e p="Dependency.cs" t="Include" />
-          <e p="TaskSheet.cs" t="Include" />
+          <e p="Profile.cs" t="Include" />
+          <e p="Sprint.cs" t="Include" />
+          <e p="TaskDetail.cs" t="Include" />
+          <e p="TaskHierarchy.cs" t="Include" />
+          <e p="TaskSchedule.cs" t="Include" />
+          <e p="TaskSummary.cs" t="Include" />
         </e>
         <e p="EditModels" t="Include">
           <e p="CheckListItemEditModel.cs" t="Include" />
           <e p="CommentEditModel.cs" t="Include" />
           <e p="DependencyEditModel.cs" t="Include" />
+          <e p="ProfileEditModel.cs" t="Include" />
           <e p="SearchQueryEditModel.cs" t="Include" />
-          <e p="TaskEditModel.cs" t="Include" />
+          <e p="SprintEditModel.cs" t="Include" />
+          <e p="TaskDetailEditModel.cs" t="Include" />
+          <e p="TaskHierarchyEditModel.cs" t="Include" />
+          <e p="TaskScheduleEditModel.cs" t="Include" />
+          <e p="TaskSummaryEditModel.cs" t="Include" />
         </e>
         <e p="Error.cs" t="Include" />
         <e p="LinkedListModel" t="Include">
@@ -75,6 +90,9 @@
       <e p="Program.cs" t="Include" />
       <e p="Properties" t="Include">
         <e p="launchSettings.json" t="Include" />
+        <e p="PublishProfiles" t="Include">
+          <e p="FolderProfile.pubxml" t="Include" />
+        </e>
       </e>
       <e p="README.md" t="Include" />
       <e p="Services" t="Include">
@@ -82,9 +100,14 @@
         <e p="CommentManagementService.cs" t="Include" />
         <e p="DependencyManagementService.cs" t="Include" />
         <e p="LinkedListService.cs" t="Include" />
+        <e p="ProfileManagementService.cs" t="Include" />
         <e p="SearchManagementService.cs" t="Include" />
+        <e p="SprintManagementService.cs" t="Include" />
         <e p="TagManagementService.cs" t="Include" />
+        <e p="TaskHierarchyManagementService .cs" t="Include" />
         <e p="TaskManagementService.cs" t="Include" />
+        <e p="TaskScheduleManagementService.cs" t="Include" />
+        <e p="TaskSummaryManagementService.cs" t="Include" />
       </e>
       <e p="Startup.cs" t="Include" />
       <e p="Utility" t="Include">

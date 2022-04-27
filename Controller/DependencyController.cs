@@ -34,7 +34,7 @@ namespace m_sort_server.Controller
         
         /// <summary>
         /// Create or update tasks
-        /// Note that if you are creating new task - what task Id you mention does not matter
+        /// Note that if you are creating new taskDetail - what taskDetail Id you mention does not matter
         /// It will assign serially
         /// position after you can keep empty ("")
         /// </summary>

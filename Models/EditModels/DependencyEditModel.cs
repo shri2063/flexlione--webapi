@@ -15,7 +15,7 @@
            
             public string Description { get; set; }
             
-            public  TaskEditModel TaskEditModel { get; set; }
+            public  TaskDetailEditModel TaskDetailEditModel { get; set; }
         
     }
 }

@@ -26,6 +26,9 @@ namespace m_sort_server.BsonModels
             
             [BsonElement("status")]
             public string Status{ get; set; }
+            
+            [BsonElement("is_removed")]
+            public bool? IsRemoved{ get; set; }
         
     }
 }

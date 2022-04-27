@@ -23,23 +23,31 @@ namespace m_sort_server.Controller
         [HttpGet("GetTaskById")]
         [Consumes("application/json")]
         
-        public TaskEditModel GetTaskById([FromQuery] string taskId,string include = null)
+        public TaskDetailEditModel GetTaskById([FromQuery] string taskId,string include = null)
         {
-            return TaskManagerService.GetTaskById(taskId,include);
+            return TaskManagementService.GetTaskById(taskId,include);
+        }
+        
+        [HttpGet("GetTaskIdList")]
+        [Consumes("application/json")]
+        
+        public List<string> GetTaskIdList(string taskId = null)
+        {
+            return TaskManagementService.GetTaskIdList(taskId);
         }
         
         /// <summary>
         /// Create or update tasks
-        /// Note that if you are creating new task - what task Id you mention does not matter
+        /// Note that if you are creating new taskDetail - what taskDetail Id you mention does not matter
         /// It will assign serially
         /// position after you can keep empty ("")
         /// </summary>
         [HttpPut("CreateOrUpdateTask")]
         [Consumes("application/json")]
         
-        public ActionResult<TaskEditModel> CreateOrUpdateTask(TaskEditModel task)
+        public ActionResult<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
         {
-            return TaskManagerService.CreateOrUpdateTask(task);
+            return TaskManagementService.CreateOrUpdateTask(taskDetail);
         }
         
         [HttpPut("GetLinkedList")]
@@ -47,7 +55,7 @@ namespace m_sort_server.Controller
         
         public LinkedChildTaskHead GetLinkedList(string taskId = null)
         {
-            List<TaskEditModel> taskList = TaskManagerService.GetTaskById(taskId, "children").Children;
+            List<TaskDetailEditModel> taskList = TaskManagementService.GetTaskById(taskId, "children").Children;
             return LinkedListService.CreateLinkedList(taskList);
         }
 
@@ -57,8 +65,34 @@ namespace m_sort_server.Controller
         
         public ActionResult<string> DeleteTask(string taskId)
         {
-            TaskManagerService.DeleteTask(taskId);
+            TaskManagementService.DeleteTask(taskId);
             return Ok();
+        }
+        
+        // Removed task will not be shown in Web App until forced
+        [HttpPost("RemoveTask")]
+        [Consumes("application/json")]
+        
+        public ActionResult<string> RemoveTask(string taskId)
+        {
+            TaskManagementService.RemoveTask(taskId);
+            return Ok();
+        }
+        
+        [HttpPut("LinkTaskToSprint")]
+        [Consumes("application/json")]
+        
+        public TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
+        {
+            return TaskManagementService.LinkTaskToSprint(taskId, sprintId);
+        }
+        
+        [HttpPut("RemoveTaskFromSprint")]
+        [Consumes("application/json")]
+        
+        public TaskDetailEditModel RemoveTaskToSprint(string taskId)
+        {
+            return TaskManagementService.RemoveTaskFromSprint(taskId);
         }
     }
 }

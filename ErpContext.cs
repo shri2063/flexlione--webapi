@@ -8,13 +8,23 @@ namespace m_sort_server
 {
     public class ErpContext:DbContext
     {
-        public DbSet<TaskSheet> TaskTree { get; set; }
+        public DbSet<TaskDetail> TaskDetail { get; set; }
         
         public DbSet<CheckList> CheckList { get; set; }
         
         public DbSet<Dependency> Dependency { get; set; }
         
+        public DbSet<Profile> Profile { get; set; }
+        
+        public DbSet<Sprint> Sprint { get; set; }
+        
+        public DbSet<TaskSchedule> TaskSchedule { get; set; }
+        
+        public DbSet<TaskSummary> TaskSummary { get; set; }
+        
         public DbSet<Comment> Comment { get; set; }
+        
+        public DbSet<TaskHierarchy> TaskHierarchy { get; set; }
 
         // for logging sql queries
         private static readonly ILoggerFactory LoggerFactory  = new LoggerFactory().AddConsole((_,___) => true);

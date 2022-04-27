@@ -16,6 +16,10 @@ namespace m_sort_server.EditModels
         
         public string Description { get; set; }
         
+        public string TaskId { get; set; }
+        
+        public bool IncludeRemoved { get; set; }
+        
         public List<string> Status { get; set; }
     }
 }

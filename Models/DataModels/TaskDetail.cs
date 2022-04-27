@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace m_sort_server.DataModels
 {
    
-    [Table("task_sheet")]
-    public class TaskSheet
+    [Table("task_detail")]
+    public class TaskDetail
     {
        [Key][Column("task_id")]
         public string TaskId { get; set; }
@@ -32,6 +33,9 @@ namespace m_sort_server.DataModels
         [Column("description")]
         public string Description { get; set; }
         
+        [Column("sprint_id")]
+        public string SprintId { get; set; }
+        
         [Column("position_after")]
         public string PositionAfter { get; set; }
         
@@ -40,6 +44,14 @@ namespace m_sort_server.DataModels
         
         [Column("rank")]
         public int? Rank { get; set; }
+        
+        [Column("is_removed")]
+        public bool? IsRemoved { get; set; }
+        
+        [Column("expected_hours")]
+        public int? ExpectedHours { get; set; }
+        
+        public List<TaskSchedule> TaskSchedules { get; set; }
 
         
        

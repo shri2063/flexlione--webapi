@@ -32,11 +32,11 @@ namespace m_sort_server.Services
                 return upStreamDependencies;
             }
 
-            if (include.ToLower() == "task")
+            if (include.ToLower() == "taskDetail")
             {
                
                 upStreamDependencies.ForEach(x =>
-                    x.TaskEditModel = TaskManagerService.GetTaskById(x.DependentTaskId));
+                    x.TaskDetailEditModel = TaskManagementService.GetTaskById(x.DependentTaskId));
             }
 
             
@@ -67,10 +67,10 @@ namespace m_sort_server.Services
                 return downStreamDependencies;
             }
 
-            if (include.ToLower() == "task")
+            if (include.ToLower() == "taskDetail")
             {
                 downStreamDependencies.ForEach(x =>
-                    x.TaskEditModel = TaskManagerService.GetTaskById(x.DependentTaskId));
+                    x.TaskDetailEditModel = TaskManagementService.GetTaskById(x.DependentTaskId));
             }
 
             
