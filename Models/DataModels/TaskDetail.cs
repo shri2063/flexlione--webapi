@@ -49,7 +49,7 @@ namespace m_sort_server.DataModels
         public bool? IsRemoved { get; set; }
         
         [Column("expected_hours")]
-        public int? ExpectedHours { get; set; }
+        public decimal? ExpectedHours { get; set; }
         
         public List<TaskSchedule> TaskSchedules { get; set; }
 

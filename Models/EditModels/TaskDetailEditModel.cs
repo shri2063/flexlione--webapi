@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace m_sort_server.EditModels
 {
    
-    public enum EStatus { yetToStart, ongoing, completed,onHold,dropped };
+    public enum EStatus { yettostart, ongoing, completed,onHold,dropped };
     public class TaskDetailEditModel
     {
         public string TaskId { get; set; }
@@ -21,6 +21,8 @@ namespace m_sort_server.EditModels
         
         public string SprintId { get; set; }
         
+        public decimal? ExpectedHours { get; set; }
+        
         public DateTime  CreatedAt { get; set; }
         
         public DateTime?  Deadline { get; set; }
@@ -30,8 +32,8 @@ namespace m_sort_server.EditModels
         public int? Score { get; set; }
         
         public int? Rank { get; set; }
-        
-        public bool? IsRemoved { get; set; }
+
+        public bool? IsRemoved { get; set; } = false;
         
         public List<TaskDetailEditModel> Children { get; set; }
         

@@ -20,9 +20,9 @@ namespace m_sort_server.Controller
         [HttpGet("GetTaskScheduleById")]
         [Consumes("application/json")]
 
-        public TaskScheduleEditModel GetTaskScheduleById(string taskScheduleId)
+        public TaskScheduleEditModel GetTaskScheduleById(string taskScheduleId, string include)
         {
-            return TaskScheduleManagementService.GetTaskScheduleById(taskScheduleId);
+            return TaskScheduleManagementService.GetTaskScheduleById(taskScheduleId, include);
         }
         
         [HttpGet("GetTaskScheduleForProfileId")]

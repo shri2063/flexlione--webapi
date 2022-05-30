@@ -1,0 +1,10 @@
+Dependency APIs
+
+ 1. /Dependency/GetUpstreamDependenciesByTaskId?taskId=23&include=task // Include task details along with upstream dependencies. Similalry for downstream
+
+
+
+Task APIs
+
+1. /Task/GetTaskIdList?taskId=68 // Gives child Task Ids of task Id 68
+2. /Task/GetTaskIdList // Gives all Task Id List

@@ -25,6 +25,10 @@ namespace m_sort_server
         public DbSet<Comment> Comment { get; set; }
         
         public DbSet<TaskHierarchy> TaskHierarchy { get; set; }
+        
+        public DbSet<Template> Template { get; set; }
+        
+        public DbSet<TemplateTask> TemplateTask { get; set; }
 
         // for logging sql queries
         private static readonly ILoggerFactory LoggerFactory  = new LoggerFactory().AddConsole((_,___) => true);

@@ -11,7 +11,20 @@ namespace m_sort_server.Services
     {
         public static TaskScheduleEditModel GetTaskScheduleById(string taskScheduleId, string include = null)
         {
-            return GetTaskScheduleByIdFromDb(taskScheduleId);
+            TaskScheduleEditModel taskScheduleEditModel = GetTaskScheduleByIdFromDb(taskScheduleId);
+            if (include == null)
+            {
+                return taskScheduleEditModel;
+            }
+
+            if (include.Contains("taskSummary"))
+            {
+                taskScheduleEditModel.TaskSummary = TaskSummaryManagementService.GetTaskSummaryById(
+                    taskScheduleEditModel.TaskSummaryId);
+                return taskScheduleEditModel;
+            }
+           
+            return taskScheduleEditModel;
 
         }
 

@@ -10,7 +10,11 @@ namespace m_sort_server.EditModels
         
         public string Name { get; set; }
         
-        public List<SprintEditModel> sprints { get; set; }
+        public string EmailId { get; set; }
+        
+        public string Password { get; set; }
+        
+        public List<SprintEditModel> Sprints { get; set; }
         
     }
 }

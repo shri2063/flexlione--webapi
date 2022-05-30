@@ -31,6 +31,8 @@ namespace m_sort_server.EditModels
         public int StopMinute { get; set; }
         
         public string TaskSummaryId { get; set; }
+        
+        public TaskSummaryEditModel TaskSummary { get; set; }
 
     }
 }

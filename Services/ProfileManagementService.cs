@@ -10,11 +10,11 @@ namespace m_sort_server.Services
     {
         public static ProfileEditModel GetProfileById(string profileId, string include = null)
         {
-          ProfileEditModel profileEditModel =  GetProfileById(profileId);
+          ProfileEditModel profileEditModel =  GetProfileByIdFromDb(profileId);
 
           if (include == "sprint")
           {
-              profileEditModel.sprints = SprintManagementService.GetSprintsByProfileId(profileId);
+              profileEditModel.Sprints = SprintManagementService.GetSprintsByProfileId(profileId);
           }
 
           return profileEditModel;
@@ -26,7 +26,7 @@ namespace m_sort_server.Services
          List<ProfileEditModel> profiles = new List<ProfileEditModel>();
             GetAllProfileIds()
                .ForEach(x => 
-                   profiles.Add(GetProfileById(x)));
+                   profiles.Add(GetProfileByIdFromDb(x)));
 
             return profiles;
         }
@@ -47,7 +47,7 @@ namespace m_sort_server.Services
 
         }
         
-        public static ProfileEditModel GetProfileById(string profileId)
+        public static ProfileEditModel GetProfileByIdFromDb(string profileId)
         {
             using (var db = new ErpContext())
             {
@@ -65,7 +65,39 @@ namespace m_sort_server.Services
                 {
                    ProfileId = existingProfile.ProfileId,
                    Name = existingProfile.Name,
-                   Type = existingProfile.Type
+                   Type = existingProfile.Type,
+                   EmailId = existingProfile.EmailId,
+                   Password = existingProfile.Password
+                };
+
+                return profileEditModel;
+            }
+
+        }
+        
+        
+        public static ProfileEditModel AuthenticateProfile(string emailId, string password)
+        {
+            using (var db = new ErpContext())
+            {
+                
+                Profile existingProfile = db.Profile
+                    .FirstOrDefault(x => x.EmailId == emailId && x.Password == password);
+                
+                // Case: Incorrect username or password
+                if (existingProfile == null)
+                {
+                    throw  new Exception("Email Id or Password does not match");
+                }
+
+
+                ProfileEditModel profileEditModel = new ProfileEditModel()
+                {
+                    ProfileId = existingProfile.ProfileId,
+                    Name = existingProfile.Name,
+                    Type = existingProfile.Type,
+                    EmailId = existingProfile.EmailId,
+                    Password = existingProfile.Password
                 };
 
                 return profileEditModel;
@@ -88,6 +120,8 @@ namespace m_sort_server.Services
                     
                     profile.Name = profileEditModel.Name.ToLower();
                     profile.Type = profileEditModel.Type;
+                    profile.EmailId = profileEditModel.EmailId;
+                    profile.Password = profileEditModel.Password;
                     db.SaveChanges();
                 }
                 else
@@ -96,7 +130,9 @@ namespace m_sort_server.Services
                     {
                         ProfileId = GetNextAvailableId(),
                         Name = profileEditModel.Name.ToLower(),
-                        Type = profileEditModel.Type
+                        Type = profileEditModel.Type,
+                        EmailId = profileEditModel.EmailId,
+                        Password = profileEditModel.Password
                     };
                     db.Profile.Add(profile);
                     db.SaveChanges();

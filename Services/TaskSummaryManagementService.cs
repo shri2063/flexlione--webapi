@@ -14,6 +14,25 @@ namespace m_sort_server.Services
             return GetTaskSummaryByIdFromDb(taskSummaryId);
 
         }
+
+        public static List<TaskSummaryEditModel> GetDailyTaskSummary(string profileId, DateTime date)
+        {
+            List<string> taskSummaryIds;
+            List<TaskSummaryEditModel> taskSummaryList 
+                = new List<TaskSummaryEditModel>();
+            using (var db = new ErpContext())
+            {
+                taskSummaryIds = db.TaskSummary
+                    .Where(x => x.Date.ToString("yyyy-MM-dd") == date.ToString("yyyy-MM-dd"))
+                    .Include(x => x.TaskId)
+                    .Where(x => x.TaskDetail.AssignedTo == profileId)
+                    .Select(x => x.TaskSummaryId)
+                    .ToList();
+            }
+            taskSummaryIds.ForEach(x => taskSummaryList.Add(GetTaskSummaryById(x)));
+            return taskSummaryList;
+
+        }
         
         public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, string include = null)
         {

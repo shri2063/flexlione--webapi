@@ -42,9 +42,10 @@ namespace m_sort_server.Services
         {
             List<string> taskIdList;
             List<TaskHierarchyEditModel> updatedTaskHierarchy = new List<TaskHierarchyEditModel>();
-            if (taskId == null) // Updating for all TaskIds
+            if (taskId == null) // Updating for all ChildrenTaskIdList
             {
-                taskIdList = TaskManagementService.GetTaskIdList();
+                taskIdList = (from s in TaskManagementService.GetTaskIdList()
+                    select s.TaskId).ToList();
             }
             else
             {
@@ -102,7 +103,7 @@ namespace m_sort_server.Services
                     TaskHierarchyId = existingTaskHierarchy.TaskHierarchyId,
                     Description = existingTaskHierarchy.TaskDetail.Description,
                     TaskId = existingTaskHierarchy.TaskId,
-                    TaskIds = existingTaskHierarchy.TaskIds
+                    ChildrenTaskIdList = existingTaskHierarchy.TaskIds
                     
                 };
 

@@ -31,7 +31,7 @@ namespace m_sort_server.Controller
         [HttpGet("GetTaskIdList")]
         [Consumes("application/json")]
         
-        public List<string> GetTaskIdList(string taskId = null)
+        public List<TaskShortDetailEditModel> GetTaskIdList(string taskId = null)
         {
             return TaskManagementService.GetTaskIdList(taskId);
         }

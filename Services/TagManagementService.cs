@@ -196,7 +196,8 @@ namespace m_sort_server.Services
 
         private static List<TaskSearchView> GetTaskListForSearchParameter(string search)
         {
-            List<string> taskIds = TaskManagementService.GetTaskIdList();
+            List<string> taskIds = (from s in TaskManagementService.GetTaskIdList()
+                select s.TaskId).ToList();
            List<TaskDetailEditModel> taskList = new List<TaskDetailEditModel>();
            List<TaskSearchView> taskListContainingSearch = new List<TaskSearchView>();
            foreach (var taskId in taskIds)

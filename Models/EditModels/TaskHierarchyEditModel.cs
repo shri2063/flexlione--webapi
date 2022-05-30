@@ -12,7 +12,7 @@ namespace m_sort_server.EditModels
         public decimal TotalEstimatedHours { get; set; }
         public decimal TotalHoursSpent { get; set; }
       
-        public List<string> TaskIds { get; set; }
+        public List<string> ChildrenTaskIdList { get; set; }
         
         public List<TaskHierarchyEditModel> ChildrenTaskHierarchy { get; set; }
     }

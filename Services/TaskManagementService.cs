@@ -14,7 +14,7 @@ namespace m_sort_server.Services
     {
         public static TaskDetailEditModel GetTaskById(string taskId, string include = null)
         {
-            TaskDetailEditModel taskDetail = GetTaskById(taskId);
+            TaskDetailEditModel taskDetail = GetTaskByIdFromDb(taskId);
 
             if (taskDetail == null)
             {
@@ -69,7 +69,11 @@ namespace m_sort_server.Services
             }
             // Check if its a new task
 
-            if (GetTaskIdList().Contains(taskDetailEditModel.TaskId))
+            var result = from s in GetTaskIdList()
+                select s.TaskId;
+            var temp = result.ToList();
+            
+            if (result.ToList().Contains(taskDetailEditModel.TaskId))
             {
                 newTask = false;
             }
@@ -111,19 +115,27 @@ namespace m_sort_server.Services
            return GetTaskById(updatedTaskDetail.TaskId);
         }
         
-        public static List<string> GetTaskIdList(string parentTaskId = null)
+        public static List<TaskShortDetailEditModel> GetTaskIdList(string parentTaskId = null)
         {
             using (var db = new ErpContext())
             {
                 if (parentTaskId == null)
                 {
                     return db.TaskDetail
-                        .Select(t => t.TaskId)
+                        .Select(t => new TaskShortDetailEditModel()
+                        {
+                            TaskId = t.TaskId,
+                            Description = t.Description
+                        })
                         .ToList();
                 }
                 return db.TaskDetail
                     .Where(t => t.ParentTaskId == parentTaskId)
-                    .Select(t => t.TaskId)
+                    .Select(t => new TaskShortDetailEditModel()
+                    {
+                        TaskId = t.TaskId,
+                        Description = t.Description
+                    })
                     .ToList();
                 
             }
@@ -167,7 +179,8 @@ namespace m_sort_server.Services
         {
             using (var db = new ErpContext())
             {
-                if ((GetTaskById(taskId, "children").Children.Count > 0))
+                if ((GetTaskById(taskId, "children").Children.FindAll(
+                    x => x.IsRemoved == false).Count > 0))
                 {
                     throw new KeyNotFoundException("Task cannot be removed. Contains one or more child taskDetail");
                 }
@@ -348,7 +361,12 @@ namespace m_sort_server.Services
 
                 if (task != null) // update
                 {
-                  
+
+                    if (task.AssignedTo != taskDetailEditModel.AssignedTo 
+                    && task.SprintId != null)
+                    {
+                        throw new Exception("Assignee cannot be changed. Already allocated in sprint");
+                    }
                     task.ParentTaskId = taskDetailEditModel.ParentTaskId;
                     task.CreatedBy = taskDetailEditModel.CreatedBy.ToLower();
                     task.Status = taskDetailEditModel.Status.ToString().ToLower();
@@ -356,6 +374,7 @@ namespace m_sort_server.Services
                     task.AssignedTo = taskDetailEditModel.AssignedTo.ToLower();
                     task.Deadline = taskDetailEditModel.Deadline;
                     task.Score = taskDetailEditModel.Score;
+                    task.ExpectedHours = taskDetailEditModel.ExpectedHours;
 
                     db.SaveChanges();
                 }
@@ -372,6 +391,7 @@ namespace m_sort_server.Services
                         AssignedTo = taskDetailEditModel.AssignedTo,
                         Deadline = taskDetailEditModel.Deadline,
                         Score = taskDetailEditModel.Score,
+                        ExpectedHours = taskDetailEditModel.ExpectedHours,
                         IsRemoved = false
                         
                     };
@@ -431,7 +451,7 @@ namespace m_sort_server.Services
         
         
         
-        public static TaskDetailEditModel GetTaskById(string taskId)
+        public static TaskDetailEditModel GetTaskByIdFromDb(string taskId)
         {
             using (var db = new ErpContext())
             {
@@ -448,7 +468,7 @@ namespace m_sort_server.Services
                 // Make it Yet To Start
                 if (existingTask.Status == null )
                 {
-                    existingTask.Status = EStatus.yetToStart.ToString();
+                    existingTask.Status = EStatus.yettostart.ToString();
                 }
                 
                 TaskDetailEditModel taskDetailEditModel = new TaskDetailEditModel()
@@ -465,7 +485,8 @@ namespace m_sort_server.Services
                     PositionAfter = existingTask.PositionAfter,
                     Rank = existingTask.Rank,
                     SprintId = existingTask.SprintId,
-                    IsRemoved = existingTask.IsRemoved
+                    IsRemoved = existingTask.IsRemoved,
+                    ExpectedHours = existingTask.ExpectedHours
                 };
 
                 return taskDetailEditModel;

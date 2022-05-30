@@ -33,6 +33,15 @@ namespace m_sort_server.Controller
             return ProfileManagementService.GetProfileById(profileId,include);
         }
         
+        
+        [HttpGet("AuthenticateProfile")]
+        [Consumes("application/json")]
+
+        public ProfileEditModel AuthenticateProfile(string emailId, string password)
+        {
+            return ProfileManagementService.AuthenticateProfile(emailId,password);
+        }
+        
         [HttpGet("GetAllProfiles")]
         [Consumes("application/json")]
 

@@ -23,6 +23,16 @@ namespace m_sort_server.Controller
         {
             return TaskSummaryManagementService.GetTaskSummaryById(taskSummaryId);
         }
+        
+        [HttpGet("GetDailyTaskSummary")]
+        [Consumes("application/json")]
+
+        public List<TaskSummaryEditModel> GetDailyTaskSummary(string profileId, DateTime date)
+        {
+            return TaskSummaryManagementService.GetDailyTaskSummary(profileId, date);
+        }
+
+        
 
         [HttpGet("GetAllTaskSummaryByTaskId")]
         [Consumes("application/json")]

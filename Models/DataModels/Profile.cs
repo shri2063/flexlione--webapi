@@ -14,5 +14,11 @@ namespace m_sort_server.DataModels
 
         [Column("name")]
         public string Name { get; set; }
+        
+        [Column("email_id")]
+        public string EmailId { get; set; }
+        
+        [Column("password")]
+        public string Password { get; set; }
     }
 }
