@@ -125,7 +125,8 @@ namespace m_sort_server.Services
                         .Select(t => new TaskShortDetailEditModel()
                         {
                             TaskId = t.TaskId,
-                            Description = t.Description
+                            Description = t.Description,
+                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true)
                         })
                         .ToList();
                 }

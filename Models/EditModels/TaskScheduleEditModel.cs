@@ -32,7 +32,7 @@ namespace m_sort_server.EditModels
         
         public string TaskSummaryId { get; set; }
         
-        public TaskSummaryEditModel TaskSummary { get; set; }
+        public TaskShortSummaryEditModel TaskSummary { get; set; }
 
     }
 }

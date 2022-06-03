@@ -23,30 +23,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Controller/TemplateController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/DataModels/Template.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/DataModels/TemplateTask.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/EditModels/TaskShortDetailEditModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/EditModels/TemplateEditModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/EditModels/TemplateTaskEditModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Services/TemplateManagementService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/EditModels/TaskShortSummaryEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/ProfileController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/ProfileController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/TaskScheduleController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskScheduleController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/TaskSummaryController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskSummaryController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ErpContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ErpContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/DataModels/Profile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/Profile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/DataModels/TaskDetail.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/TaskDetail.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/EditModels/ProfileEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/ProfileEditModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskDetailEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskDetailEditModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskHierarchyEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskHierarchyEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskScheduleEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskScheduleEditModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/DependencyManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/DependencyManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/ProfileManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/ProfileManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TagManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TagManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskShortDetailEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskShortDetailEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskSummaryEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskSummaryEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/TaskManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/TaskScheduleManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskScheduleManagementService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" afterDir="false" />
@@ -74,7 +56,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Models/DataModels/Comment.cs" />
         <option value="$PROJECT_DIR$/Models/EditModels/CommentEditModel.cs" />
         <option value="$PROJECT_DIR$/Controller/TaskManagementController.cs" />
         <option value="$PROJECT_DIR$/Controller/CommentController.cs" />
@@ -90,7 +71,6 @@
         <option value="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" />
         <option value="$PROJECT_DIR$/Services/SprintManagementService.cs" />
         <option value="$PROJECT_DIR$/Controller/SprintController.cs" />
-        <option value="$PROJECT_DIR$/Models/EditModels/TaskSummaryEditModel.cs" />
         <option value="$PROJECT_DIR$/Models/BsonModels/TaskSearchView.cs" />
         <option value="$PROJECT_DIR$/Controller/SearchController.cs" />
         <option value="$PROJECT_DIR$/Models/EditModels/SearchQueryEditModel.cs" />
@@ -105,7 +85,6 @@
         <option value="$PROJECT_DIR$/Models/EditModels/ProfileEditModel.cs" />
         <option value="$PROJECT_DIR$/Controller/ProfileController.cs" />
         <option value="$PROJECT_DIR$/Services/ProfileManagementService.cs" />
-        <option value="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" />
         <option value="$PROJECT_DIR$/Models/DataModels/template_task.cs" />
         <option value="$PROJECT_DIR$/Models/EditModels/TemplateTaskEditModel.cs" />
         <option value="$PROJECT_DIR$/ErpContext.cs" />
@@ -119,10 +98,13 @@
         <option value="$PROJECT_DIR$/Models/EditModels/TaskDetailEditModel.cs" />
         <option value="$PROJECT_DIR$/Services/TagManagementService.cs" />
         <option value="$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs" />
-        <option value="$PROJECT_DIR$/Models/EditModels/TaskShortDetailEditModel.cs" />
         <option value="$PROJECT_DIR$/Controller/TaskController.cs" />
-        <option value="$PROJECT_DIR$/Services/TaskManagementService.cs" />
         <option value="$PROJECT_DIR$/Controller/TaskScheduleController.cs" />
+        <option value="$PROJECT_DIR$/Models/EditModels/TaskSummaryEditModel.cs" />
+        <option value="$PROJECT_DIR$/Models/EditModels/TaskShortDetailEditModel.cs" />
+        <option value="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" />
+        <option value="$PROJECT_DIR$/Services/TaskManagementService.cs" />
+        <option value="$PROJECT_DIR$/Models/EditModels/TaskShortSummaryEditModel.cs" />
         <option value="$PROJECT_DIR$/Models/EditModels/TaskScheduleEditModel.cs" />
         <option value="$PROJECT_DIR$/Services/TaskScheduleManagementService.cs" />
       </list>
@@ -148,7 +130,7 @@
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\JetBrains Rider 2020.2.4\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.flexStore">
+  <component name="RunManager" selected="Publish to folder.Publish flexli-erp-webapi to folder (5)">
     <configuration name="Publish flexli-erp-webapi to folder (1)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
@@ -165,11 +147,11 @@
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
-    <configuration name="Publish flexli-erp-webapi to folder (6)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
+    <configuration name="Publish flexli-erp-webapi to folder (5)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
-    <configuration name="Publish flexli-erp-webapi to folder" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
+    <configuration name="Publish flexli-erp-webapi to folder (6)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
@@ -223,19 +205,19 @@
       <item itemvalue=".NET Launch Settings Profile.flexStore" />
       <item itemvalue=".NET Launch Settings Profile.flexli-erp-webapi" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (3)" />
-      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (1)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (2)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (6)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (4)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (5)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (5)" />
         <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (4)" />
         <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (6)" />
         <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (2)" />
         <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (1)" />
-        <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder" />
       </list>
     </recent_temporary>
   </component>
@@ -286,6 +268,7 @@
       <workItem from="1651731409619" duration="5310000" />
       <workItem from="1652162537871" duration="38000" />
       <workItem from="1653389776530" duration="3583000" />
+      <workItem from="1653897489227" duration="4500000" />
     </task>
     <servers />
   </component>
@@ -318,22 +301,22 @@
       <screen x="0" y="0" width="1280" height="672" />
     </state>
     <state width="517" height="464" key="DebuggerActiveHint/0.0.1280.672@0.0.1280.672" timestamp="1653395806961" />
-    <state width="1222" height="103" key="GridCell.Tab.0.bottom" timestamp="1653399621195">
+    <state width="1222" height="103" key="GridCell.Tab.0.bottom" timestamp="1653980139245">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="103" key="GridCell.Tab.0.bottom/0.0.1280.672@0.0.1280.672" timestamp="1653399621195" />
-    <state width="1222" height="103" key="GridCell.Tab.0.center" timestamp="1653399621194">
+    <state width="1222" height="103" key="GridCell.Tab.0.bottom/0.0.1280.672@0.0.1280.672" timestamp="1653980139245" />
+    <state width="1222" height="103" key="GridCell.Tab.0.center" timestamp="1653980139245">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="103" key="GridCell.Tab.0.center/0.0.1280.672@0.0.1280.672" timestamp="1653399621194" />
-    <state width="1222" height="103" key="GridCell.Tab.0.left" timestamp="1653399621194">
+    <state width="1222" height="103" key="GridCell.Tab.0.center/0.0.1280.672@0.0.1280.672" timestamp="1653980139245" />
+    <state width="1222" height="103" key="GridCell.Tab.0.left" timestamp="1653980139245">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="103" key="GridCell.Tab.0.left/0.0.1280.672@0.0.1280.672" timestamp="1653399621194" />
-    <state width="1222" height="103" key="GridCell.Tab.0.right" timestamp="1653399621194">
+    <state width="1222" height="103" key="GridCell.Tab.0.left/0.0.1280.672@0.0.1280.672" timestamp="1653980139245" />
+    <state width="1222" height="103" key="GridCell.Tab.0.right" timestamp="1653980139245">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state width="1222" height="103" key="GridCell.Tab.0.right/0.0.1280.672@0.0.1280.672" timestamp="1653399621194" />
+    <state width="1222" height="103" key="GridCell.Tab.0.right/0.0.1280.672@0.0.1280.672" timestamp="1653980139245" />
     <state width="1222" height="144" key="GridCell.Tab.1.bottom" timestamp="1653395957697">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
@@ -406,10 +389,10 @@
       <screen x="0" y="0" width="1280" height="672" />
     </state>
     <state x="100" y="100" width="1080" height="472" key="VCS.FileHistoryDialog/0.0.1280.672@0.0.1280.672" timestamp="1647938389303" />
-    <state x="318" y="72" width="644" height="534" key="find.popup" timestamp="1650009918353">
+    <state x="318" y="72" width="644" height="534" key="find.popup" timestamp="1653978892571">
       <screen x="0" y="0" width="1280" height="672" />
     </state>
-    <state x="318" y="72" width="644" height="534" key="find.popup/0.0.1280.672@0.0.1280.672" timestamp="1650009918353" />
+    <state x="318" y="72" width="644" height="534" key="find.popup/0.0.1280.672@0.0.1280.672" timestamp="1653978892571" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -442,13 +425,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>159</line>
+          <line>170</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="90">
             <startOffsets>
-              <option value="6426" />
+              <option value="6830" />
             </startOffsets>
             <endOffsets>
-              <option value="6443" />
+              <option value="6847" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="25" />
@@ -481,13 +464,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>130</line>
+          <line>141</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="115">
             <startOffsets>
-              <option value="4859" />
+              <option value="5263" />
             </startOffsets>
             <endOffsets>
-              <option value="4984" />
+              <option value="5388" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="32" />
@@ -507,13 +490,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>503</line>
+          <line>504</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="472">
             <startOffsets>
-              <option value="18044" />
+              <option value="18136" />
             </startOffsets>
             <endOffsets>
-              <option value="18121" />
+              <option value="18213" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="35" />
@@ -559,13 +542,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>54</line>
+          <line>65</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="30">
             <startOffsets>
-              <option value="2082" />
+              <option value="2486" />
             </startOffsets>
             <endOffsets>
-              <option value="2136" />
+              <option value="2540" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="43" />

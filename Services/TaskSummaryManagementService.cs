@@ -29,7 +29,18 @@ namespace m_sort_server.Services
                     .Select(x => x.TaskSummaryId)
                     .ToList();
             }
-            taskSummaryIds.ForEach(x => taskSummaryList.Add(GetTaskSummaryById(x)));
+            taskSummaryIds.ForEach(x => taskSummaryList.Add(
+                GetTaskSummaryById(x)));
+            taskSummaryList.ForEach(x =>
+            {
+                TaskDetailEditModel task = TaskManagementService.GetTaskById(x.TaskId);
+                x.Task = new TaskShortDetailEditModel()
+                {
+                    TaskId = task.TaskId,
+                    Description = task.Description,
+                    Status = task.Status
+                };
+            });
             return taskSummaryList;
 
         }

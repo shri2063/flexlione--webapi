@@ -19,8 +19,14 @@ namespace m_sort_server.Services
 
             if (include.Contains("taskSummary"))
             {
-                taskScheduleEditModel.TaskSummary = TaskSummaryManagementService.GetTaskSummaryById(
+                TaskSummaryEditModel taskSummary = TaskSummaryManagementService.GetTaskSummaryById(
                     taskScheduleEditModel.TaskSummaryId);
+                taskScheduleEditModel.TaskSummary = new TaskShortSummaryEditModel()
+                {
+                    TaskSummaryId = taskSummary.TaskSummaryId,
+                    TaskId = taskSummary.TaskId,
+                    ActualOutput = taskSummary.ActualOutput
+                };
                 return taskScheduleEditModel;
             }
            
@@ -37,9 +43,28 @@ namespace m_sort_server.Services
             {
                 taskScheduleList.Add(GetTaskScheduleById(x));
             });
+            
+            taskScheduleList.ForEach(x =>
+            {
+                
+                {
+                    TaskSummaryEditModel taskSummary =  TaskSummaryManagementService.GetTaskSummaryById(x.TaskSummaryId);
+                    if (taskSummary != null)
+                    {
+                        x.TaskSummary = new TaskShortSummaryEditModel()
+                        {
+                            TaskSummaryId = taskSummary.TaskSummaryId,
+                            TaskId = taskSummary.TaskId,
+                            ActualOutput = taskSummary.ActualOutput
+                        }; 
+                    }
+                }
+            });
+            
             return taskScheduleList;
 
         }
+        
 
        
         

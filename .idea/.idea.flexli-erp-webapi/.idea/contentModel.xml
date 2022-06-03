@@ -8,26 +8,6 @@
       <e p="api_comment.txt" t="Include" />
       <e p="appsettings.json" t="Include" />
       <e p="bin" t="ExcludeRecursive" />
-      <e p="ClassLibrary1" t="Include">
-        <e p="obj" t="Include">
-          <e p="ClassLibrary1.csproj.nuget.dgspec.json" t="Include" />
-          <e p="ClassLibrary1.csproj.nuget.g.props" t="Include" />
-          <e p="ClassLibrary1.csproj.nuget.g.targets" t="Include" />
-          <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
-              <e p="ClassLibrary1.AssemblyInfo.cs" t="Include" />
-              <e p="ClassLibrary1.AssemblyInfoInputs.cache" t="Include" />
-              <e p="ClassLibrary1.assets.cache" t="Include" />
-              <e p="ClassLibrary1.csproj.CoreCompileInputs.cache" t="Include" />
-              <e p="ClassLibrary1.csprojAssemblyReference.cache" t="Include" />
-            </e>
-          </e>
-          <e p="project.assets.json" t="Include" />
-          <e p="project.nuget.cache" t="Include" />
-          <e p="project.packagespec.json" t="Include" />
-          <e p="rider.project.restore.info" t="Include" />
-        </e>
-      </e>
       <e p="Controller" t="Include">
         <e p="CheckListController.cs" t="Include" />
         <e p="CommentController.cs" t="Include" />
@@ -75,6 +55,7 @@
           <e p="TaskHierarchyEditModel.cs" t="Include" />
           <e p="TaskScheduleEditModel.cs" t="Include" />
           <e p="TaskShortDetailEditModel.cs" t="Include" />
+          <e p="TaskShortSummaryEditModel.cs" t="Include" />
           <e p="TaskSummaryEditModel.cs" t="Include" />
           <e p="TemplateEditModel.cs" t="Include" />
           <e p="TemplateTaskEditModel.cs" t="Include" />

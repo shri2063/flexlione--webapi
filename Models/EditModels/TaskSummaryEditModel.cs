@@ -28,5 +28,7 @@ namespace m_sort_server.EditModels
         public decimal ActualHour { get; set; }
         
         public string TaskScheduleId { get; set; }
+        
+        public TaskShortDetailEditModel Task { get; set; }
     }
 }
