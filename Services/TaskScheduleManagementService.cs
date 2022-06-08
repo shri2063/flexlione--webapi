@@ -114,6 +114,7 @@ namespace m_sort_server.Services
                     StopHour = existingTaskSchedule.StopHour,
                     StartMinute = existingTaskSchedule.StartMinute,
                     StopMinute = existingTaskSchedule.StopMinute,
+                    IsPlanned = existingTaskSchedule.IsPlanned,
                     TaskSummaryId = existingTaskSchedule.TaskSummary == null ? "" :existingTaskSchedule.TaskSummary.TaskSummaryId
                 };
 
@@ -146,6 +147,7 @@ namespace m_sort_server.Services
                     taskSchedule.StopHour = taskScheduleEditModel.StopHour;
                     taskSchedule.StartMinute = taskScheduleEditModel.StartMinute;
                     taskSchedule.StopMinute = taskScheduleEditModel.StopMinute;
+                    taskSchedule.IsPlanned = taskScheduleEditModel.IsPlanned;
                     db.SaveChanges();
                 }
                 else
@@ -159,7 +161,8 @@ namespace m_sort_server.Services
                         StartHour = taskScheduleEditModel.StartHour,
                         StopHour = taskScheduleEditModel.StopHour,
                         StartMinute = taskScheduleEditModel.StartMinute,
-                        StopMinute = taskScheduleEditModel.StopMinute
+                        StopMinute = taskScheduleEditModel.StopMinute,
+                        IsPlanned = taskScheduleEditModel.IsPlanned
                     };
                     db.TaskSchedule.Add(taskSchedule);
                     db.SaveChanges();
@@ -202,6 +205,47 @@ namespace m_sort_server.Services
                 db.TaskSchedule.Remove(existingTaskSchedule);
                 db.SaveChanges();
 
+
+            }
+        }
+        
+        //created by Tushar Garg
+        // function to read taskScheduleId and isPlanned value.
+        public static TaskShortScheduleEditModel GetShortTaskScheduleById(string taskScheduleId)
+        {
+            TaskShortScheduleEditModel taskShortSchedule = GetShortTaskScheduleByIdFromDb(taskScheduleId);
+
+            // exception to handle if no schedule exists
+            if (taskShortSchedule == null)
+            {
+                throw new KeyNotFoundException("Error in finding required taskSchedule");
+            }
+
+            return taskShortSchedule;
+        }
+        
+        // reading the values from database
+        private static TaskShortScheduleEditModel GetShortTaskScheduleByIdFromDb(string taskScheduleId)
+        {
+            using (var db = new ErpContext())
+            {
+
+                // where taskScheduleId matches parameter Id
+                TaskSchedule existingTask = db.TaskSchedule
+                    .FirstOrDefault(x => x.TaskScheduleId == taskScheduleId);
+
+                // Case: TaskSchedule does not exist
+                if (existingTask == null)
+                    return null;
+                
+                // new object and assign values
+                TaskShortScheduleEditModel taskShortScheduleEditModel = new TaskShortScheduleEditModel()
+                {
+                    TaskScheduleId = existingTask.TaskScheduleId,
+                    IsPlanned = existingTask.IsPlanned
+                };
+
+                return taskShortScheduleEditModel;
 
             }
         }
