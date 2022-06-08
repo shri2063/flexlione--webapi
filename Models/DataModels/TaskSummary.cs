@@ -32,6 +32,15 @@ namespace m_sort_server.DataModels
         [Column("task_schedule_id")]
         public string TaskScheduleId { get; set; }
         
+        [Column("stamp")]
+        public DateTime Stamp { get; set; }
+        
+        [Column("action")]
+        public string Action { get; set; }
+        
+        [Column("system_hours")]
+        public decimal SystemHours { get; set; }
+
         public TaskDetail TaskDetail { get; set; }
         
     }

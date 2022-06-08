@@ -41,6 +41,13 @@ namespace m_sort_server.Services
                     Status = task.Status
                 };
             });
+            
+            // short task schedule in task summary
+            taskSummaryList.ForEach(x =>
+            {
+                x.TaskSchedule = TaskScheduleManagementService.GetShortTaskScheduleById(x.TaskScheduleId);
+            });
+                
             return taskSummaryList;
 
         }
@@ -119,7 +126,10 @@ namespace m_sort_server.Services
                     ExpectedOutput = existingTaskSummary.ExpectedOutput,
                     ActualHour = existingTaskSummary.ActualHour,
                     ActualOutput = existingTaskSummary.ActualOutput,
-                    TaskScheduleId = existingTaskSummary.TaskScheduleId
+                    TaskScheduleId = existingTaskSummary.TaskScheduleId,
+                    Stamp = existingTaskSummary.Stamp,
+                    Action = existingTaskSummary.Action,
+                    SystemHours = existingTaskSummary.SystemHours
                 };
 
                 return taskSummaryEditModel;
@@ -205,6 +215,79 @@ namespace m_sort_server.Services
 
 
             }
+        }
+
+        public static List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId,
+            DateTime stamp, string action)
+        {
+            if (GetTaskSummaryByIdFromDb(taskSummaryId) == null)
+            {
+                throw new KeyNotFoundException("Error in finding taskSummaryId");
+            }
+            
+            List<TaskSummaryEditModel> taskSummaryList 
+                = new List<TaskSummaryEditModel>();
+
+            if (action == "start")
+            {
+                List<string> taskSummaryIds;
+                
+                using (var db = new ErpContext())
+                {
+                    taskSummaryIds = db.TaskSummary
+                        .Where(x=>x.Action == "start")
+                        .Include(x => x.TaskId)
+                        .Where(x => x.TaskDetail.AssignedTo == profileId)
+                        .Select(x => x.TaskSummaryId)
+                        .ToList();
+                }
+
+                if (taskSummaryIds.Count==0)
+                {
+                    taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
+                    return taskSummaryList;
+                }
+                
+                taskSummaryIds.ForEach(x =>
+                {
+                    taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(x, stamp, "stop"));
+                });
+                
+                taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
+
+                return taskSummaryList;
+
+            }
+            taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
+            return taskSummaryList;
+        }
+
+        private static TaskSummaryEditModel UpdateTaskSummaryActionAndActualTimeInDb(string taskSummaryId,
+            DateTime stamp, string action)
+        {
+            TaskSummary taskSummaryDb;
+            TaskSummaryEditModel taskSummary = new TaskSummaryEditModel();
+            
+            using (var db = new ErpContext())
+            {
+                taskSummaryDb = db.TaskSummary
+                    .FirstOrDefault(x => x.TaskSummaryId == taskSummaryId);
+
+                if (action == "stop")
+                {
+                    decimal temp = new decimal();
+                    temp = taskSummaryDb.SystemHours;
+                    taskSummaryDb.SystemHours = temp + (decimal)(stamp - taskSummaryDb.Stamp).TotalMinutes / 60;
+                }
+                
+                taskSummaryDb.Stamp = stamp;
+                taskSummaryDb.Action = action;
+                db.SaveChanges(); 
+            }
+
+            taskSummary = GetTaskSummaryById(taskSummaryId);
+            return taskSummary;
+
         }
 
     }

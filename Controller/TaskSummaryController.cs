@@ -49,6 +49,15 @@ namespace m_sort_server.Controller
             return TaskSummaryManagementService.AddOrUpdateTaskSummary(taskSummaryEditModel);
         }
         
+        //created by Tushar Garg
+        [HttpPost("UpdateDailyTaskActualTime")]
+        [Consumes("application/json")]
+
+        public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId, DateTime stamp, string action)
+        {
+            return TaskSummaryManagementService.UpdateDailyTaskActualTime(profileId, taskSummaryId, stamp, action);
+        }
+        
         [HttpDelete("DeleteTaskSummary")]
         [Consumes("application/json")]
         

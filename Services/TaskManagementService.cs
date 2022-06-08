@@ -526,7 +526,5 @@ namespace m_sort_server.Services
 
             return positionedTask;
         }
-
-
     }
 }
