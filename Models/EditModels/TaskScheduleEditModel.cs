@@ -32,6 +32,8 @@ namespace m_sort_server.EditModels
         
         public string TaskSummaryId { get; set; }
         
+        public bool IsPlanned { get; set; }
+        
         public TaskShortSummaryEditModel TaskSummary { get; set; }
 
     }

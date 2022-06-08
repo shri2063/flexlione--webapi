@@ -32,6 +32,9 @@ namespace m_sort_server.DataModels
         [Column("stop_minute")]
         public int StopMinute { get; set; }
         
+        [Column("is_planned")]
+        public bool IsPlanned { get; set; }
+        
         public TaskSummary TaskSummary { get; set; }
         
         public TaskDetail TaskDetail { get; set; }

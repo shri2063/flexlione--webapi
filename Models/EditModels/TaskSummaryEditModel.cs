@@ -28,6 +28,14 @@ namespace m_sort_server.EditModels
         public decimal ActualHour { get; set; }
         
         public string TaskScheduleId { get; set; }
+
+        public DateTime Stamp { get; set; }
+        
+        public string Action { get; set; }
+        
+        public decimal SystemHours { get; set; }
+
+        public TaskShortScheduleEditModel TaskSchedule { get; set; }
         
         public TaskShortDetailEditModel Task { get; set; }
     }
