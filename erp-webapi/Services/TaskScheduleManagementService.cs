@@ -21,12 +21,16 @@ namespace m_sort_server.Services
             {
                 TaskSummaryEditModel taskSummary = TaskSummaryManagementService.GetTaskSummaryById(
                     taskScheduleEditModel.TaskSummaryId);
-                taskScheduleEditModel.TaskSummary = new TaskShortSummaryEditModel()
+                if (taskSummary != null)
                 {
-                    TaskSummaryId = taskSummary.TaskSummaryId,
-                    TaskId = taskSummary.TaskId,
-                    ActualOutput = taskSummary.ActualOutput
-                };
+                    taskScheduleEditModel.TaskSummary = new TaskShortSummaryEditModel()
+                    {
+                        TaskSummaryId = taskSummary.TaskSummaryId,
+                        TaskId = taskSummary.TaskId,
+                        ActualOutput = taskSummary.ActualOutput
+                    };
+                }
+               
                 return taskScheduleEditModel;
             }
            

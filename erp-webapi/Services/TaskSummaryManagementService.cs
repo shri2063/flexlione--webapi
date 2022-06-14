@@ -11,6 +11,10 @@ namespace m_sort_server.Services
     {
         public static TaskSummaryEditModel GetTaskSummaryById(string taskSummaryId, string include = null)
         {
+            if (taskSummaryId == null)
+            {
+                return null;
+            }
             return GetTaskSummaryByIdFromDb(taskSummaryId);
 
         }

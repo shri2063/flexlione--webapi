@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace m_sort_server.EditModels
 {
    
-    public enum EStatus { yettostart, ongoing, completed,onHold,dropped };
+    public enum EStatus { yettostart, ongoing, completed,onhold,dropped };
     public class TaskDetailEditModel
     {
         public string TaskId { get; set; }

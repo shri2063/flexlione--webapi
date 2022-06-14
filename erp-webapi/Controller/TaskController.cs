@@ -23,7 +23,7 @@ namespace m_sort_server.Controller
         [HttpGet("GetTaskById")]
         [Consumes("application/json")]
         
-        public TaskDetailEditModel GetTaskById([FromQuery] string taskId,string include = null)
+        public ActionResult<TaskDetailEditModel> GetTaskById([FromQuery] string taskId,string include = null)
         {
             return TaskManagementService.GetTaskById(taskId,include);
         }
