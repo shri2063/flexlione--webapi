@@ -168,6 +168,7 @@ namespace m_sort_server.Services
                     taskSummary.TaskScheduleId = taskSummaryEditModel.TaskScheduleId;
                     db.SaveChanges();
                 }
+                
                 else
                 {
                     taskSummary = new TaskSummary()
@@ -235,23 +236,36 @@ namespace m_sort_server.Services
             if (action == "start")
             {
                 List<string> taskSummaryIds;
+                string check_start;
                 
                 using (var db = new ErpContext())
                 {
+                    check_start = db.TaskSummary
+                        .Where(x => x.TaskSummaryId == taskSummaryId)
+                        .Select(x => x.Action)
+                        .First();
+                    
+                    
+                    var usedProfileId = db.TaskSummary
+                        .Include(x => x.TaskDetail)
+                        .Where(x => x.TaskSummaryId == taskSummaryId)
+                        .Select(x => x.TaskDetail.AssignedTo)
+                        .First();
+
+                    
                     taskSummaryIds = db.TaskSummary
                         .Where(x=>x.Action == "start")
                         .Include(x => x.TaskId)
-                        .Where(x => x.TaskDetail.AssignedTo == profileId)
+                        .Where(x => x.TaskDetail.AssignedTo == usedProfileId)
                         .Select(x => x.TaskSummaryId)
                         .ToList();
                 }
-
-                if (taskSummaryIds.Count==0)
-                {
-                    taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
-                    return taskSummaryList;
-                }
                 
+                if (check_start == "start")
+                {
+                    throw new ArgumentException("Cannot start task which is already start.");
+                }
+
                 taskSummaryIds.ForEach(x =>
                 {
                     taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(x, stamp, "stop"));
@@ -262,7 +276,24 @@ namespace m_sort_server.Services
                 return taskSummaryList;
 
             }
+
+            string check_action;
+
+            using (var db = new ErpContext())
+            { 
+                check_action = db.TaskSummary
+                    .Where(x => x.TaskSummaryId == taskSummaryId)
+                    .Select(x => x.Action)
+                    .First();
+            }
+            
+            if ( check_action == "stop")
+            {
+                throw new ArgumentException("Cannot stop task which is already stop.");
+            }
+                
             taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
+            
             return taskSummaryList;
         }
 
