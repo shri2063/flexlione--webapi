@@ -246,7 +246,8 @@ namespace m_sort_server.Services
                 TaskShortScheduleEditModel taskShortScheduleEditModel = new TaskShortScheduleEditModel()
                 {
                     TaskScheduleId = existingTask.TaskScheduleId,
-                    IsPlanned = existingTask.IsPlanned
+                    IsPlanned = existingTask.IsPlanned,
+                    StartHour = existingTask.StartHour
                 };
 
                 return taskShortScheduleEditModel;
