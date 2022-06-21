@@ -50,12 +50,7 @@ namespace m_sort_server.DataModels
         
         [Column("expected_hours")]
         public decimal? ExpectedHours { get; set; }
-        
-        public List<TaskSchedule> TaskSchedules { get; set; }
 
-        
-       
-        
-       
+        public List<TaskSchedule> TaskSchedules { get; set; }
     }
 }

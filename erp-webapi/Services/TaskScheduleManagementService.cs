@@ -39,20 +39,18 @@ namespace m_sort_server.Services
         }
 
 
-        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileId(string profileId, int month,int year, string include = null)
+        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileId(string profileId, int month, int year,
+            string include = null)
         {
-            List<string> taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId,month,year);
+            List<string> taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId, month, year);
             List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
-            taskScheduleIds.ForEach(x =>
-            {
-                taskScheduleList.Add(GetTaskScheduleById(x));
-            });
-            
+            taskScheduleIds.ForEach(x => { taskScheduleList.Add(GetTaskScheduleById(x)); });
+
             taskScheduleList.ForEach(x =>
             {
-                
+
                 {
-                    TaskSummaryEditModel taskSummary =  TaskSummaryManagementService.GetTaskSummaryById(x.TaskSummaryId);
+                    TaskSummaryEditModel taskSummary = TaskSummaryManagementService.GetTaskSummaryById(x.TaskSummaryId);
                     if (taskSummary != null)
                     {
                         x.TaskSummary = new TaskShortSummaryEditModel()
@@ -60,17 +58,14 @@ namespace m_sort_server.Services
                             TaskSummaryId = taskSummary.TaskSummaryId,
                             TaskId = taskSummary.TaskId,
                             ActualOutput = taskSummary.ActualOutput
-                        }; 
+                        };
                     }
                 }
             });
-            
+
             return taskScheduleList;
 
         }
-        
-
-       
         
         private static List<string> GetTaskScheduleIdsForProfileId(string profileId, int month, int year)
         {

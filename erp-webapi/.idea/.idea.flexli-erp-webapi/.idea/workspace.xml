@@ -30,9 +30,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../api-unit-testing/CheckListItemControllerTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-unit-testing/WavesControllerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../api-unit-testing/WavesControllerTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskShortScheduleEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskShortScheduleEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/DataModels/TaskDetail.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/TaskDetail.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/TaskScheduleManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskScheduleManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flexli-erp-webapi.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/flexli-erp-webapi.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +119,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="Toolset" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="23awSKHkDOpFj9D8gGqn5FuuTFW" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -341,7 +344,10 @@
       <workItem from="1655203539599" duration="183000" />
       <workItem from="1655203752704" duration="64000" />
       <workItem from="1655291233652" duration="8869000" />
-      <workItem from="1655459331439" duration="1922000" />
+      <workItem from="1655459331439" duration="7058000" />
+      <workItem from="1655530760582" duration="1780000" />
+      <workItem from="1655708020679" duration="10543000" />
+      <workItem from="1655792945703" duration="5172000" />
     </task>
     <servers />
   </component>
