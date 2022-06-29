@@ -64,7 +64,6 @@ namespace api_unit_testing
         private const string NONITEMS = "any-string";
 
         private const string NONITEMMESSAGE = "Error in finding required check list";
-
         private const string INVALIDTASKIDMESSAGE =
             "An error occurred while updating the entries. See the inner exception for details.";
 
@@ -122,6 +121,7 @@ namespace api_unit_testing
             _checkListItem.TaskId = TASKID;
             CheckListItemEditModel checkListItem = CheckListManagementService.CreateOrUpdateCheckListItem(_checkListItem);
             CHECKLISTITEMID = checkListItem.CheckListItemId;
+            
             // Act
             
             //Assert

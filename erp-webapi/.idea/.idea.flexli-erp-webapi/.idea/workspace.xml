@@ -34,7 +34,6 @@
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../api-unit-testing/CheckListItemControllerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../api-unit-testing/CheckListItemControllerTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flexli-erp-webapi.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/flexli-erp-webapi.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -343,7 +342,7 @@
       <workItem from="1656304959780" duration="1225000" />
       <workItem from="1656307815110" duration="11146000" />
       <workItem from="1656397230195" duration="6465000" />
-      <workItem from="1656479667662" duration="7237000" />
+      <workItem from="1656479667662" duration="11190000" />
     </task>
     <servers />
   </component>
