@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace m_sort_server.EditModels
+namespace flexli_erp_webapi.EditModels
 {
     public class SprintEditModel
     {

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.InteropServices;
-using m_sort_server.Models;
+using flexli_erp_webapi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace m_sort_server.Utility
+namespace flexli_erp_webapi.Utility
 {
     // This class is implemented to handle exceptions returned from controllers.
     // Another way to handle exception is UseExceptionHandler() in Startup.cs

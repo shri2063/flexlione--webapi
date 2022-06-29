@@ -1,12 +1,16 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.JsonPatch.Operations;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace m_sort_server.Utility
+namespace flexli_erp_webapi.Utility
 {
     public class ApiVersionOperationFilter:IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+       
+
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             var actionApiVersionModel = context.ApiDescription.ActionDescriptor?.GetApiVersion();
             if (actionApiVersionModel == null)
@@ -16,16 +20,11 @@ namespace m_sort_server.Utility
 
             if (actionApiVersionModel.DeclaredApiVersions.Any())
             {
-                operation.Produces = operation.Produces
-                    .SelectMany(p => actionApiVersionModel.DeclaredApiVersions
-                        .Select(version => $"{p};v={version.ToString()}")).ToList();
+               
                        
             }
             else
             {
-                operation.Produces = operation.Produces
-                    .SelectMany(p => actionApiVersionModel.ImplementedApiVersions.OrderByDescending(v => v)
-                        .Select(version => $"{p};v={version.ToString()}")).ToList();
             }
         }
     }

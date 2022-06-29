@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace m_sort_server.BsonModels
+namespace flexli_erp_webapi.BsonModels
 {
     [BsonDiscriminator("search_tags")]
     public class SearchTag

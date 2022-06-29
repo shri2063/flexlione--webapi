@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using m_sort_server.Utility;
+using flexli_erp_webapi.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,10 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace m_sort_server
+namespace flexli_erp_webapi
 {
     
     using Swashbuckle.AspNetCore.SwaggerUI;
@@ -83,7 +84,7 @@ namespace m_sort_server
             services.AddSwaggerGen(c =>
             {
               
-                c.SwaggerDoc("v1.0",new Info()
+                c.SwaggerDoc("v1.0",new OpenApiInfo()
                 {
                     Title = "ERP Server",
                     Description = "API for ERP server",
@@ -111,7 +112,7 @@ namespace m_sort_server
 
                     return actionApiVersionModel.ImplementedApiVersions.Any(v => $"v{v.ToString()}" == docName);
                 });
-                c.OperationFilter<ApiVersionOperationFilter>();
+               // c.OperationFilter<ApiVersionOperationFilter>();
             });
 
             // Disable automatic response when model is invalid

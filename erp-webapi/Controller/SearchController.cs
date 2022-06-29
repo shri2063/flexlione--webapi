@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using m_sort_server.BsonModels;
-using m_sort_server.DataModels;
-using m_sort_server.EditModels;
-using m_sort_server.Services;
+using flexli_erp_webapi.BsonModels;
+using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Services;
+using flexli_erp_webapi.DataModels;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
-namespace m_sort_server.Controller
+namespace flexli_erp_webapi.Controller
 {
     
     [Route("api/v1/[controller]")]

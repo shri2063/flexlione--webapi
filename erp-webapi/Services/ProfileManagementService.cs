@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using m_sort_server.DataModels;
-using m_sort_server.EditModels;
+using flexli_erp_webapi.DataModels;
+using flexli_erp_webapi.EditModels;
 
-namespace m_sort_server.Services
+namespace flexli_erp_webapi.Services
 {
     public class ProfileManagementService
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Versioning;
 
-namespace m_sort_server.Utility
+namespace flexli_erp_webapi.Utility
 {
     public static class ActionDescriptorExtensions
     {
