@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using m_sort_server.EditModels;
-using m_sort_server.LinkedListModel;
+using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.LinkedListModel;
 
-namespace m_sort_server.Services
+namespace flexli_erp_webapi.Services
 {
     public class LinkedListService
     {

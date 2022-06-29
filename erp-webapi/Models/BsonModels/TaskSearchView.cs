@@ -2,7 +2,7 @@
 using System.Data;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace m_sort_server.BsonModels
+namespace flexli_erp_webapi.BsonModels
 {
     [BsonDiscriminator("tasks")]
     public class TaskSearchView

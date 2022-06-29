@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace m_sort_server.Models
+namespace flexli_erp_webapi.Models
 {
     public class Error
     {

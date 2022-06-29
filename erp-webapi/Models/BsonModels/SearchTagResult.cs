@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace m_sort_server.BsonModels
+namespace flexli_erp_webapi.BsonModels
 {
     public class SearchTagResult
     {

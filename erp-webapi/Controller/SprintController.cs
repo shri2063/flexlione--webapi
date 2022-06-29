@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using m_sort_server.EditModels;
-using m_sort_server.Services;
+using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace m_sort_server.Controller
+namespace flexli_erp_webapi.Controller
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -15,6 +15,10 @@ namespace m_sort_server.Controller
     
     public class SprintController:ControllerBase
     {
+        /// <summary>
+        ///  Sends data of  closed shipper boxes to the WMS
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetSprintById")]
         [Consumes("application/json")]
 

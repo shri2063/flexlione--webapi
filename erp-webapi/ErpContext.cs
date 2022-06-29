@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using flexli_erp_webapi.DataModels;
+using Microsoft.EntityFrameworkCore;
 using JetBrains.Annotations;
-using m_sort_server.DataModels;
 using Microsoft.Extensions.Logging;
 
 
-namespace m_sort_server
+namespace flexli_erp_webapi
 {
     public class ErpContext:DbContext
     {
