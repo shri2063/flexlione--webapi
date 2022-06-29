@@ -21,7 +21,11 @@ namespace api_unit_testing
         {
             string connString = "Server=65.1.53.71;Port=5432;UserId=postgres;Password=3edc#EDC;Database=flexli-erp-alpha";
             ErpContext.SetConnectionString(connString);
-            Dispose();
+
+            TaskDetailEditModel _createdTask = TaskManagementService.CreateOrUpdateTask(_taskDetailEditModel);
+            TASKID = _createdTask.TaskId;
+            
+            TaskHierarchyManagementService.DeleteTaskHierarchy(_createdTask.TaskId);
         }
         
         //Runs after every test
@@ -31,27 +35,25 @@ namespace api_unit_testing
             {
                 db.CheckList.RemoveIfExists(CHECKLISTITEMID);
                 db.SaveChanges();
-                
-                // db.TaskDetail.RemoveIfExists(TASKID);
-                // db.SaveChanges();
+
+                db.TaskDetail.RemoveIfExists(TASKID);
+                db.SaveChanges();
             }
         }
 
-        // private static TaskDetailEditModel _taskDetailEditModel = new TaskDetailEditModel()
-        // {
-        //     TaskId = "new-task",
-        //     CreatedBy = "14",
-        //     AssignedTo = "14",
-        //     Description = DESCRIPTION,
-        //     PositionAfter = "505"
-        //
-        // };
-        //
-        // private static TaskDetailEditModel
-        //     _taskDetail = TaskManagementService.CreateOrUpdateTask(_taskDetailEditModel);
+        private readonly TaskDetailEditModel _taskDetailEditModel = new TaskDetailEditModel()
+        {
+            TaskId = "new-task",
+            ParentTaskId = "0",
+            CreatedBy = "14",
+            AssignedTo = "14",
+            Description = DESCRIPTION,
+            PositionAfter = "577"
+        
+        };
 
         private static string CHECKLISTITEMID = "unit-test-123";
-        private static string TASKID = "599";
+        private static string TASKID = "task-id-123";
         private const string DESCRIPTION = "unit-testing-description";
         private const string STATUS = "unit-testing-status";
         private const string COMMENT = "unit-testing-comment";
@@ -66,10 +68,9 @@ namespace api_unit_testing
         private const string INVALIDTASKIDMESSAGE =
             "An error occurred while updating the entries. See the inner exception for details.";
 
-        private readonly CheckListItemEditModel _checkListItem = new CheckListItemEditModel()
+        private static CheckListItemEditModel _checkListItem = new CheckListItemEditModel()
         {
             CheckListItemId = CHECKLISTITEMID,
-            TaskId = TASKID,
             Description = DESCRIPTION,
             Status = STATUS,
             Comment = COMMENT,
@@ -103,7 +104,9 @@ namespace api_unit_testing
         private void givenExistingTaskIdAndIncludeContainItems_whenGetCheckListCalled_expectedNotNull() //read
         {
             // Arrange
+            _checkListItem.TaskId = TASKID; 
             CheckListItemEditModel checkListItem = CheckListManagementService.CreateOrUpdateCheckListItem(_checkListItem);
+            CHECKLISTITEMID = checkListItem.CheckListItemId;
 
             // Act
             List<CheckListItemEditModel> checkList = CheckListManagementService.GetCheckList(TASKID, ITEMS);
@@ -116,8 +119,9 @@ namespace api_unit_testing
         private void givenExistingTaskIdAndIncludeNotContainsItems_whenGetCheckListCalled_expectedException() //read
         {
             // Arrange
+            _checkListItem.TaskId = TASKID;
             CheckListItemEditModel checkListItem = CheckListManagementService.CreateOrUpdateCheckListItem(_checkListItem);
-
+            CHECKLISTITEMID = checkListItem.CheckListItemId;
             // Act
             
             //Assert
@@ -131,6 +135,7 @@ namespace api_unit_testing
             // Arrange
         
             // Act
+            _checkListItem.TaskId = TASKID;
             CheckListItemEditModel checkListItem =
                 CheckListManagementService.CreateOrUpdateCheckListItem(_checkListItem);
             CHECKLISTITEMID = checkListItem.CheckListItemId;
@@ -174,6 +179,7 @@ namespace api_unit_testing
         private void whenDeleteCheckListItemCalled_expectSuccessAndNoException() //Delete
         {
             // Arrange
+            _checkListItem.TaskId = TASKID;
             CheckListItemEditModel checkListItem =
                 CheckListManagementService.CreateOrUpdateCheckListItem(_checkListItem);
             CHECKLISTITEMID = checkListItem.CheckListItemId;
@@ -192,6 +198,11 @@ namespace api_unit_testing
         [Fact]
         private void whenCreatedCheckListWithInvalidTaskId_expectedException() //Relation
         {
+            // Arrange
+            
+            // Act
+            
+            //Assert
             var ex = Assert.Throws<DbUpdateException>(() =>
                 CheckListManagementService.CreateOrUpdateCheckListItem(_invalidCheckListItem));
             Assert.Equal(INVALIDTASKIDMESSAGE, ex.Message);
