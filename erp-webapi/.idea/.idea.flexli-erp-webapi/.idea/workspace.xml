@@ -32,11 +32,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../api-unit-testing/CheckListItemControllerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../api-unit-testing/CheckListItemControllerTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../api-unit-testing/WavesControllerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../api-unit-testing/WavesControllerTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/SprintController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/ProfileManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/ProfileManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/DataModels/TaskSummary.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/TaskSummary.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,8 +56,6 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.2.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://E:/Flexli/erp-webapi/api-unit-testing/WavesControllerTest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://E:/Flexli/erp-webapi/api-unit-testing/WavesControllerTest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/SearchController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Services/SprintManagementService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -354,6 +350,7 @@
       <workItem from="1656307815110" duration="11146000" />
       <workItem from="1656397230195" duration="6465000" />
       <workItem from="1656479667662" duration="11190000" />
+      <workItem from="1656588983815" duration="4045000" />
     </task>
     <servers />
   </component>
@@ -394,7 +391,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>166</line>
+          <line>179</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="90" />
           <option name="timeStamp" value="25" />
         </line-breakpoint>
@@ -502,13 +499,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>240</line>
+          <line>253</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="236" containingFunctionPresentation="method 'UpdateDailyTaskActualTime'" />
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>248</line>
+          <line>261</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="244" containingFunctionPresentation="method 'UpdateDailyTaskActualTime'" />
           <option name="timeStamp" value="54" />
         </line-breakpoint>
