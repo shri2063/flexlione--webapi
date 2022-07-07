@@ -29,6 +29,8 @@ namespace flexli_erp_webapi
         public DbSet<Template> Template { get; set; }
         
         public DbSet<TemplateTask> TemplateTask { get; set; }
+        
+        public DbSet<RegisterTimeStamp> RegisterTimeStamp { get; set; }
 
         // for logging sql queries
         private static readonly ILoggerFactory LoggerFactory  = new LoggerFactory().AddConsole((_,___) => true);
