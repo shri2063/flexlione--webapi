@@ -6,10 +6,12 @@ using flexli_erp_webapi.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
@@ -80,6 +82,12 @@ namespace flexli_erp_webapi
 
             //Logging
             services.AddLogging();
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = Int32.MaxValue;
+                o.MultipartBodyLengthLimit = Int32.MaxValue;
+                o.MemoryBufferThreshold = Int32.MaxValue;
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -141,6 +149,13 @@ namespace flexli_erp_webapi
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider("C:\\inetpub\\wwwroot"),
+                // RequestPath = new PathString("/Resources")
+            });
             app.UseMvc();
 
             app.UseSwagger();
