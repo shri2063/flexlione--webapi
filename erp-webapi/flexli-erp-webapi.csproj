@@ -4,6 +4,7 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <RootNamespace>m-sort-server</RootNamespace>
+        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
