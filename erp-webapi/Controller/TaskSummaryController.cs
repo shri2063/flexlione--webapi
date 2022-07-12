@@ -37,9 +37,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetAllTaskSummaryByTaskId")]
         [Consumes("application/json")]
 
-        public List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, string include = null)
+        public List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate, DateTime? toDate=null, string include=null)
         {
-            return TaskSummaryManagementService.GetAllTaskSummaryByTaskId(taskId, include);
+            return TaskSummaryManagementService.GetAllTaskSummaryByTaskId(taskId, fromDate, toDate, include);
         }
 
         [HttpPost("AddOrUpdateTaskSummary")]

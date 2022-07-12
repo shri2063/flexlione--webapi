@@ -31,6 +31,12 @@ namespace flexli_erp_webapi.DataModels
         [Column("delivered")]
         public string Delivered { get; set; }
         
+        [Column("approver_id")]
+        public string ApproverId { get; set; }
+        
+        [Column("approved")]
+        public bool Approved { get; set; }
+        
        
         
     }

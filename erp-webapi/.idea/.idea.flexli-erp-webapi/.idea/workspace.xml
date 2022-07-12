@@ -5,6 +5,8 @@
     <projectFile>flexli-erp-webapi.csproj</projectFile>
     <projectFile>ConsoleApp1/ConsoleApp1.csproj</projectFile>
     <projectFile>../ConsoleApp2/ConsoleApp2.csproj</projectFile>
+    <projectFile profileName="IIS Express">flexli-erp-webapi.csproj</projectFile>
+    <projectFile profileName="flexStore">flexli-erp-webapi.csproj</projectFile>
     <projectFile pubXmlPath="Properties/PublishProfiles/FolderProfile.pubxml">flexli-erp-webapi.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
@@ -30,9 +32,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Startup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/SprintController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/TaskSummaryController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskSummaryController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/DataModels/TaskDetail.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/TaskDetail.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/TaskDetailEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/TaskDetailEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/SprintManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SprintManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskSummaryManagementService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,13 +60,18 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.2.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3eec868b837667eaf552abb624a89c3ea387938/Check.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/SearchController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Services/SprintManagementService.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -125,21 +142,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.editor",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Publish to folder.Publish flexli-erp-webapi to folder (14)">
+}]]></component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.flexStore">
     <configuration name="Publish flexli-erp-webapi to folder (10)" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
@@ -384,6 +401,9 @@
       <workItem from="1655291233652" duration="8869000" />
       <workItem from="1655459331439" duration="1922000" />
       <workItem from="1657190478591" duration="10392000" />
+      <workItem from="1657608522190" duration="346000" />
+      <workItem from="1657609963602" duration="1187000" />
+      <workItem from="1657627503870" duration="14730000" />
     </task>
     <servers />
   </component>
@@ -421,13 +441,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>43</line>
+          <line>44</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="38" />
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>166</line>
+          <line>196</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="90" />
           <option name="timeStamp" value="25" />
         </line-breakpoint>
@@ -445,13 +465,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>97</line>
+          <line>98</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="83" />
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>503</line>
+          <line>521</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="472" />
           <option name="timeStamp" value="35" />
         </line-breakpoint>
@@ -472,12 +492,6 @@
           <line>61</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskHierarchyManagementService .cs" initialLine="38" />
           <option name="timeStamp" value="38" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>65</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="30" />
-          <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/DependencyManagementService.cs</url>
@@ -529,13 +543,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>75</line>
+          <line>76</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="74" />
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>255</line>
+          <line>286</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="236" containingFunctionPresentation="method 'UpdateDailyTaskActualTime'" />
           <option name="timeStamp" value="53" />
         </line-breakpoint>
@@ -547,40 +561,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>16</line>
+          <line>17</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="16" containingFunctionPresentation="method 'GetTaskById'" />
           <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>18</line>
+          <line>19</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="18" containingFunctionPresentation="method 'GetTaskById'" />
           <option name="timeStamp" value="58" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>459</line>
+          <line>472</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="459" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
           <option name="timeStamp" value="59" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>464</line>
+          <line>477</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="464" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
           <option name="timeStamp" value="60" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Controller/FileAttachmentController.cs</url>
-          <line>42</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi-with-unit-testing\erp-webapi\Controller\FileAttachmentController.cs" initialLine="41" containingFunctionPresentation="method 'Upload'">
-            <startOffsets>
-              <option value="1474" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1529" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="68" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

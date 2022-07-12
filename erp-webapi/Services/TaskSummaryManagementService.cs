@@ -56,15 +56,45 @@ namespace flexli_erp_webapi.Services
 
         }
         
-        public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, string include = null)
+        public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate = null, DateTime? toDate = null, string include = null)
         {
             List<string> taskSummaryIds =  GetTaskSummaryIdsForTaskId(taskId);
               
             List<TaskSummaryEditModel> taskSummaryList = new List<TaskSummaryEditModel>();
             taskSummaryIds.ForEach(x =>
             {
-                taskSummaryList.Add(GetTaskSummaryById(x));
+                if (fromDate == null && toDate == null)
+                {
+                    taskSummaryList.Add(GetTaskSummaryById(x));
+                }
+                else if (fromDate == null)
+                {
+                    TaskSummaryEditModel taskSummaryEditModel = GetTaskSummaryById(x);
+                    if (taskSummaryEditModel.Date <= toDate)
+                    {
+                        taskSummaryList.Add(taskSummaryEditModel);
+                    }
+                }
+                
+                else if (toDate == null)
+                {
+                    TaskSummaryEditModel taskSummaryEditModel = GetTaskSummaryById(x);
+                    if (taskSummaryEditModel.Date >= fromDate)
+                    {
+                        taskSummaryList.Add(taskSummaryEditModel);
+                    }
+                }
+
+                else
+                {
+                    TaskSummaryEditModel taskSummaryEditModel = GetTaskSummaryById(x);
+                    if (taskSummaryEditModel.Date >= fromDate && taskSummaryEditModel.Date <= toDate)
+                    {
+                        taskSummaryList.Add(taskSummaryEditModel);
+                    }
+                }
             });
+
             if (include == null)
             {
                 return taskSummaryList;
@@ -187,6 +217,7 @@ namespace flexli_erp_webapi.Services
                 }
             }
 
+            TaskManagementService.UpdateEditedAt(taskSummary.TaskId);
             return GetTaskSummaryById(taskSummary.TaskSummaryId);
         }
         

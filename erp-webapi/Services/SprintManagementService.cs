@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
@@ -88,7 +89,9 @@ namespace flexli_erp_webapi.Services
                    FromDate = existingSprint.FromDate,
                    ToDate = existingSprint.ToDate,
                    Deliverable = existingSprint.Deliverable,
-                   Delivered = existingSprint.Delivered
+                   Delivered = existingSprint.Delivered,
+                   ApproverId = existingSprint.ApproverId,
+                   Approved = existingSprint.Approved
                 };
 
                 return sprintEditModel;
@@ -108,12 +111,18 @@ namespace flexli_erp_webapi.Services
 
                 if (sprint != null) // update
                 {
+                    if (sprint.Approved)
+                    {
+                        throw new ConstraintException("Sprint is freezed, ask approver to unapprove first");
+                    }
+                    
                     sprint.Description = sprintEditModel.Description;
                     sprint.Owner = sprintEditModel.Owner;
                     sprint.FromDate = sprintEditModel.FromDate;
                     sprint.ToDate = sprintEditModel.ToDate;
                     sprint.Deliverable = sprintEditModel.Deliverable;
                     sprint.Delivered = sprintEditModel.Delivered;
+                    sprint.ApproverId = sprintEditModel.ApproverId;
                     db.SaveChanges();
                 }
                 else
@@ -125,8 +134,11 @@ namespace flexli_erp_webapi.Services
                         Owner = sprintEditModel.Owner,
                         FromDate = sprintEditModel.FromDate,
                         ToDate = sprintEditModel.ToDate,
+                        Score = 0,
                         Deliverable = sprintEditModel.Deliverable,
-                        Delivered = sprintEditModel.Delivered
+                        Delivered = sprintEditModel.Delivered,
+                        ApproverId = sprintEditModel.ApproverId,
+                        Approved = false
                     };
                     db.Sprint.Add(sprint);
                     db.SaveChanges();
@@ -166,6 +178,81 @@ namespace flexli_erp_webapi.Services
 
 
             }
+        }
+
+
+        public static SprintEditModel ApproveSprint(string sprintId, string approverId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+                
+                if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
+                {
+                    throw new ArgumentException("Approver id is not eligible to approve the task");
+                }
+
+                sprint.Approved = true;
+                db.SaveChanges();
+            }
+            
+            return GetSprintById(sprintId);
+        }
+        
+        public static SprintEditModel UnapproveSprint(string sprintId, string approverId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+
+                if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
+                {
+                    throw new ArgumentException("Approver id is not eligible to unapprove the task");
+                }
+                
+                sprint.Approved = false;
+                db.SaveChanges();
+            }
+            
+            return GetSprintById(sprintId);
+        }
+
+        public static void UpdateSprintScore(string sprintId, int? actualScore, int? bestScore, int? worstScore)
+        {
+            using (var db = new ErpContext())
+            {
+                Sprint sprint = db.Sprint
+                    .FirstOrDefault(x=>x.SprintId==sprintId);
+
+                if (actualScore < worstScore)
+                {
+                    if (sprint.Score > 0)
+                    {
+                        sprint.Score--;
+                        db.SaveChanges();
+                        return;
+                    }
+                }
+                
+                else if (actualScore > bestScore)
+                {
+                    throw new ArgumentException("invalid actual score");
+                }
+                
+                sprint.Score++;
+                db.SaveChanges();
+
+            }
+        }
+        
+        public static bool CheckApproved(string sprintId)
+        {
+            SprintEditModel sprintEditModel = GetSprintById(sprintId);
+            return sprintEditModel.Approved;
         }
     }
 }

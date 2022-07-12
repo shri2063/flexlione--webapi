@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
@@ -359,7 +360,6 @@ namespace flexli_erp_webapi.Services
                 task = db.TaskDetail
                     .FirstOrDefault(x => x.TaskId == taskDetailEditModel.TaskId);
 
-
                 if (task != null) // update
                 {
 
@@ -374,8 +374,16 @@ namespace flexli_erp_webapi.Services
                     task.Description = taskDetailEditModel.Description;
                     task.AssignedTo = taskDetailEditModel.AssignedTo.ToLower();
                     task.Deadline = taskDetailEditModel.Deadline;
-                    task.Score = taskDetailEditModel.Score;
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
+                    task.EditedAt = DateTime.Now;
+                    if (!SprintManagementService.CheckApproved(task.SprintId))
+                    {
+                        task.BestScore = taskDetailEditModel.BestScore;
+                        task.WorstScore = taskDetailEditModel.WorstScore;
+                        task.ActualScore = taskDetailEditModel.ActualScore;
+                        task.ExpectedDeliverable = taskDetailEditModel.Delivered;
+                        task.Delivered = taskDetailEditModel.Delivered;
+                    }
 
                     db.SaveChanges();
                 }
@@ -391,7 +399,12 @@ namespace flexli_erp_webapi.Services
                         Description = taskDetailEditModel.Description,
                         AssignedTo = taskDetailEditModel.AssignedTo,
                         Deadline = taskDetailEditModel.Deadline,
-                        Score = taskDetailEditModel.Score,
+                        BestScore = taskDetailEditModel.BestScore,
+                        WorstScore = taskDetailEditModel.WorstScore,
+                        ExpectedDeliverable = taskDetailEditModel.ExpectedDeliverable,
+                        Delivered = taskDetailEditModel.Delivered,
+                        ActualScore = 0,
+                        EditedAt = DateTime.Now,
                         ExpectedHours = taskDetailEditModel.ExpectedHours,
                         IsRemoved = false
                         
@@ -480,14 +493,19 @@ namespace flexli_erp_webapi.Services
                     Deadline = existingTask.Deadline,
                     CreatedBy = existingTask.CreatedBy,
                     AssignedTo = existingTask.AssignedTo,
-                    Score = existingTask.Score,
                     Status =  (EStatus) Enum.Parse(typeof(EStatus), existingTask.Status, true),
                     Description = existingTask.Description,
                     PositionAfter = existingTask.PositionAfter,
                     Rank = existingTask.Rank,
                     SprintId = existingTask.SprintId,
                     IsRemoved = existingTask.IsRemoved,
-                    ExpectedHours = existingTask.ExpectedHours
+                    ExpectedHours = existingTask.ExpectedHours,
+                    BestScore = existingTask.BestScore,
+                    WorstScore = existingTask.WorstScore,
+                    ActualScore = existingTask.ActualScore,
+                    ExpectedDeliverable = existingTask.ExpectedDeliverable,
+                    Delivered = existingTask.Delivered,
+                    EditedAt = existingTask.EditedAt
                 };
 
                 return taskDetailEditModel;
@@ -525,6 +543,54 @@ namespace flexli_erp_webapi.Services
             }
 
             return positionedTask;
+        }
+
+        public static TaskDetailEditModel UpdateActualScoreOfTask(string taskId, string include, int actualScore)
+        {
+            TaskDetailEditModel taskDetailEditModel = GetTaskByIdFromDb(taskId);
+
+            if (taskDetailEditModel == null)
+            {
+                throw new KeyNotFoundException("Error in finding required taskId");
+            }
+            
+            if (include != "sprint")
+            {
+                throw new ArgumentException("use sprint inside include");
+            }
+
+            if (SprintManagementService.CheckApproved(taskDetailEditModel.SprintId))
+            {
+                throw new ConstraintException("Cannot update score, ask approver to unapprove the sprint");
+            }
+
+            using (var db = new ErpContext())
+            {
+                TaskDetail task = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
+
+                task.ActualScore = actualScore;
+                task.EditedAt = DateTime.Now;
+                db.SaveChanges();
+            }
+
+            TaskDetailEditModel taskDetail = GetTaskById(taskId);
+
+            SprintManagementService.UpdateSprintScore(taskDetail.SprintId, taskDetail.ActualScore, taskDetail.BestScore, taskDetail.WorstScore);
+
+            return taskDetail;
+        }
+
+        public static void UpdateEditedAt(string taskId)
+        {
+            using (var db = new ErpContext())
+            {
+                TaskDetail taskDetail = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
+                
+                taskDetail.EditedAt = DateTime.Now;
+                db.SaveChanges();
+            }
         }
     }
 }

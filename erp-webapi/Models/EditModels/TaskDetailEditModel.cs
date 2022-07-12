@@ -29,7 +29,17 @@ namespace flexli_erp_webapi.EditModels
         
         public EStatus Status { get; set; }
         
-        public int? Score { get; set; }
+        public int? ActualScore { get; set; }
+        
+        public int? BestScore { get; set; }
+        
+        public int? WorstScore { get; set; }
+        
+        public string ExpectedDeliverable { get; set; }
+        
+        public string Delivered { get; set; }
+        
+        public DateTime EditedAt { get; set; }
         
         public int? Rank { get; set; }
 

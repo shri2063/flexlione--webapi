@@ -21,6 +21,10 @@ namespace flexli_erp_webapi.EditModels
         
         public string Delivered { get; set; }
         
+        public string ApproverId { get; set; }
+        
+        public bool Approved { get; set; }
+        
         public List<TaskDetailEditModel> Tasks { get; set; }
         
     }

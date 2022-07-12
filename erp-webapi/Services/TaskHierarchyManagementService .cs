@@ -14,10 +14,10 @@ namespace flexli_erp_webapi.Services
         {
             TaskHierarchyEditModel taskHierarchy = GetTaskHierarchyByIdFromDb(taskId);
             taskHierarchy.TotalHoursSpent = TaskSummaryManagementService
-                .GetAllTaskSummaryByTaskId(taskId,"allChildren")
+                .GetAllTaskSummaryByTaskId(taskId,null, null, "allChildren")
                 .Sum(x => x.ActualHour);
             taskHierarchy.TotalEstimatedHours = TaskSummaryManagementService
-                .GetAllTaskSummaryByTaskId(taskId,"allChildren")
+                .GetAllTaskSummaryByTaskId(taskId,null, null,"allChildren")
                 .Sum(x => x.ExpectedHour);
 
             if (include == null)

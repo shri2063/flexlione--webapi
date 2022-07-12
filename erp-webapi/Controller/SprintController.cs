@@ -50,6 +50,22 @@ namespace flexli_erp_webapi.Controller
         {
             SprintManagementService.DeleteSprint(sprintId);
             return Ok();
-        } 
+        }
+
+        [HttpPost("ApproveSprint")]
+        [Consumes("application/json")]
+
+        public SprintEditModel ApproveSprint(string sprintId, string approverId)
+        {
+            return SprintManagementService.ApproveSprint(sprintId, approverId);
+        }
+        
+        [HttpPost("UnapproveSprint")]
+        [Consumes("application/json")]
+        
+        public SprintEditModel UnapproveSprint(string sprintId, string approverId)
+        {
+            return SprintManagementService.UnapproveSprint(sprintId, approverId);
+        }
     }
 }
