@@ -30,9 +30,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Startup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_comment.txt" beforeDir="false" afterPath="$PROJECT_DIR$/api_comment.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -384,6 +383,7 @@
       <workItem from="1655291233652" duration="8869000" />
       <workItem from="1655459331439" duration="1922000" />
       <workItem from="1657190478591" duration="10392000" />
+      <workItem from="1657533639167" duration="1074000" />
     </task>
     <servers />
   </component>
