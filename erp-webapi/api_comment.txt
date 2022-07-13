@@ -8,3 +8,8 @@ Task APIs
 
 1. /Task/GetTaskIdList?taskId=68 // Gives child Task Ids of task Id 68
 2. /Task/GetTaskIdList // Gives all Task Id List
+
+
+Task Summary Apis
+
+1. /api/v1/TaskSummary/GetAllTaskSummaryByTaskId // Gives all Task Summary for that particular Task, if "allChildren" included then it will include task summary of all downstream tasks
