@@ -23,12 +23,12 @@ namespace flexli_erp_webapi.Controller
             return SprintReportManagementService.GetSprintReportItemById(sprintReportLineItemId);
         }
         
-        [HttpPut("UpdateSprintReportLineItem")]
+        [HttpPut("ApproveSprintReportLineItem")]
         [Consumes("application/json")]
         
-        public SprintReportEditModel UpdateSprintReportLineItem(SprintReportEditModel sprintReportEditModel, string approverId)
+        public bool ApproveSprintReportLineItem(string sprintReportLineItemId, string approverId)
         {
-            return SprintReportManagementService.UpdateSprintReportLineItem(sprintReportEditModel, approverId);
+            return SprintReportManagementService.ApproveSprintReportLineItems(sprintReportLineItemId, approverId);
         }
     }
 }

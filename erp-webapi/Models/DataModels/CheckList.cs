@@ -38,6 +38,9 @@ namespace flexli_erp_webapi.DataModels
         [Column("user_comment")]
         public string UserComment { get; set; }
         
+        [Column("manager_comment")]
+        public string ManagerComment { get; set; }
+        
         [Column("essential")]
         public bool Essential { get; set; }
  }

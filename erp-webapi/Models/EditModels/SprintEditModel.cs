@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace flexli_erp_webapi.EditModels
 {
-    public enum SStatus { planning, requestforapproval, approved, requestforclosure, closed, reviewed };
+    public enum SStatus { Planning, RequestForApproval, Approved, RequestForClosure, Closed, Reviewed };
     public class SprintEditModel
     {
         public string SprintId { get; set; }

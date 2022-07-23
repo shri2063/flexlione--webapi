@@ -100,7 +100,8 @@ namespace flexli_erp_webapi.Controller
 
         public TaskDetailEditModel UpdateActualScoreOfTask(string taskId, string include, int actualScore)
         {
-            return TaskManagementService.UpdateActualScoreOfTask(taskId, include, actualScore);
+            // return TaskManagementService.UpdateActualScoreOfTask(taskId, include, actualScore);
+            return null;
         }
     }
 }

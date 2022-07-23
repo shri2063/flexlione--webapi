@@ -25,6 +25,8 @@ namespace flexli_erp_webapi.EditModels
         
         public string UserComment { get; set; }
         
+        public string ManagerComment { get; set; }
+        
         public bool Essential { get; set; }
         
     }

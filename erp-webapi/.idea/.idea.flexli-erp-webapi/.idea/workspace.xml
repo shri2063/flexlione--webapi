@@ -33,17 +33,16 @@
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/SprintController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/SprintReportController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintReportController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/DataModels/SprintReport.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/SprintReport.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintReportEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintReportEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/CheckListManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/CheckListManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/ProfileManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/ProfileManagementService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/SprintManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SprintManagementService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/SprintReportManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SprintReportManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TaskManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flexli-erp-webapi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/flexli-erp-webapi.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +67,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.2.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3eec868b837667eaf552abb624a89c3ea387938/Check.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a0b56b10bf50171c7d24c28488c1db3bf2d26a51c273c4d15cdbecf677ce4faa/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c4f87b9a75ee0bf3b70ffb3a2a719d16ef4142bfff4a9d27c671398ae3d2c7/Int32Serializer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/SearchController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Services/SprintManagementService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -595,6 +596,32 @@
           <line>490</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="464" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
           <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/CheckListManagementService.cs</url>
+          <line>153</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\CheckListManagementService.cs" initialLine="136" containingFunctionPresentation="method 'CreateOrUpdateCheckListInDb'">
+            <startOffsets>
+              <option value="5719" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5770" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/SprintReportManagementService.cs</url>
+          <line>63</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\SprintReportManagementService.cs" initialLine="63" containingFunctionPresentation="lambda expression inside method 'UpdateSprintReportLineItem'">
+            <startOffsets>
+              <option value="2406" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2512" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

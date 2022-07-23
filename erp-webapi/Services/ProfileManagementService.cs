@@ -239,7 +239,11 @@ namespace flexli_erp_webapi.Services
             return profileManagerEditModel;
         }
         
-        public static bool FindValidManager(string userId, string managerId)
+        // CS1591.cs  
+        // compile with: /W:4 /doc:x.xml  
+  
+        /// Needed to approve Sprint
+        public static bool CheckManagerValidity(string userId, string managerId)
         {
             using (var db = new ErpContext())
             {

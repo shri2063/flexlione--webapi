@@ -78,7 +78,7 @@ namespace flexli_erp_webapi.Services
                 
                 // Case: TaskDetail does not exist
                 if (existingSprint == null)
-                    return null;
+                    throw new KeyNotFoundException("Sprint id does not exist: " + sprintId);
                 
                 // Case: In case you have to update data received from db
 
@@ -114,7 +114,7 @@ namespace flexli_erp_webapi.Services
                 {
                     if (sprint.Approved)
                     {
-                        throw new ConstraintException("Sprint is freezed, ask approver to unapprove first");
+                        throw new ConstraintException("Sprint is froze, ask approver to close and plan new sprint");
                     }
                     
                     sprint.Description = sprintEditModel.Description;
@@ -133,7 +133,7 @@ namespace flexli_erp_webapi.Services
                         Owner = sprintEditModel.Owner,
                         FromDate = sprintEditModel.FromDate,
                         ToDate = sprintEditModel.ToDate,
-                        Status = SStatus.planning.ToString(),
+                        Status = SStatus.Planning.ToString(),
                         Score = 0,
                         Approved = false,
                         Closed = false
@@ -196,12 +196,12 @@ namespace flexli_erp_webapi.Services
                     throw new KeyNotFoundException("Sprint Id or User Id does not exist");
                 }
 
-                if (sprint.Status != SStatus.planning.ToString())
+                if (sprint.Status != SStatus.Planning.ToString())
                 {
                     throw new ConstraintException("status is not planning, hence request for approval can't be made");
                 }
 
-                sprint.Status = SStatus.requestforapproval.ToString();
+                sprint.Status = SStatus.RequestForApproval.ToString();
                 db.SaveChanges();
             }
 
@@ -216,17 +216,17 @@ namespace flexli_erp_webapi.Services
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
                 
-                if(!ProfileManagementService.FindValidManager(sprint.Owner,approverId))
+                if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
                 {
                     throw new ArgumentException("Approver id is not eligible to approve the sprint");
                 }
 
-                if (sprint.Status != SStatus.requestforapproval.ToString())
+                if (sprint.Status != SStatus.RequestForApproval.ToString())
                 {
                     throw new ConstraintException("Sprint not requested for approval hence can't be approved");
                 }
 
-                sprint.Status = SStatus.approved.ToString();
+                sprint.Status = SStatus.Approved.ToString();
                 sprint.Approved = true;
                 db.SaveChanges();
 
@@ -251,12 +251,12 @@ namespace flexli_erp_webapi.Services
                     throw new KeyNotFoundException("Sprint Id or User Id does not exist");
                 }
 
-                if (sprint.Status != SStatus.approved.ToString())
+                if (sprint.Status != SStatus.Approved.ToString())
                 {
                     throw new ConstraintException("status is not approved, hence request for closure can't be made");
                 }
 
-                sprint.Status = SStatus.requestforclosure.ToString();
+                sprint.Status = SStatus.RequestForClosure.ToString();
                 db.SaveChanges();
             }
 
@@ -291,17 +291,17 @@ namespace flexli_erp_webapi.Services
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
                 
-                if(!ProfileManagementService.FindValidManager(sprint.Owner,approverId))
+                if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
                 {
                     throw new ArgumentException("Approver id is not eligible to close the sprint");
                 }
 
-                if (sprint.Status != SStatus.requestforclosure.ToString())
+                if (sprint.Status != SStatus.RequestForClosure.ToString())
                 {
                     throw new ConstraintException("Sprint not requested for closure hence can't be closed");
                 }
 
-                sprint.Status = SStatus.closed.ToString();
+                sprint.Status = SStatus.Closed.ToString();
                 sprint.Closed = true;
 
                 TaskManagementService.UpdateTaskScore(sprintId);
@@ -354,7 +354,7 @@ namespace flexli_erp_webapi.Services
         public static string CheckStatus(string sprintId)
         {
             SprintEditModel sprintEditModel = GetSprintById(sprintId);
-            return sprintEditModel.Status.ToString().ToLower();
+            return sprintEditModel.Status.ToString();
         }
 
         public static bool CheckApproved(string sprintId)
