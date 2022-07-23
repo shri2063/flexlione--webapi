@@ -122,35 +122,29 @@ namespace flexli_erp_webapi.Services
             using (var db = new ErpContext())
             {
                 List<string> tasks = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.TaskId)
+                    .Where(task => task.SprintId == sprintId)
+                    .Select(task => task.TaskId)
                     .ToList();
                 
-                tasks.ForEach(x =>
+                tasks.ForEach(task =>
                 {
-                    List<string> checkListItemIds = db.CheckList
-                        .Where(s => s.TaskId == x)
-                        .Select(s => s.CheckListItemId)
-                        .ToList();
+                    List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, "items");
 
-                    checkListItemIds.ForEach(y =>
+                    checkListItems.ForEach(checkListItem =>
                     {
-                        CheckList checkList = db.CheckList
-                            .FirstOrDefault(z => z.CheckListItemId == y);
-                        
                         SprintReport sprintReport = new SprintReport()
                         {
                             SprintReportLineItemId = GetNextAvailableId(),
                             SprintId = sprintId,
-                            TaskId = x,
-                            CheckListItemId = checkList.CheckListItemId,
-                            Description = checkList.Description,
-                            ResultType = checkList.ResultType,
-                            UserComment = checkList.UserComment,
+                            TaskId = task,
+                            CheckListItemId = checkListItem.CheckListItemId,
+                            Description = checkListItem.Description,
+                            ResultType = checkListItem.ResultType,
+                            UserComment = checkListItem.UserComment,
                             Approved = "no action",
                             Status = CStatus.notCompleted.ToString(),
-                            WorstCase = checkList.WorstCase,
-                            BestCase = checkList.BestCase,
+                            WorstCase = checkListItem.WorstCase,
+                            BestCase = checkListItem.BestCase,
                             Score = 0
                         };
 

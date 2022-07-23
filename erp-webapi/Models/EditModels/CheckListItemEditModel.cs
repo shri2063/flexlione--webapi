@@ -13,13 +13,11 @@ namespace flexli_erp_webapi.EditModels
         
         public CStatus Status { get; set; }
         
-        public string Comment { get; set; }
-        
         public string  Attachment { get; set; }
         
-        public int WorstCase { get; set; }
+        public int? WorstCase { get; set; }
         
-        public int BestCase { get; set; }
+        public int? BestCase { get; set; }
         
         public string ResultType { get; set; }
         

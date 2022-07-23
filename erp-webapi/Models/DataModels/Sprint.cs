@@ -23,7 +23,7 @@ namespace flexli_erp_webapi.DataModels
         public DateTime ToDate { get; set; }
         
         [Column("score")]
-        public int Score { get; set; }
+        public int? Score { get; set; }
 
         [Column("status")]
         public string Status { get; set; }

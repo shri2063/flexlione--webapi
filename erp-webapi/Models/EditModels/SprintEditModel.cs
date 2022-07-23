@@ -16,7 +16,7 @@ namespace flexli_erp_webapi.EditModels
         
         public DateTime ToDate { get; set; }
         
-        public int Score { get; set; }
+        public int? Score { get; set; }
         
         public SStatus Status { get; set; }
         

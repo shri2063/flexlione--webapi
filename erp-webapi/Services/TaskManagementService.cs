@@ -555,40 +555,53 @@ namespace flexli_erp_webapi.Services
             return positionedTask;
         }
 
-        public static TaskDetailEditModel UpdateActualScoreOfTask(string taskId, string include, int actualScore)
+        public static void UpdateTaskScore(string sprintId)
         {
-            TaskDetailEditModel taskDetailEditModel = GetTaskByIdFromDb(taskId);
-
-            if (taskDetailEditModel == null)
-            {
-                throw new KeyNotFoundException("Error in finding required taskId");
-            }
-            
-            if (include != "sprint")
-            {
-                throw new ArgumentException("use sprint inside include");
-            }
-
-            // if (SprintManagementService.CheckApproved(taskDetailEditModel.SprintId))
-            // {
-            //     throw new ConstraintException("Cannot update score, ask approver to unapprove the sprint");
-            // }
+            List<TaskDetail> tasks;
 
             using (var db = new ErpContext())
             {
-                TaskDetail task = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskId);
+                tasks = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .ToList();
+                
+                tasks.ForEach(task =>
+                {
+                    List<CheckListItemEditModel>
+                        checkListItems = CheckListManagementService.GetCheckList(task.TaskId, "items");
+                    
+                    int complete = 0;
+                    int completeEssential = 0;
+                    int essential = 0;
+                    
+                    checkListItems.ForEach(checkListItem =>
+                    {
+                        if (checkListItem.Essential)
+                            essential++;
 
-                task.Score = actualScore;
-                task.EditedAt = DateTime.Now;
-                db.SaveChanges();
+                        if (checkListItem.Essential && checkListItem.Status == CStatus.completed)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+                        
+                        else if (checkListItem.Status == CStatus.completed)
+                        {
+                            complete++;
+                        }
+
+                    });
+                    
+                    if (completeEssential < essential)
+                        task.Score = 0;
+
+                    else if (complete > task.AcceptanceCriteria)
+                        task.Score = (int) task.ExpectedHours / 3;
+
+                    db.SaveChanges();
+
+                });
             }
-
-            TaskDetailEditModel taskDetail = GetTaskById(taskId);
-            //
-            // SprintManagementService.UpdateSprintScore(taskDetail.SprintId, taskDetail.ActualScore, taskDetail.BestScore, taskDetail.WorstScore);
-
-            return taskDetail;
         }
 
         public static void UpdateEditedAt(string taskId)

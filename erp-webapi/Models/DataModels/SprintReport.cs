@@ -40,10 +40,10 @@ namespace flexli_erp_webapi.DataModels
         public string Status { get; set; }
         
         [Column("worst_case")]
-        public int WorstCase { get; set; }
+        public int? WorstCase { get; set; }
         
         [Column("best_case")]
-        public int BestCase { get; set; }
+        public int? BestCase { get; set; }
         
         [Column("score")]
         public int? Score { get; set; }

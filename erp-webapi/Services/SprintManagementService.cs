@@ -230,7 +230,7 @@ namespace flexli_erp_webapi.Services
                 sprint.Approved = true;
                 db.SaveChanges();
 
-                SprintReportManagementService.AddSprintReportLineItem(sprintId);
+                SprintReportManagementService.AddSprintReportLineItem(sprint.SprintId);
                 // SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
 
             }
@@ -263,25 +263,25 @@ namespace flexli_erp_webapi.Services
             return GetSprintById(sprintId);
         }
 
-        public static SprintEditModel UnapproveSprint(string sprintId, string approverId)
-        {
-            Sprint sprint;
-            using (var db = new ErpContext())
-            {
-                sprint = db.Sprint
-                    .FirstOrDefault(x => x.SprintId == sprintId);
-
-                // if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
-                // {
-                //     throw new ArgumentException("Approver id is not eligible to unapprove the task");
-                // }
-                
-                sprint.Approved = false;
-                db.SaveChanges();
-            }
-            
-            return GetSprintById(sprintId);
-        }
+        // public static SprintEditModel UnapproveSprint(string sprintId, string approverId)
+        // {
+        //     Sprint sprint;
+        //     using (var db = new ErpContext())
+        //     {
+        //         sprint = db.Sprint
+        //             .FirstOrDefault(x => x.SprintId == sprintId);
+        //
+        //         // if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
+        //         // {
+        //         //     throw new ArgumentException("Approver id is not eligible to unapprove the task");
+        //         // }
+        //         
+        //         sprint.Approved = false;
+        //         db.SaveChanges();
+        //     }
+        //     
+        //     return GetSprintById(sprintId);
+        // }
         
         public static SprintEditModel CloseSprint(string sprintId, string approverId)
         {
@@ -303,9 +303,19 @@ namespace flexli_erp_webapi.Services
 
                 sprint.Status = SStatus.closed.ToString();
                 sprint.Closed = true;
+
+                TaskManagementService.UpdateTaskScore(sprintId);
+
+                List<int?> taskScores = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.Score)
+                    .ToList();
+
+                sprint.Score = taskScores.Sum();
+                
                 db.SaveChanges();
 
-                SprintReportManagementService.AddSprintReportLineItem(sprintId);
+                // SprintReportManagementService.AddSprintReportLineItem(sprintId);
                 // SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
 
             }
@@ -354,9 +364,9 @@ namespace flexli_erp_webapi.Services
                 var status = db.Sprint
                     .Where(x => x.SprintId == sprintId)
                     .Select(x => x.Approved)
-                    .Single();
+                    .ToString();
 
-                if (status)
+                if (status=="true")
                 {
                     return true;
                 }

@@ -24,9 +24,9 @@
         
         public string Status { get; set; }
         
-        public int WorstCase { get; set; }
+        public int? WorstCase { get; set; }
         
-        public int BestCase { get; set; }
+        public int? BestCase { get; set; }
         
         public int? Score { get; set; }
     }

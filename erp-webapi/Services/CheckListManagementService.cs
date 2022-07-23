@@ -81,30 +81,156 @@ namespace flexli_erp_webapi.Services
 
                 if (checkList != null) // update
                 {
-                    checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
-                    checkList.Status = checkListItemEditModel.Status.ToString().ToLower();
-                    checkList.TaskId = checkListItemEditModel.TaskId;
-                    checkList.Comment = checkListItemEditModel.Comment;
-                    checkList.Attachment = checkListItemEditModel.Attachment;
+                    TaskDetail taskDetail = db.TaskDetail
+                        .FirstOrDefault(x => x.TaskId == checkListItemEditModel.TaskId);
+
+                    if (taskDetail.SprintId == null)
+                    {
+                        checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
+                        checkList.Status = checkListItemEditModel.Status.ToString().ToLower();
+                        checkList.TaskId = checkListItemEditModel.TaskId;
+                        checkList.Attachment = checkListItemEditModel.Attachment;
+                        checkList.Description = checkListItemEditModel.Description;
+                        checkList.WorstCase = checkListItemEditModel.WorstCase;
+                        checkList.BestCase = checkListItemEditModel.BestCase;
+                        checkList.ResultType = checkListItemEditModel.ResultType;
+                        checkList.Essential = checkListItemEditModel.Essential;
+                        checkList.Result = checkListItemEditModel.Result;
+                        checkList.UserComment = checkListItemEditModel.UserComment;
                     
-                    db.SaveChanges();
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        switch (SprintManagementService.CheckStatus(taskDetail.SprintId))
+                        {
+                            case "planning":
+                                checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
+                                checkList.TaskId = checkListItemEditModel.TaskId;
+                                checkList.Attachment = checkListItemEditModel.Attachment;
+                                checkList.Description = checkListItemEditModel.Description;
+                                checkList.WorstCase = checkListItemEditModel.WorstCase;
+                                checkList.BestCase = checkListItemEditModel.BestCase;
+                                checkList.ResultType = checkListItemEditModel.ResultType;
+                                checkList.Essential = checkListItemEditModel.Essential;
+
+                                db.SaveChanges();
+                                break;
+                            
+                            case "requestforapproval":
+                                checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
+                                checkList.TaskId = checkListItemEditModel.TaskId;
+                                checkList.Attachment = checkListItemEditModel.Attachment;
+                                checkList.Description = checkListItemEditModel.Description;
+                                checkList.WorstCase = checkListItemEditModel.WorstCase;
+                                checkList.BestCase = checkListItemEditModel.BestCase;
+                                checkList.ResultType = checkListItemEditModel.ResultType;
+                                checkList.Essential = checkListItemEditModel.Essential;
+
+                                db.SaveChanges();
+                                break;
+                            
+                            case "approved":
+                                checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
+                                checkList.Status = checkListItemEditModel.Status.ToString().ToLower();
+                                checkList.TaskId = checkListItemEditModel.TaskId;
+                                checkList.Attachment = checkListItemEditModel.Attachment;
+                                checkList.Result = checkListItemEditModel.Result;
+                                checkList.UserComment = checkListItemEditModel.UserComment;
+
+                                db.SaveChanges();
+                                
+                                // UpdateResultAndCommentInSprintReport(checkList.CheckListItemId, checkListItemEditModel);
+                                break;
+                            
+                            case "requestforclosure":
+                                checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
+                                checkList.Status = checkListItemEditModel.Status.ToString().ToLower();
+                                checkList.TaskId = checkListItemEditModel.TaskId;
+                                checkList.Attachment = checkListItemEditModel.Attachment;
+                                checkList.Result = checkListItemEditModel.Result;
+                                checkList.UserComment = checkListItemEditModel.UserComment;
+
+                                db.SaveChanges();
+                                
+                                // UpdateResultAndCommentInSprintReport(checkList.CheckListItemId, checkListItemEditModel);
+                                break;
+                            
+                            case "closed":
+                                checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
+                                checkList.Status = checkListItemEditModel.Status.ToString().ToLower();
+                                checkList.TaskId = checkListItemEditModel.TaskId;
+                                checkList.Attachment = checkListItemEditModel.Attachment;
+
+                                db.SaveChanges();
+                                break;
+                        }
+                    }
+                    
                 }
                 else
                 {
-                    checkList = new CheckList
+                    var sprintId = db.TaskDetail
+                        .Where(x => x.TaskId == checkListItemEditModel.TaskId)
+                        .Select(x => x.SprintId)
+                        .ToString();
+
+                    if (sprintId == null)
                     {
-                        CheckListItemId = GetNextAvailableId(),
-                        Status = checkListItemEditModel.Status.ToString().ToLower(),
-                        TaskId = checkListItemEditModel.TaskId,
-                        Comment = checkListItemEditModel.Comment,
-                        Attachment = checkListItemEditModel.Attachment,
+                        checkList = new CheckList
+                        {
+                            CheckListItemId = GetNextAvailableId(),
+                            Status = checkListItemEditModel.Status.ToString().ToLower(),
+                            TaskId = checkListItemEditModel.TaskId,
+                            Attachment = checkListItemEditModel.Attachment,
+                            Description = checkListItemEditModel.Description,
+                            WorstCase = checkListItemEditModel.WorstCase,
+                            BestCase = checkListItemEditModel.BestCase,
+                            ResultType = checkListItemEditModel.ResultType,
+                            Essential = checkListItemEditModel.Essential,
+                            Result = checkListItemEditModel.Result,
+                            UserComment = checkListItemEditModel.UserComment
                         
-                    };
-                    db.CheckList.Add(checkList);
-                    db.SaveChanges();
+                        };
+                        db.CheckList.Add(checkList);
+                        db.SaveChanges();
+                    }
+
+                    else if (SprintManagementService.CheckApproved(sprintId))
+                    {
+                        checkList = new CheckList
+                        {
+                            CheckListItemId = GetNextAvailableId(),
+                            Status = checkListItemEditModel.Status.ToString().ToLower(),
+                            TaskId = checkListItemEditModel.TaskId,
+                            Attachment = checkListItemEditModel.Attachment,
+                        
+                        };
+                        db.CheckList.Add(checkList);
+                        db.SaveChanges();
+                    }
+                    
+                    else if (!SprintManagementService.CheckApproved(sprintId))
+                    {
+                        checkList = new CheckList
+                        {
+                            CheckListItemId = GetNextAvailableId(),
+                            Status = CStatus.notCompleted.ToString(),
+                            TaskId = checkListItemEditModel.TaskId,
+                            Attachment = checkListItemEditModel.Attachment,
+                            Description = checkListItemEditModel.Description,
+                            WorstCase = checkListItemEditModel.WorstCase,
+                            BestCase = checkListItemEditModel.BestCase,
+                            ResultType = checkListItemEditModel.ResultType,
+                            Essential = checkListItemEditModel.Essential
+                        
+                        };
+                        db.CheckList.Add(checkList);
+                        db.SaveChanges();
+                    }
                 }
                 
-                AddOrUpdateCheckListForSprint(checkList.CheckListItemId, checkListItemEditModel);
+                // AddOrUpdateCheckListForSprint(checkList.CheckListItemId, checkListItemEditModel);
             }
 
             return GetCheckListById(checkList.CheckListItemId);
@@ -210,7 +336,6 @@ namespace flexli_erp_webapi.Services
                     TaskId = existingCheckList.TaskId,
                     Description = existingCheckList.Description,
                     Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
-                    Comment = existingCheckList.Comment,
                     Attachment = existingCheckList.Attachment,
                     WorstCase = existingCheckList.WorstCase,
                     BestCase = existingCheckList.BestCase,
