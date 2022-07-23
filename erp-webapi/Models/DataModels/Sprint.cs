@@ -24,19 +24,18 @@ namespace flexli_erp_webapi.DataModels
         
         [Column("score")]
         public int Score { get; set; }
-        
-        [Column("deliverable")]
-        public string Deliverable { get; set; }
-        
-        [Column("delivered")]
-        public string Delivered { get; set; }
-        
-        [Column("approver_id")]
-        public string ApproverId { get; set; }
+
+        [Column("status")]
+        public string Status { get; set; }
         
         [Column("approved")]
         public bool Approved { get; set; }
         
+        [Column("closed")]
+        public bool Closed { get; set; }
+        
+        [Column("sprint_no")]
+        public double SprintNo { get; set; }
        
         
     }

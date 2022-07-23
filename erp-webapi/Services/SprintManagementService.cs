@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace flexli_erp_webapi.Services
 {
@@ -88,10 +89,10 @@ namespace flexli_erp_webapi.Services
                    Owner = existingSprint.Owner,
                    FromDate = existingSprint.FromDate,
                    ToDate = existingSprint.ToDate,
-                   Deliverable = existingSprint.Deliverable,
-                   Delivered = existingSprint.Delivered,
-                   ApproverId = existingSprint.ApproverId,
-                   Approved = existingSprint.Approved
+                   Score = existingSprint.Score,
+                   Status = (SStatus) Enum.Parse(typeof(SStatus), existingSprint.Status, true),
+                   Approved = existingSprint.Approved,
+                   Closed = existingSprint.Closed
                 };
 
                 return sprintEditModel;
@@ -120,9 +121,7 @@ namespace flexli_erp_webapi.Services
                     sprint.Owner = sprintEditModel.Owner;
                     sprint.FromDate = sprintEditModel.FromDate;
                     sprint.ToDate = sprintEditModel.ToDate;
-                    sprint.Deliverable = sprintEditModel.Deliverable;
-                    sprint.Delivered = sprintEditModel.Delivered;
-                    sprint.ApproverId = sprintEditModel.ApproverId;
+                    sprint.Score = sprintEditModel.Score;
                     db.SaveChanges();
                 }
                 else
@@ -134,11 +133,10 @@ namespace flexli_erp_webapi.Services
                         Owner = sprintEditModel.Owner,
                         FromDate = sprintEditModel.FromDate,
                         ToDate = sprintEditModel.ToDate,
+                        Status = SStatus.planning.ToString(),
                         Score = 0,
-                        Deliverable = sprintEditModel.Deliverable,
-                        Delivered = sprintEditModel.Delivered,
-                        ApproverId = sprintEditModel.ApproverId,
-                        Approved = false
+                        Approved = false,
+                        Closed = false
                     };
                     db.Sprint.Add(sprint);
                     db.SaveChanges();
@@ -171,16 +169,45 @@ namespace flexli_erp_webapi.Services
                 
                 if (existingSprint != null)
                 {
+                    if (existingSprint.Approved)
+                    {
+                        throw new ConstraintException("Cannot delete the sprint, already approved");
+                    }
                     
                     db.Sprint.Remove(existingSprint);
                     db.SaveChanges();
+                    
                 }
 
 
             }
         }
 
+        public static SprintEditModel RequestForApproval(string sprintId, string userId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId && x.Owner == userId);
 
+                if (sprint == null)
+                {
+                    throw new KeyNotFoundException("Sprint Id or User Id does not exist");
+                }
+
+                if (sprint.Status != SStatus.planning.ToString())
+                {
+                    throw new ConstraintException("status is not planning, hence request for approval can't be made");
+                }
+
+                sprint.Status = SStatus.requestforapproval.ToString();
+                db.SaveChanges();
+            }
+
+            return GetSprintById(sprintId);
+        }
+        
         public static SprintEditModel ApproveSprint(string sprintId, string approverId)
         {
             Sprint sprint;
@@ -189,18 +216,53 @@ namespace flexli_erp_webapi.Services
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
                 
-                if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
+                if(!ProfileManagementService.FindValidManager(sprint.Owner,approverId))
                 {
-                    throw new ArgumentException("Approver id is not eligible to approve the task");
+                    throw new ArgumentException("Approver id is not eligible to approve the sprint");
                 }
 
+                if (sprint.Status != SStatus.requestforapproval.ToString())
+                {
+                    throw new ConstraintException("Sprint not requested for approval hence can't be approved");
+                }
+
+                sprint.Status = SStatus.approved.ToString();
                 sprint.Approved = true;
                 db.SaveChanges();
+
+                SprintReportManagementService.AddSprintReportLineItem(sprintId);
+                // SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
+
             }
             
             return GetSprintById(sprintId);
         }
         
+        public static SprintEditModel RequestForClosure(string sprintId, string userId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId && x.Owner == userId);
+
+                if (sprint == null)
+                {
+                    throw new KeyNotFoundException("Sprint Id or User Id does not exist");
+                }
+
+                if (sprint.Status != SStatus.approved.ToString())
+                {
+                    throw new ConstraintException("status is not approved, hence request for closure can't be made");
+                }
+
+                sprint.Status = SStatus.requestforclosure.ToString();
+                db.SaveChanges();
+            }
+
+            return GetSprintById(sprintId);
+        }
+
         public static SprintEditModel UnapproveSprint(string sprintId, string approverId)
         {
             Sprint sprint;
@@ -209,10 +271,10 @@ namespace flexli_erp_webapi.Services
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
 
-                if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
-                {
-                    throw new ArgumentException("Approver id is not eligible to unapprove the task");
-                }
+                // if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
+                // {
+                //     throw new ArgumentException("Approver id is not eligible to unapprove the task");
+                // }
                 
                 sprint.Approved = false;
                 db.SaveChanges();
@@ -220,39 +282,105 @@ namespace flexli_erp_webapi.Services
             
             return GetSprintById(sprintId);
         }
+        
+        public static SprintEditModel CloseSprint(string sprintId, string approverId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+                
+                if(!ProfileManagementService.FindValidManager(sprint.Owner,approverId))
+                {
+                    throw new ArgumentException("Approver id is not eligible to close the sprint");
+                }
 
-        public static void UpdateSprintScore(string sprintId, int? actualScore, int? bestScore, int? worstScore)
+                if (sprint.Status != SStatus.requestforclosure.ToString())
+                {
+                    throw new ConstraintException("Sprint not requested for closure hence can't be closed");
+                }
+
+                sprint.Status = SStatus.closed.ToString();
+                sprint.Closed = true;
+                db.SaveChanges();
+
+                SprintReportManagementService.AddSprintReportLineItem(sprintId);
+                // SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
+
+            }
+            
+            return GetSprintById(sprintId);
+        }
+
+        // public static void UpdateSprintScore(string sprintId, int? actualScore, int? bestScore, int? worstScore)
+        // {
+        //     using (var db = new ErpContext())
+        //     {
+        //         Sprint sprint = db.Sprint
+        //             .FirstOrDefault(x=>x.SprintId==sprintId);
+        //
+        //         if (actualScore < worstScore)
+        //         {
+        //             if (sprint.Score > 0)
+        //             {
+        //                 sprint.Score--;
+        //                 db.SaveChanges();
+        //                 return;
+        //             }
+        //         }
+        //         
+        //         else if (actualScore > bestScore)
+        //         {
+        //             throw new ArgumentException("invalid actual score");
+        //         }
+        //         
+        //         sprint.Score++;
+        //         db.SaveChanges();
+        //
+        //     }
+        // }
+        
+        public static string CheckStatus(string sprintId)
+        {
+            SprintEditModel sprintEditModel = GetSprintById(sprintId);
+            return sprintEditModel.Status.ToString().ToLower();
+        }
+
+        public static bool CheckApproved(string sprintId)
         {
             using (var db = new ErpContext())
             {
-                Sprint sprint = db.Sprint
-                    .FirstOrDefault(x=>x.SprintId==sprintId);
+                var status = db.Sprint
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.Approved)
+                    .Single();
 
-                if (actualScore < worstScore)
+                if (status)
                 {
-                    if (sprint.Score > 0)
-                    {
-                        sprint.Score--;
-                        db.SaveChanges();
-                        return;
-                    }
+                    return true;
                 }
-                
-                else if (actualScore > bestScore)
-                {
-                    throw new ArgumentException("invalid actual score");
-                }
-                
-                sprint.Score++;
-                db.SaveChanges();
 
+                return false;
             }
         }
         
-        public static bool CheckApproved(string sprintId)
+        public static bool CheckClosed(string sprintId)
         {
-            SprintEditModel sprintEditModel = GetSprintById(sprintId);
-            return sprintEditModel.Approved;
+            using (var db = new ErpContext())
+            {
+                var status = db.Sprint
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.Closed)
+                    .Single();
+
+                if (status)
+                {
+                    return true;
+                }
+
+                return false;
+            }
         }
     }
 }

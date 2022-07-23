@@ -212,6 +212,15 @@ namespace flexli_erp_webapi.Services
                 if (existingTask == null)
                     throw new KeyNotFoundException("TaskDetail does not exist");
 
+                Sprint sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+
+                // Case: Sprint is approved
+                if (sprint.Approved)
+                {
+                    throw new ConstraintException("cannot link task to sprint as sprint is already approved");
+                }
+
                 existingTask.SprintId = sprintId;
                 db.SaveChanges();
 
@@ -239,6 +248,15 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new KeyNotFoundException("Cannot remove task from sprint, it is " +
                                                    "already scheduled  ");
+                }
+
+                Sprint sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == existingTask.SprintId);
+                
+                // Case: Sprint is already approved
+                if (sprint.Approved)
+                {
+                    throw new ConstraintException("cannot delete the task as sprint is already approved");
                 }
                 
                 existingTask.SprintId = null;
@@ -376,35 +394,30 @@ namespace flexli_erp_webapi.Services
                     task.Deadline = taskDetailEditModel.Deadline;
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
                     task.EditedAt = DateTime.Now;
-                    if (!SprintManagementService.CheckApproved(task.SprintId))
+
+                    List<string> values = new List<string> { "planning", "requestforapproval", "closed", "reviewed" };
+                    if (values.Contains(SprintManagementService.CheckStatus(task.SprintId)))
                     {
-                        task.BestScore = taskDetailEditModel.BestScore;
-                        task.WorstScore = taskDetailEditModel.WorstScore;
-                        task.ActualScore = taskDetailEditModel.ActualScore;
-                        task.ExpectedDeliverable = taskDetailEditModel.Delivered;
-                        task.Delivered = taskDetailEditModel.Delivered;
+                        task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
                     }
 
                     db.SaveChanges();
                 }
                 else
                 {
+                    var dateTime = DateTime.Now;
                     task = new TaskDetail
                     {
                         TaskId = GetNextAvailableId(),
                         ParentTaskId = taskDetailEditModel.ParentTaskId,
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = dateTime,
                         CreatedBy = taskDetailEditModel.CreatedBy,
                         Status = taskDetailEditModel.Status.ToString().ToLower(),
                         Description = taskDetailEditModel.Description,
                         AssignedTo = taskDetailEditModel.AssignedTo,
                         Deadline = taskDetailEditModel.Deadline,
-                        BestScore = taskDetailEditModel.BestScore,
-                        WorstScore = taskDetailEditModel.WorstScore,
-                        ExpectedDeliverable = taskDetailEditModel.ExpectedDeliverable,
-                        Delivered = taskDetailEditModel.Delivered,
-                        ActualScore = 0,
-                        EditedAt = DateTime.Now,
+                        Score = 0,
+                        EditedAt = dateTime,
                         ExpectedHours = taskDetailEditModel.ExpectedHours,
                         IsRemoved = false
                         
@@ -500,11 +513,8 @@ namespace flexli_erp_webapi.Services
                     SprintId = existingTask.SprintId,
                     IsRemoved = existingTask.IsRemoved,
                     ExpectedHours = existingTask.ExpectedHours,
-                    BestScore = existingTask.BestScore,
-                    WorstScore = existingTask.WorstScore,
-                    ActualScore = existingTask.ActualScore,
-                    ExpectedDeliverable = existingTask.ExpectedDeliverable,
-                    Delivered = existingTask.Delivered,
+                    Score = existingTask.Score,
+                    AcceptanceCriteria = existingTask.AcceptanceCriteria,
                     EditedAt = existingTask.EditedAt
                 };
 
@@ -559,24 +569,24 @@ namespace flexli_erp_webapi.Services
                 throw new ArgumentException("use sprint inside include");
             }
 
-            if (SprintManagementService.CheckApproved(taskDetailEditModel.SprintId))
-            {
-                throw new ConstraintException("Cannot update score, ask approver to unapprove the sprint");
-            }
+            // if (SprintManagementService.CheckApproved(taskDetailEditModel.SprintId))
+            // {
+            //     throw new ConstraintException("Cannot update score, ask approver to unapprove the sprint");
+            // }
 
             using (var db = new ErpContext())
             {
                 TaskDetail task = db.TaskDetail
                     .FirstOrDefault(x => x.TaskId == taskId);
 
-                task.ActualScore = actualScore;
+                task.Score = actualScore;
                 task.EditedAt = DateTime.Now;
                 db.SaveChanges();
             }
 
             TaskDetailEditModel taskDetail = GetTaskById(taskId);
-
-            SprintManagementService.UpdateSprintScore(taskDetail.SprintId, taskDetail.ActualScore, taskDetail.BestScore, taskDetail.WorstScore);
+            //
+            // SprintManagementService.UpdateSprintScore(taskDetail.SprintId, taskDetail.ActualScore, taskDetail.BestScore, taskDetail.WorstScore);
 
             return taskDetail;
         }

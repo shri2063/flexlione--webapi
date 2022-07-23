@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.BsonModels;
@@ -65,6 +66,23 @@ namespace flexli_erp_webapi.Controller
         {
           ProfileManagementService.DeleteProfile(profileId);
             return Ok();
-        } 
+        }
+
+        [HttpPost("AddManager")]
+        [Consumes("application/json")]
+
+        public ProfileManagerEditModel AddManager(string userId, string managerId)
+        {
+            return ProfileManagementService.AddManager(userId, managerId);
+        }
+        
+        [HttpDelete("DeleteManager")]
+        [Consumes("application/json")]
+        
+        public ActionResult<string> DeleteManager(string userId, string managerId)
+        {
+            ProfileManagementService.DeleteManager(userId, managerId);
+            return Ok();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
@@ -46,7 +47,16 @@ namespace flexli_erp_webapi.Services
 
                 if (existingCheckList != null)
                 {
+                    var sprintId = db.TaskDetail
+                        .Where(x => x.TaskId == existingCheckList.TaskId)
+                        .Select(x => x.SprintId)
+                        .ToString();
 
+                    if (SprintManagementService.CheckApproved(sprintId))
+                    {
+                        throw new ConstraintException("Checklist cannot be deleted, sprint is already approved");
+                    }
+                    
                     db.CheckList.Remove(existingCheckList);
                     db.SaveChanges();
                 }
@@ -71,10 +81,8 @@ namespace flexli_erp_webapi.Services
 
                 if (checkList != null) // update
                 {
-
                     checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
-                    checkList.Description = checkListItemEditModel.Description;
-                    checkList.Status = checkListItemEditModel.Status;
+                    checkList.Status = checkListItemEditModel.Status.ToString().ToLower();
                     checkList.TaskId = checkListItemEditModel.TaskId;
                     checkList.Comment = checkListItemEditModel.Comment;
                     checkList.Attachment = checkListItemEditModel.Attachment;
@@ -86,18 +94,71 @@ namespace flexli_erp_webapi.Services
                     checkList = new CheckList
                     {
                         CheckListItemId = GetNextAvailableId(),
-                        Description = checkListItemEditModel.Description,
-                        Status = checkListItemEditModel.Status,
+                        Status = checkListItemEditModel.Status.ToString().ToLower(),
                         TaskId = checkListItemEditModel.TaskId,
                         Comment = checkListItemEditModel.Comment,
-                        Attachment = checkListItemEditModel.Attachment
+                        Attachment = checkListItemEditModel.Attachment,
+                        
                     };
                     db.CheckList.Add(checkList);
                     db.SaveChanges();
                 }
+                
+                AddOrUpdateCheckListForSprint(checkList.CheckListItemId, checkListItemEditModel);
             }
 
             return GetCheckListById(checkList.CheckListItemId);
+        }
+
+        private static void AddOrUpdateCheckListForSprint(string checklistItemId, CheckListItemEditModel checkListItemEditModel)
+        {
+            using (var db = new ErpContext())
+            {
+                var sprintId = db.TaskDetail
+                    .Where(x => x.TaskId == checkListItemEditModel.TaskId)
+                    .Select(x => x.SprintId)
+                    .ToString();
+
+                CheckList checkList = db.CheckList
+                    .FirstOrDefault(x => x.CheckListItemId == checklistItemId);
+                
+                if (SprintManagementService.CheckApproved(sprintId) && !SprintManagementService.CheckClosed(sprintId))
+                {
+                    checkList.Result = checkListItemEditModel.Result;
+                    checkList.UserComment = checkListItemEditModel.UserComment;
+
+                    db.SaveChanges();
+                    UpdateResultAndCommentInSprintReport(checklistItemId, checkListItemEditModel);
+                }
+
+                if (!SprintManagementService.CheckApproved(sprintId))
+                {
+                    checkList.Description = checkListItemEditModel.Description;
+                    checkList.WorstCase = checkListItemEditModel.WorstCase;
+                    checkList.BestCase = checkListItemEditModel.BestCase;
+                    checkList.ResultType = checkListItemEditModel.ResultType;
+                    checkList.Essential = checkListItemEditModel.Essential;
+                    checkList.Result = checkListItemEditModel.Result; 
+                    checkList.UserComment = checkListItemEditModel.UserComment;
+                
+                    db.SaveChanges();
+                }
+
+            }
+        }
+
+        private static void UpdateResultAndCommentInSprintReport(string checklistItemId, CheckListItemEditModel checkListItemEditModel)
+        {
+            using (var db = new ErpContext())
+            {
+                SprintReport sprintReport = db.SprintReport
+                    .FirstOrDefault(x => x.CheckListItemId == checklistItemId);
+
+                sprintReport.Result = checkListItemEditModel.Result;
+                sprintReport.UserComment = checkListItemEditModel.UserComment;
+
+                db.SaveChanges();
+            }
         }
 
 
@@ -148,9 +209,15 @@ namespace flexli_erp_webapi.Services
                     CheckListItemId = existingCheckList.CheckListItemId,
                     TaskId = existingCheckList.TaskId,
                     Description = existingCheckList.Description,
-                    Status = existingCheckList.Status,
+                    Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
                     Comment = existingCheckList.Comment,
-                    Attachment = existingCheckList.Attachment
+                    Attachment = existingCheckList.Attachment,
+                    WorstCase = existingCheckList.WorstCase,
+                    BestCase = existingCheckList.BestCase,
+                    ResultType = existingCheckList.ResultType,
+                    Result = existingCheckList.Result,
+                    Essential = existingCheckList.Essential,
+                    
                     
                 };
 

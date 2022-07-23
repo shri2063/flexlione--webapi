@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace flexli_erp_webapi.DataModels
 {
-   
+    
     [Table("check_list")]
     public class CheckList
     {
@@ -25,5 +25,23 @@ namespace flexli_erp_webapi.DataModels
         
         [Column("attachment")]
         public string Attachment { get; set; }
+        
+        [Column("worst_case")]
+        public int WorstCase { get; set; }
+        
+        [Column("best_case")]
+        public int BestCase { get; set; }
+        
+        [Column("result_type")]
+        public string ResultType { get; set; }
+        
+        [Column("result")]
+        public string Result { get; set; }
+        
+        [Column("user_comment")]
+        public string UserComment { get; set; }
+        
+        [Column("essential")]
+        public bool Essential { get; set; }
  }
 }
