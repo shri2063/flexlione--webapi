@@ -2,6 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using flexli_erp_webapi.DataLayer;
+using flexli_erp_webapi.DataLayer.Interface;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
+using flexli_erp_webapi.Services;
 using flexli_erp_webapi.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,8 +39,11 @@ namespace flexli_erp_webapi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
-            
+
+             services.AddScoped<ITagContext, TagContext>();
+             services.AddScoped<ITagTaskListRepository, TagTaskListRepository>();
+             services.AddScoped<ITagRepository, TagRepository>();
+             services.AddScoped<SearchManagementService, SearchManagementService>();
              services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
@@ -88,6 +96,8 @@ namespace flexli_erp_webapi
                 o.MultipartBodyLengthLimit = Int32.MaxValue;
                 o.MemoryBufferThreshold = Int32.MaxValue;
             });
+            
+            services.AddSwaggerGenNewtonsoftSupport();
 
             services.AddSwaggerGen(c =>
             {
@@ -103,6 +113,8 @@ namespace flexli_erp_webapi
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+                //https://stackoverflow.com/questions/36452468/swagger-ui-web-api-documentation-present-enums-as-strings
+                c.DescribeAllEnumsAsStrings();
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {

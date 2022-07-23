@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.LinkedListModel;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.DataModels;
 using Microsoft.AspNetCore.Mvc;
 using flexli_erp_webapi.Models;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Cors;
 
 
@@ -19,10 +23,20 @@ namespace flexli_erp_webapi.Controller
     
     public class TaskController : ControllerBase
     {
+       
+        
+        private readonly ITagRepository _tagRepository;
+        private readonly ITagTaskListRepository _tagTaskListRepository;
+       
+        public TaskController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository)
+        {
+            _tagRepository = tagRepository;
+            _tagTaskListRepository = tagTaskListRepository;
+        }
         
         [HttpGet("GetTaskById")]
         [Consumes("application/json")]
-        
+
         public ActionResult<TaskDetailEditModel> GetTaskById([FromQuery] string taskId,string include = null)
         {
             return TaskManagementService.GetTaskById(taskId,include);
@@ -45,9 +59,24 @@ namespace flexli_erp_webapi.Controller
         [HttpPut("CreateOrUpdateTask")]
         [Consumes("application/json")]
         
-        public ActionResult<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
+        public async Task<ActionResult<TaskDetailEditModel>> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
         {
-            return TaskManagementService.CreateOrUpdateTask(taskDetail);
+             TaskDetailEditModel createdTask = TaskManagementService.CreateOrUpdateTask(taskDetail);
+            // [Action] : Add created task in search tags with common keywords. 
+           /*
+            IEnumerable<Tag> tagList = await _tagRepository.GetSearchTagList(ETagType.SearchTag);
+            // running on separate thread
+            await Task.Run(() =>
+            {
+                _tagTaskListRepository.ParseTaskDescriptionForSearchTags(taskDetail.Description, createdTask.TaskId, tagList);
+            });
+            */
+            
+            return createdTask;
+            
+
+           
+
         }
         
         [HttpPut("GetLinkedList")]

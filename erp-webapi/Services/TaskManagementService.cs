@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.LinkedListModel;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,6 +15,12 @@ namespace flexli_erp_webapi.Services
 {
     public class TaskManagementService
     {
+
+        private readonly ITagTaskListRepository _tagTaskListRepository;
+        public TaskManagementService(ITagTaskListRepository tagTaskListRepository)
+        {
+            _tagTaskListRepository = tagTaskListRepository;
+        }
         public static TaskDetailEditModel GetTaskById(string taskId, string include = null)
         {
             TaskDetailEditModel taskDetail = GetTaskByIdFromDb(taskId);
@@ -48,7 +57,7 @@ namespace flexli_erp_webapi.Services
         }
 
        
-        public static TaskDetailEditModel CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel)
+        public  static TaskDetailEditModel CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel)
         {
             bool newTask ; 
             // Validation 1: Check if Position after is valid
@@ -109,9 +118,8 @@ namespace flexli_erp_webapi.Services
                positionedTask.ForEach(x => UpdatePositionInDb(x.TaskId,x.PositionAfter));
            }
 
-           // Async run tag updates for the given taskDetail
-           // All those tags that are contained in the taskDetail will get updated
-           Task.Run(() => TagManagementService.UpdateTagsContainingTask(taskDetailEditModel));
+           
+          
            return GetTaskById(updatedTaskDetail.TaskId);
         }
         

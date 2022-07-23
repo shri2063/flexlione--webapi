@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace flexli_erp_webapi.EditModels
 {
+  
     public class SprintEditModel
     {
         public string SprintId { get; set; }

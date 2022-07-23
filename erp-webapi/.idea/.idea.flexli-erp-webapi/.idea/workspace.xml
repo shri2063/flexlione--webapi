@@ -30,8 +30,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Controller/TagController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/Interface/ITagContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/TagContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/BsonModels/Tag.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/BsonModels/TagTaskList.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Repository/Interfaces/ITagRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Repository/Interfaces/ITagTaskListRespository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Repository/TagRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Repository/TagTaskListRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-unit-testing/WavesControllerTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../api-unit-testing/WavesControllerTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api-unit-testing/api-unit-testing.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../api-unit-testing/api-unit-testing.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_comment.txt" beforeDir="false" afterPath="$PROJECT_DIR$/api_comment.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/SearchController.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/SprintController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/TaskController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/BsonModels/SearchTag.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/BsonModels/SearchTagResult.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/SearchManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SearchManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TagManagementService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Services/TaskManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Startup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flexli-erp-webapi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/flexli-erp-webapi.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +74,8 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.2.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3eec868b837667eaf552abb624a89c3ea387938/Check.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Controller/SearchController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c4f87b9a75ee0bf3b70ffb3a2a719d16ef4142bfff4a9d27c671398ae3d2c7/Int32Serializer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Controller/TagController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
@@ -138,7 +161,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Publish to folder.Publish flexli-erp-webapi to folder (14)">
+  <component name="RunManager" selected=".NET Launch Settings Profile.flexStore">
     <configuration name="Publish flexli-erp-webapi to folder (10)" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
@@ -157,6 +180,10 @@
     </configuration>
     <configuration name="Publish flexli-erp-webapi to folder (14)" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (15)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/../../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
     <configuration name="Publish flexli-erp-webapi to folder (1)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
@@ -286,6 +313,7 @@
       <item itemvalue=".NET Launch Settings Profile.flexli-erp-webapi" />
       <item itemvalue=".NET Project.ConsoleApp1" />
       <item itemvalue=".NET Project.ConsoleApp2" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (15)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (10)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (11)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (12)" />
@@ -384,6 +412,12 @@
       <workItem from="1655459331439" duration="1922000" />
       <workItem from="1657190478591" duration="10392000" />
       <workItem from="1657533639167" duration="1074000" />
+      <workItem from="1657629173441" duration="5049000" />
+      <workItem from="1658231929441" duration="9247000" />
+      <workItem from="1658302941399" duration="4860000" />
+      <workItem from="1658382990891" duration="22736000" />
+      <workItem from="1658468583295" duration="4250000" />
+      <workItem from="1658474578057" duration="18404000" />
     </task>
     <servers />
   </component>
@@ -421,7 +455,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>43</line>
+          <line>52</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="38" />
           <option name="timeStamp" value="24" />
         </line-breakpoint>
@@ -432,46 +466,10 @@
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/SearchManagementService.cs</url>
-          <line>18</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\SearchManagementService.cs" initialLine="18" />
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/SearchManagementService.cs</url>
-          <line>96</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\SearchManagementService.cs" initialLine="94" />
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>97</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="83" />
-          <option name="timeStamp" value="34" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>503</line>
+          <line>511</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="472" />
           <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs</url>
-          <line>44</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskHierarchyManagementService .cs" initialLine="22" />
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs</url>
-          <line>53</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskHierarchyManagementService .cs" initialLine="30" />
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskHierarchyManagementService .cs</url>
-          <line>61</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskHierarchyManagementService .cs" initialLine="38" />
-          <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
@@ -499,39 +497,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/SearchManagementService.cs</url>
-          <line>112</line>
+          <line>124</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\SearchManagementService.cs" initialLine="112" />
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/SearchManagementService.cs</url>
-          <line>26</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\SearchManagementService.cs" initialLine="26" />
-          <option name="timeStamp" value="48" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/SearchManagementService.cs</url>
-          <line>115</line>
+          <line>127</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\SearchManagementService.cs" initialLine="115" />
           <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TagManagementService.cs</url>
-          <line>207</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TagManagementService.cs" initialLine="206" />
-          <option name="timeStamp" value="50" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TagManagementService.cs</url>
-          <line>101</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TagManagementService.cs" initialLine="101" />
-          <option name="timeStamp" value="51" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>75</line>
-          <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="74" />
-          <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
@@ -540,47 +514,101 @@
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Controller/TaskController.cs</url>
-          <line>27</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Controller\TaskController.cs" initialLine="27" containingFunctionPresentation="method 'GetTaskById'" />
-          <option name="timeStamp" value="56" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>16</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="16" containingFunctionPresentation="method 'GetTaskById'" />
-          <option name="timeStamp" value="57" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>18</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="18" containingFunctionPresentation="method 'GetTaskById'" />
-          <option name="timeStamp" value="58" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>459</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="459" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
-          <option name="timeStamp" value="59" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>464</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="464" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
-          <option name="timeStamp" value="60" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Controller/FileAttachmentController.cs</url>
           <line>42</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi-with-unit-testing\erp-webapi\Controller\FileAttachmentController.cs" initialLine="41" containingFunctionPresentation="method 'Upload'">
+          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi-with-unit-testing\erp-webapi\Controller\FileAttachmentController.cs" initialLine="41" containingFunctionPresentation="method 'Upload'" />
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Repository/TagTaskListRepository.cs</url>
+          <line>72</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Repository\TagTaskListRepository.cs" initialLine="72" containingFunctionPresentation="method 'AddTaskToTagTask'">
             <startOffsets>
-              <option value="1474" />
+              <option value="2720" />
             </startOffsets>
             <endOffsets>
-              <option value="1529" />
+              <option value="2815" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="68" />
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Repository/TagTaskListRepository.cs</url>
+          <line>53</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Repository\TagTaskListRepository.cs" initialLine="53" containingFunctionPresentation="method 'AddTaskToTagTask'">
+            <startOffsets>
+              <option value="1908" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1993" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="74" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Repository/TagTaskListRepository.cs</url>
+          <line>56</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Repository\TagTaskListRepository.cs" initialLine="56" containingFunctionPresentation="method 'AddTaskToTagTask'">
+            <startOffsets>
+              <option value="2084" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2112" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="75" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Repository/TagTaskListRepository.cs</url>
+          <line>77</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Repository\TagTaskListRepository.cs" initialLine="77" containingFunctionPresentation="method 'AddTaskToTagTask'">
+            <startOffsets>
+              <option value="2892" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3013" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Repository/TagTaskListRepository.cs</url>
+          <line>82</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Repository\TagTaskListRepository.cs" initialLine="82" containingFunctionPresentation="method 'AddTaskToTagTask'">
+            <startOffsets>
+              <option value="3203" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3271" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Repository/TagTaskListRepository.cs</url>
+          <line>84</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Repository\TagTaskListRepository.cs" initialLine="84" containingFunctionPresentation="method 'AddTaskToTagTask'">
+            <startOffsets>
+              <option value="3285" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3337" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="78" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/SearchManagementService.cs</url>
+          <line>69</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\SearchManagementService.cs" initialLine="69" containingFunctionPresentation="method 'SearchByTag'">
+            <startOffsets>
+              <option value="2420" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2451" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="79" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
