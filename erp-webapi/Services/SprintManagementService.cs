@@ -116,6 +116,7 @@ namespace flexli_erp_webapi.Services
                     {
                         throw new ConstraintException("Sprint is froze, ask approver to close and plan new sprint");
                     }
+
                     
                     sprint.Description = sprintEditModel.Description;
                     sprint.Owner = sprintEditModel.Owner;
@@ -169,9 +170,9 @@ namespace flexli_erp_webapi.Services
                 
                 if (existingSprint != null)
                 {
-                    if (existingSprint.Approved)
+                    if (existingSprint.Status != SStatus.Planning.ToString())
                     {
-                        throw new ConstraintException("Cannot delete the sprint, already approved");
+                        throw new ConstraintException("Cannot delete the sprint, status is not planning");
                     }
                     
                     db.Sprint.Remove(existingSprint);
@@ -200,6 +201,11 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new ConstraintException("status is not planning, hence request for approval can't be made");
                 }
+                
+                if (TotalExpectedHours(sprintId) > 6*ValidSprintDays(sprintId))
+                {
+                    throw new ConstraintException("expected hours more then total sprint time");
+                }
 
                 sprint.Status = SStatus.RequestForApproval.ToString();
                 db.SaveChanges();
@@ -207,7 +213,47 @@ namespace flexli_erp_webapi.Services
 
             return GetSprintById(sprintId);
         }
-        
+
+        private static int TotalExpectedHours(string sprintId)
+        {
+            using (var db = new ErpContext())
+            {
+                List<Decimal?> expectedHours = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.ExpectedHours)
+                    .ToList();
+
+                return Convert.ToInt32(expectedHours.Sum());
+            }
+        }
+
+        private static int ValidSprintDays(string sprintId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+
+                DateTime to = sprint.ToDate;
+                DateTime from = sprint.FromDate;
+                
+                if (to < from)
+                    throw new ArgumentException("To cannot be smaller than from.", nameof(to));
+
+                int n = 0;
+                DateTime nextDate = from;
+                while(nextDate <= to.Date)
+                {
+                    if (nextDate.DayOfWeek != DayOfWeek.Saturday && nextDate.DayOfWeek != DayOfWeek.Sunday)
+                        n++;
+                    nextDate = nextDate.AddDays(1);
+                }
+
+                return n;
+            }
+        }
+
         public static SprintEditModel ApproveSprint(string sprintId, string approverId)
         {
             Sprint sprint;
@@ -231,8 +277,6 @@ namespace flexli_erp_webapi.Services
                 db.SaveChanges();
 
                 SprintReportManagementService.AddSprintReportLineItem(sprint.SprintId);
-                // SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
-
             }
             
             return GetSprintById(sprintId);
@@ -262,26 +306,6 @@ namespace flexli_erp_webapi.Services
 
             return GetSprintById(sprintId);
         }
-
-        // public static SprintEditModel UnapproveSprint(string sprintId, string approverId)
-        // {
-        //     Sprint sprint;
-        //     using (var db = new ErpContext())
-        //     {
-        //         sprint = db.Sprint
-        //             .FirstOrDefault(x => x.SprintId == sprintId);
-        //
-        //         // if(sprint.ApproverId!=approverId && sprint.ApproverId!=null)
-        //         // {
-        //         //     throw new ArgumentException("Approver id is not eligible to unapprove the task");
-        //         // }
-        //         
-        //         sprint.Approved = false;
-        //         db.SaveChanges();
-        //     }
-        //     
-        //     return GetSprintById(sprintId);
-        // }
         
         public static SprintEditModel CloseSprint(string sprintId, string approverId)
         {
@@ -303,58 +327,72 @@ namespace flexli_erp_webapi.Services
 
                 sprint.Status = SStatus.Closed.ToString();
                 sprint.Closed = true;
-
-                TaskManagementService.UpdateTaskScore(sprintId);
-
-                List<int?> taskScores = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.Score)
-                    .ToList();
-
-                sprint.Score = taskScores.Sum();
+                
+                // Provisional score of task
+                // TaskManagementService.UpdateProvisionalTaskScore(sprintId);
+                //
+                // List<int?> taskScores = db.TaskDetail
+                //     .Where(x => x.SprintId == sprintId)
+                //     .Select(x => x.Score)
+                //     .ToList();
+                //
+                // // Provisional score of sprint
+                // sprint.Score = taskScores.Sum();
                 
                 db.SaveChanges();
-
-                // SprintReportManagementService.AddSprintReportLineItem(sprintId);
-                // SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
+                
+                // Unlinking tasks from sprint
+                List<string> tasks = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.TaskId)
+                    .ToList();
+                
+                tasks.ForEach(x =>
+                {
+                    TaskManagementService.RemoveTaskFromSprint(x);
+                });
 
             }
             
             return GetSprintById(sprintId);
         }
 
-        // public static void UpdateSprintScore(string sprintId, int? actualScore, int? bestScore, int? worstScore)
-        // {
-        //     using (var db = new ErpContext())
-        //     {
-        //         Sprint sprint = db.Sprint
-        //             .FirstOrDefault(x=>x.SprintId==sprintId);
-        //
-        //         if (actualScore < worstScore)
-        //         {
-        //             if (sprint.Score > 0)
-        //             {
-        //                 sprint.Score--;
-        //                 db.SaveChanges();
-        //                 return;
-        //             }
-        //         }
-        //         
-        //         else if (actualScore > bestScore)
-        //         {
-        //             throw new ArgumentException("invalid actual score");
-        //         }
-        //         
-        //         sprint.Score++;
-        //         db.SaveChanges();
-        //
-        //     }
-        // }
+        public static SprintEditModel ReviewCompleted(string sprintId, string approverId)
+        {
+            Sprint sprint;
+            using (var db = new ErpContext())
+            {
+                sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+                
+                if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
+                {
+                    throw new ArgumentException("Approver id is not eligible to review the sprint");
+                }
+
+                if (sprint.Status != SStatus.Closed.ToString())
+                {
+                    throw new ConstraintException("Sprint cannot be reviewed as status is not closed");
+                }
+
+                if (!SprintReportManagementService.AllSprintReportLineItemsStatusNotNoChange(sprintId))
+                {
+                    throw new ConstraintException("Sprint report line items have status no change");
+                }
+
+                sprint.Status = SStatus.Reviewed.ToString();
+                db.SaveChanges();
+
+                // SprintReportManagementService.PublishActualScores(sprintId);
+
+            }
+            return GetSprintById(sprintId);
+        }
         
         public static string CheckStatus(string sprintId)
         {
             SprintEditModel sprintEditModel = GetSprintById(sprintId);
-            return sprintEditModel.Status.ToString();
+            return sprintEditModel.Status.ToString().ToLower();
         }
 
         public static bool CheckApproved(string sprintId)

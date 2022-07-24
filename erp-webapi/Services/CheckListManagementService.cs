@@ -96,7 +96,7 @@ namespace flexli_erp_webapi.Services
                     if(taskDetail.SprintId != null)
                         status = SprintManagementService.GetSprintById(taskDetail.SprintId)
                         .Status;
-                    if (status != SStatus.Planning)
+                    if (status != SStatus.Planning || status != SStatus.RequestForApproval)
                     {
                         throw new KeyNotFoundException("New Checklist cannot be added once sprint is approved");
                     }
@@ -125,7 +125,7 @@ namespace flexli_erp_webapi.Services
                 {
                         checkList.UserComment = checkListItemEditModel.UserComment;
                         checkList.Status = checkListItemEditModel.Status.ToString();
-                         checkList.Result = checkListItemEditModel.Result;
+                        checkList.Result = checkListItemEditModel.Result;
                 }
                 if (status != SStatus.Approved)
                 {
@@ -146,7 +146,14 @@ namespace flexli_erp_webapi.Services
                 }
                 else
                 {
-                    SprintReportManagementService.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(checkListItemEditModel));
+                    if(taskDetail.SprintId != null)
+                        status = SprintManagementService.GetSprintById(taskDetail.SprintId)
+                            .Status;
+                    if (status != SStatus.Planning || status != SStatus.RequestForApproval)
+                    {
+                        SprintReportManagementService.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(checkListItemEditModel));
+                    }
+                    
                     db.SaveChanges();
                 }
             }
@@ -165,7 +172,7 @@ namespace flexli_erp_webapi.Services
             sprintReportEditModel.Result = checkListItem.Result;
             sprintReportEditModel.UserComment = checkListItem.UserComment;
             return sprintReportEditModel;
-
+        
         }
         
 

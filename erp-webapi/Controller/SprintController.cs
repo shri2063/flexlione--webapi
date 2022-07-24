@@ -84,12 +84,12 @@ namespace flexli_erp_webapi.Controller
             return SprintManagementService.CloseSprint(sprintId, approverId);
         }
         
-        // [HttpPost("UnapproveSprint")]
-        // [Consumes("application/json")]
-        //
-        // public SprintEditModel UnapproveSprint(string sprintId, string approverId)
-        // {
-        //     return SprintManagementService.UnapproveSprint(sprintId, approverId);
-        // }
+        [HttpPost("ReviewCompleted")]
+        [Consumes("application/json")]
+        
+        public SprintEditModel ReviewCompleted(string sprintId, string approverId)
+        {
+            return SprintManagementService.ReviewCompleted(sprintId, approverId);
+        }
     }
 }

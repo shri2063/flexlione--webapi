@@ -2,7 +2,7 @@
 
 namespace flexli_erp_webapi.EditModels
 {
-    public enum CStatus { notCompleted, completed };
+    public enum CStatus { NotCompleted, Completed };
     public class CheckListItemEditModel
     {
         public string CheckListItemId { get; set; }

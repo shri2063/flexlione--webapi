@@ -216,7 +216,7 @@ namespace flexli_erp_webapi.Services
                     .FirstOrDefault(x => x.SprintId == sprintId);
 
                 // Case: Sprint is approved
-                if (sprint.Approved)
+                if (sprint.Approved && !sprint.Closed)
                 {
                     throw new ConstraintException("cannot link task to sprint as sprint is already approved");
                 }
@@ -254,7 +254,7 @@ namespace flexli_erp_webapi.Services
                     .FirstOrDefault(x => x.SprintId == existingTask.SprintId);
                 
                 // Case: Sprint is already approved
-                if (sprint.Approved)
+                if (sprint.Approved && !sprint.Closed)
                 {
                     throw new ConstraintException("cannot delete the task as sprint is already approved");
                 }
@@ -395,7 +395,7 @@ namespace flexli_erp_webapi.Services
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
                     task.EditedAt = DateTime.Now;
 
-                    List<string> values = new List<string> { "planning", "requestforapproval", "closed", "reviewed" };
+                    List<string> values = new List<string> { "planning", "requestforapproval", "closed" };
                     if (values.Contains(SprintManagementService.CheckStatus(task.SprintId)))
                     {
                         task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
@@ -555,7 +555,7 @@ namespace flexli_erp_webapi.Services
             return positionedTask;
         }
 
-        public static void UpdateTaskScore(string sprintId)
+        public static void UpdateProvisionalTaskScore(string sprintId)
         {
             List<TaskDetail> tasks;
 
@@ -579,13 +579,13 @@ namespace flexli_erp_webapi.Services
                         if (checkListItem.Essential)
                             essential++;
 
-                        if (checkListItem.Essential && checkListItem.Status == CStatus.completed)
+                        if (checkListItem.Essential && checkListItem.Status == CStatus.Completed)
                         {
                             complete++;
                             completeEssential++;
                         }
                         
-                        else if (checkListItem.Status == CStatus.completed)
+                        else if (checkListItem.Status == CStatus.Completed)
                         {
                             complete++;
                         }
@@ -596,7 +596,7 @@ namespace flexli_erp_webapi.Services
                         task.Score = 0;
 
                     else if (complete > task.AcceptanceCriteria)
-                        task.Score = (int) task.ExpectedHours / 3;
+                        task.Score = Convert.ToInt32(task.ExpectedHours / 3);
 
                     db.SaveChanges();
 

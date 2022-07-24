@@ -22,7 +22,7 @@
         
         public string Approved { get; set; }
         
-        public string Status { get; set; }
+        public CStatus Status { get; set; }
         
         public int? WorstCase { get; set; }
         
