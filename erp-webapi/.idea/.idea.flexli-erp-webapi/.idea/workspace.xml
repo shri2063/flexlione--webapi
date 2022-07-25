@@ -32,10 +32,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_23-07-2022_18_50__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_23-07-2022_18_50__Default_Changelist_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/SprintController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/SprintReportController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/SprintReportController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintReportEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintReportEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/CheckListManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/CheckListManagementService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Services/SprintManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SprintManagementService.cs" afterDir="false" />
@@ -65,7 +67,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.2.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/41624174e69d2d18a9f8d116532ebd28b44e25452bd69081888cb0c39e234219/DbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a0b56b10bf50171c7d24c28488c1db3bf2d26a51c273c4d15cdbecf677ce4faa/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cf4a5e4b92724faf8631a8e1a07cdf3d4fb46c8415f248d32546533c74874b37/QueryCompiler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/SearchController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Services/SprintManagementService.cs" root0="FORCE_HIGHLIGHTING" />
@@ -416,6 +420,7 @@
       <workItem from="1658544568410" duration="15672000" />
       <workItem from="1658652333816" duration="8631000" />
       <workItem from="1658667340160" duration="12117000" />
+      <workItem from="1658729579134" duration="15718000" />
     </task>
     <servers />
   </component>
@@ -483,7 +488,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>531</line>
+          <line>540</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskManagementService.cs" initialLine="472" />
           <option name="timeStamp" value="35" />
         </line-breakpoint>
@@ -572,28 +577,69 @@
           <option name="timeStamp" value="56" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>17</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="16" containingFunctionPresentation="method 'GetTaskById'" />
-          <option name="timeStamp" value="57" />
+          <url>file://$PROJECT_DIR$/Services/SprintManagementService.cs</url>
+          <line>176</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\SprintManagementService.cs" initialLine="162" containingFunctionPresentation="method 'AddOrUpdateSprintInDb'">
+            <startOffsets>
+              <option value="6071" />
+            </startOffsets>
+            <endOffsets>
+              <option value="6093" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Services/SprintManagementService.cs</url>
+          <line>16</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\SprintManagementService.cs" initialLine="16" containingFunctionPresentation="method 'GetSprintsByProfileId'">
+            <startOffsets>
+              <option value="494" />
+            </startOffsets>
+            <endOffsets>
+              <option value="554" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="66" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>19</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="18" containingFunctionPresentation="method 'GetTaskById'" />
-          <option name="timeStamp" value="58" />
+          <line>215</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\TaskManagementService.cs" initialLine="215" containingFunctionPresentation="method 'LinkTaskToSprint'">
+            <startOffsets>
+              <option value="7801" />
+            </startOffsets>
+            <endOffsets>
+              <option value="7835" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>485</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="459" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
-          <option name="timeStamp" value="59" />
+          <url>file://$PROJECT_DIR$/Services/SprintManagementService.cs</url>
+          <line>313</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\SprintManagementService.cs" initialLine="313" containingFunctionPresentation="method 'ApproveSprint'">
+            <startOffsets>
+              <option value="10689" />
+            </startOffsets>
+            <endOffsets>
+              <option value="10760" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskManagementService.cs</url>
-          <line>490</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="464" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
-          <option name="timeStamp" value="60" />
+          <url>file://$PROJECT_DIR$/Services/SprintReportManagementService.cs</url>
+          <line>104</line>
+          <properties documentPath="C:\Users\Hi\Desktop\flexli-one\erp-webapi-with-unit-testing\erp-webapi\Services\SprintReportManagementService.cs" initialLine="122" containingFunctionPresentation="method 'AddSprintReportLineItem'">
+            <startOffsets>
+              <option value="4087" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4114" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="88" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

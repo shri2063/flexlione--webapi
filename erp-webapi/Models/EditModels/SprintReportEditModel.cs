@@ -12,7 +12,7 @@
         
         public string Description { get; set; }
         
-        public string ResultType { get; set; }
+        public CResultType ResultType { get; set; }
         
         public string Result { get; set; }
         

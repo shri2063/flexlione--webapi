@@ -28,9 +28,67 @@ namespace flexli_erp_webapi.Services
         public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 
-            return CreateOrUpdateCheckListInDb(checkListItemEditModel);
+          
+            // If checklist exist - get Sprint Status from DB
+            var checkList = GetCheckListById(checkListItemEditModel.CheckListItemId);
+            var task = (checkList != null)?TaskManagementService.GetTaskById(checkList.TaskId): null;
+            var sprint = (task != null) ?SprintManagementService.GetSprintById(
+                task.SprintId): null;
             
+            // [check] Checklist can added only if sprint is in planning stage
+            // If checklist does not exist - get Sprint Status from checklist param in function
+            if (checkList == null)
+            {
+                task = (checkListItemEditModel.TaskId != null)?TaskManagementService.GetTaskById(checkListItemEditModel.TaskId)
+                    : throw new KeyNotFoundException("Task Id not mentioned");
+                sprint = (task != null) ?SprintManagementService.GetSprintById(
+                    task.SprintId): throw new KeyNotFoundException("Task does not exist");
+                
+                if (sprint != null)
+                {
+                    if (sprint.Status != SStatus.Planning)
+                    {
+                        throw new KeyNotFoundException("Checklist can added only if sprint is in planning stage");  
+                    } 
+                }
+                
+            }
+            // [check] Checklist params could be modified based upon sprint state
+            var updatedCheckList = ApplySprintStatusBasedCheck(checkListItemEditModel, sprint != null ?sprint.Status: SStatus.Planning);
+           
             
+            updatedCheckList = CreateOrUpdateCheckListInDb(updatedCheckList);
+             
+             //[Action]: Update in Sprint report if Status Approved
+             if (sprint != null ? sprint.Approved: false)
+             {
+                 SprintReportManagementService.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(updatedCheckList));
+             }
+
+             return updatedCheckList;
+        }
+
+        private static CheckListItemEditModel ApplySprintStatusBasedCheck(CheckListItemEditModel checkListItemEditModel, SStatus sprintStatus)
+        {
+            var closureStatus = new List<string> { SStatus.Closed.ToString(), SStatus.RequestForClosure.ToString() };
+            CheckListItemEditModel editCheckList = GetCheckListById(checkListItemEditModel.CheckListItemId);
+            if (! closureStatus.Contains(sprintStatus.ToString()))
+            {
+                editCheckList.UserComment = checkListItemEditModel.UserComment;
+                editCheckList.Status = checkListItemEditModel.Status;
+                editCheckList.Result = checkListItemEditModel.Result;
+            }
+            if (sprintStatus == SStatus.Planning)
+            {
+                editCheckList.Description = checkListItemEditModel.Description;
+                editCheckList.TaskId = checkListItemEditModel.TaskId;
+                editCheckList.WorstCase = checkListItemEditModel.WorstCase;
+                editCheckList.BestCase = checkListItemEditModel.BestCase;
+                editCheckList.ResultType = checkListItemEditModel.ResultType;
+                editCheckList.Essential = checkListItemEditModel.Essential;
+            }
+
+            return editCheckList;
         }
 
         public static void DeleteCheckListItem(string checkListItemId)
@@ -49,14 +107,19 @@ namespace flexli_erp_webapi.Services
                 if (existingCheckList != null)
                 {
                     var sprintId = db.TaskDetail
-                        .Where(x => x.TaskId == existingCheckList.TaskId)
-                        .Select(x => x.SprintId)
-                        .ToString();
+                        .FirstOrDefault(x => x.TaskId == existingCheckList.TaskId)
+                        .SprintId
+                        ;
 
-                    if (SprintManagementService.CheckApproved(sprintId))
+                    // [Check]: Sprint should be in Planning Stage
+                    if (sprintId != null)
                     {
-                        throw new ConstraintException("Checklist cannot be deleted, sprint is already approved");
+                        if (SprintManagementService.CheckStatus(sprintId) != SStatus.Planning)
+                        {
+                            throw new ConstraintException("Checklist cannot be deleted, sprint is already approved");
+                        }  
                     }
+                   
                     
                     db.CheckList.Remove(existingCheckList);
                     db.SaveChanges();
@@ -73,72 +136,36 @@ namespace flexli_erp_webapi.Services
         private static CheckListItemEditModel CreateOrUpdateCheckListInDb(CheckListItemEditModel checkListItemEditModel)
         {
             CheckList checkList;
-            bool newCheckList = false;
-            // [proxy] Using sprint status as planning  in case sprint not associated to the task
-            SStatus status = SStatus.Planning ;
-            
             using (var db = new ErpContext())
             {
 
-                // [check] Task id exists
-                TaskDetail taskDetail = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == checkListItemEditModel.TaskId);
-                if (taskDetail == null)
-                {
-                    throw new KeyNotFoundException("Task id does not exist");
-                }
-                checkList = db.CheckList
+                Boolean newCheckList = false;
+                
+                 checkList = db.CheckList
                     .FirstOrDefault(x => x.CheckListItemId == checkListItemEditModel.CheckListItemId);
 
                 if (checkList == null)
                 {
-                    // [check] new task cannot be added once sprint approved
-                    if(taskDetail.SprintId != null)
-                        status = SprintManagementService.GetSprintById(taskDetail.SprintId)
-                        .Status;
-                    if (status != SStatus.Planning || status != SStatus.RequestForApproval)
-                    {
-                        throw new KeyNotFoundException("New Checklist cannot be added once sprint is approved");
-                    }
                     // [case] creating new checklist
                     checkList = new CheckList();
                     checkList.CheckListItemId = GetNextAvailableId();
                     newCheckList = true;
                 }
-                else
-                {
-                    checkList.CheckListItemId = checkListItemEditModel.CheckListItemId;
-                    
-                    // get Sprint Status
-                    TaskDetail taskDetailIndB = db.TaskDetail
-                        .FirstOrDefault(x => x.TaskId == checkList.TaskId);
-                    status = SprintManagementService.GetSprintById(taskDetailIndB.SprintId)
-                        .Status; 
-                }
-                 
-                    
-                if (status != SStatus.Reviewed)
-                {
-                    checkList.ManagerComment = checkListItemEditModel.ManagerComment;
-                }
-                if (status != SStatus.Closed)
-                {
-                        checkList.UserComment = checkListItemEditModel.UserComment;
-                        checkList.Status = checkListItemEditModel.Status.ToString();
-                        checkList.Result = checkListItemEditModel.Result;
-                }
-                if (status != SStatus.Approved)
-                {
-                        checkList.Description = checkListItemEditModel.Description;
-                        checkList.TaskId = checkListItemEditModel.TaskId;
-                        checkList.WorstCase = checkListItemEditModel.WorstCase;
-                        checkList.BestCase = checkListItemEditModel.BestCase;
-                        checkList.ResultType = checkListItemEditModel.ResultType;
-                        checkList.Essential = checkListItemEditModel.Essential;
-                } 
+
+                checkList.Description = checkListItemEditModel.Description; 
+                checkList.TaskId = checkListItemEditModel.TaskId;
+                checkList.WorstCase = checkListItemEditModel.WorstCase; 
+                checkList.BestCase = checkListItemEditModel.BestCase;
+                checkList.ResultType = checkListItemEditModel.ResultType.ToString();
+                checkList.Essential = checkListItemEditModel.Essential; 
+                checkList.UserComment = checkListItemEditModel.UserComment; 
+                checkList.Status = checkListItemEditModel.Status.ToString(); 
+                checkList.Result = checkListItemEditModel.Result; 
+                checkList.ManagerComment = checkListItemEditModel.ManagerComment;
+                
                
                 
-                if ( newCheckList)
+                if (newCheckList)
                 {
                     db.CheckList.Add(checkList);
                     db.SaveChanges();
@@ -146,14 +173,6 @@ namespace flexli_erp_webapi.Services
                 }
                 else
                 {
-                    if(taskDetail.SprintId != null)
-                        status = SprintManagementService.GetSprintById(taskDetail.SprintId)
-                            .Status;
-                    if (status != SStatus.Planning || status != SStatus.RequestForApproval)
-                    {
-                        SprintReportManagementService.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(checkListItemEditModel));
-                    }
-                    
                     db.SaveChanges();
                 }
             }
@@ -166,11 +185,17 @@ namespace flexli_erp_webapi.Services
         {
             string sprintReportLineItemId =
                 SprintReportManagementService.GetSprintreportLineItemIdForCheckListId(checkListItem.CheckListItemId);
+            if (sprintReportLineItemId == null)
+            {
+                throw new KeyNotFoundException("Sprint report lineitem does not exist for checklist item: " +
+                                               checkListItem.CheckListItemId);
+            }
             SprintReportEditModel sprintReportEditModel = SprintReportManagementService
                 .GetSprintReportItemById(sprintReportLineItemId);
             sprintReportEditModel.ManagerComment = checkListItem.ManagerComment;
             sprintReportEditModel.Result = checkListItem.Result;
             sprintReportEditModel.UserComment = checkListItem.UserComment;
+            sprintReportEditModel.Status = checkListItem.Status;
             return sprintReportEditModel;
         
         }
@@ -225,10 +250,9 @@ namespace flexli_erp_webapi.Services
                     TaskId = existingCheckList.TaskId,
                     Description = existingCheckList.Description,
                     Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
-                    Attachment = existingCheckList.Attachment,
                     WorstCase = existingCheckList.WorstCase,
                     BestCase = existingCheckList.BestCase,
-                    ResultType = existingCheckList.ResultType,
+                    ResultType = (CResultType) Enum.Parse(typeof(CResultType), existingCheckList.ResultType, true),
                     Result = existingCheckList.Result,
                     Essential = existingCheckList.Essential,
                     UserComment = existingCheckList.UserComment,

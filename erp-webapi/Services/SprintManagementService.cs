@@ -28,6 +28,10 @@ namespace flexli_erp_webapi.Services
         public static SprintEditModel GetSprintById(string sprintId, string include = null)
         {
             SprintEditModel sprint =  GetSprintByIdFromDb(sprintId);
+            if (sprint == null)
+            {
+                return null;
+            }
             sprint.Tasks = new List<TaskDetailEditModel>();
             if (include == "task")
             {
@@ -48,7 +52,7 @@ namespace flexli_erp_webapi.Services
 
         private static List<string> GetSprintIdsForProfileId(string profileId, string include = null)
         {
-            List<string> sprintIds;
+            List<string> sprintIds = new List<string>();
             using (var db = new ErpContext())
             {
                 sprintIds = db.Sprint
@@ -62,11 +66,42 @@ namespace flexli_erp_webapi.Services
         }
         
         
+        
         public static SprintEditModel AddOrUpdateSprint(SprintEditModel sprintEditModel)
         {
+            // [Check]: Previous all sprints closed in case of new sprint
+            if (GetSprintById(sprintEditModel.SprintId) == null)
+            {
+                List<SprintEditModel> sprints = GetSprintsByProfileId(sprintEditModel.Owner);
+
+                if (sprints.Count > 0)
+                {
+                    var openSprints = sprints.FindAll(x => (!x.Closed))
+                        .Count;
+                    if (openSprints > 0)
+                    {
+                        throw new ConstraintException("All Previous sprints need to be closed");
+                    }
+                }
+
+            }
+              
+            
+            
+            // [Check]: Sprint is in planning state in case of already created sprint
+
+            if (GetSprintById(sprintEditModel.SprintId) != null)
+            {
+              if(GetSprintById(sprintEditModel.SprintId).Status != SStatus.Planning)
+                  
+                throw new ConstraintException("Sprint  can be updated only in planning stage ");
+            }
+            
             return AddOrUpdateSprintInDb(sprintEditModel);
 
         }
+        
+       
         
         private static SprintEditModel GetSprintByIdFromDb (string sprintId)
         {
@@ -76,11 +111,14 @@ namespace flexli_erp_webapi.Services
                 Sprint existingSprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
                 
-                // Case: TaskDetail does not exist
+                // [Check]: Sprint does not exist
                 if (existingSprint == null)
-                    throw new KeyNotFoundException("Sprint id does not exist: " + sprintId);
+                {
+                    return null;
+                }
+                    
                 
-                // Case: In case you have to update data received from db
+               
 
                 SprintEditModel sprintEditModel = new SprintEditModel()
                 {
@@ -92,7 +130,8 @@ namespace flexli_erp_webapi.Services
                    Score = existingSprint.Score,
                    Status = (SStatus) Enum.Parse(typeof(SStatus), existingSprint.Status, true),
                    Approved = existingSprint.Approved,
-                   Closed = existingSprint.Closed
+                   Closed = existingSprint.Closed,
+                   SprintNo = existingSprint.SprintNo
                 };
 
                 return sprintEditModel;
@@ -112,13 +151,8 @@ namespace flexli_erp_webapi.Services
 
                 if (sprint != null) // update
                 {
-                    if (sprint.Approved)
-                    {
-                        throw new ConstraintException("Sprint is froze, ask approver to close and plan new sprint");
-                    }
-
-                    
                     sprint.Description = sprintEditModel.Description;
+                    sprint.SprintNo = sprintEditModel.SprintNo;
                     sprint.Owner = sprintEditModel.Owner;
                     sprint.FromDate = sprintEditModel.FromDate;
                     sprint.ToDate = sprintEditModel.ToDate;
@@ -130,6 +164,7 @@ namespace flexli_erp_webapi.Services
                     sprint = new Sprint()
                     {
                         SprintId = GetNextAvailableId(),
+                        SprintNo = 0,
                         Description = sprintEditModel.Description,
                         Owner = sprintEditModel.Owner,
                         FromDate = sprintEditModel.FromDate,
@@ -389,10 +424,10 @@ namespace flexli_erp_webapi.Services
             return GetSprintById(sprintId);
         }
         
-        public static string CheckStatus(string sprintId)
+        public static SStatus CheckStatus(string sprintId)
         {
             SprintEditModel sprintEditModel = GetSprintById(sprintId);
-            return sprintEditModel.Status.ToString().ToLower();
+            return sprintEditModel.Status;
         }
 
         public static bool CheckApproved(string sprintId)

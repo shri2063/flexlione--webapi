@@ -208,17 +208,26 @@ namespace flexli_erp_webapi.Services
                 TaskDetail existingTask = db.TaskDetail
                     .FirstOrDefault(x => x.TaskId == taskId);
                 
-                // Case: TaskDetail does not exist
+                //[Check]: Task does not exist
                 if (existingTask == null)
                     throw new KeyNotFoundException("TaskDetail does not exist");
+                
+                // [Check]: Task is not linked to some other sprint
+                if (existingTask.SprintId != null)
+                {
+                    throw new ConstraintException("task already link to sprint" +  existingTask.SprintId);
+                }
 
                 Sprint sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
+                //[Check]: Sprint does not exist
+                if (sprint == null)
+                    throw new KeyNotFoundException("Sprint does not exist");
 
-                // Case: Sprint is approved
-                if (sprint.Approved && !sprint.Closed)
+                // [Check]: Sprint is in planning stage
+                if (sprint.Status != SStatus.Planning.ToString())
                 {
-                    throw new ConstraintException("cannot link task to sprint as sprint is already approved");
+                    throw new ConstraintException("cannot link task to sprint as sprint is not in planning stage");
                 }
 
                 existingTask.SprintId = sprintId;
@@ -395,8 +404,8 @@ namespace flexli_erp_webapi.Services
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
                     task.EditedAt = DateTime.Now;
 
-                    List<string> values = new List<string> { "planning", "requestforapproval", "closed" };
-                    if (values.Contains(SprintManagementService.CheckStatus(task.SprintId)))
+                    var values = new List<string> {SStatus.Planning.ToString(), SStatus.RequestForApproval.ToString(), SStatus.Closed.ToString() };
+                    if (values.Contains(SprintManagementService.CheckStatus(task.SprintId).ToString()))
                     {
                         task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
                     }

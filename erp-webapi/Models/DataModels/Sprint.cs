@@ -35,7 +35,7 @@ namespace flexli_erp_webapi.DataModels
         public bool Closed { get; set; }
         
         [Column("sprint_no")]
-        public double SprintNo { get; set; }
+        public int? SprintNo { get; set; }
        
         
     }

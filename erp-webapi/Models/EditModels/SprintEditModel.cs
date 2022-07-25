@@ -20,13 +20,14 @@ namespace flexli_erp_webapi.EditModels
         
         public SStatus Status { get; set; }
         
-        public double SprintNo { get; set; }
+        public int? SprintNo { get; set; }
 
         public bool Approved { get; set; }
         
         public bool Closed { get; set; }
         
         public List<TaskDetailEditModel> Tasks { get; set; }
+        
         
     }
 }

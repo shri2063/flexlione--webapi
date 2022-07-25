@@ -33,7 +33,7 @@ namespace flexli_erp_webapi.Services
                 TaskId = sprintReport.TaskId,
                 CheckListItemId = sprintReport.CheckListItemId,
                 Description = sprintReport.Description,
-                ResultType = sprintReport.ResultType,
+                ResultType = (CResultType) Enum.Parse(typeof(CResultType), sprintReport.ResultType,true),
                 Result = sprintReport.Result,
                 UserComment = sprintReport.UserComment,
                 ManagerComment = sprintReport.ManagerComment,
@@ -41,7 +41,8 @@ namespace flexli_erp_webapi.Services
                 Status = (CStatus) Enum.Parse(typeof(CStatus), sprintReport.Status, true),
                 WorstCase = sprintReport.WorstCase,
                 BestCase = sprintReport.BestCase,
-                Score = sprintReport.Score
+                Score = sprintReport.Score,
+                SprintId = sprintReport.SprintId
             };
 
             return sprintReportEditModel;
@@ -52,39 +53,21 @@ namespace flexli_erp_webapi.Services
             SprintReport sprintReport;
             using (var db = new ErpContext())
             {
-                var userId = db.Sprint
-                    .Where(x => x.SprintId == sprintReportEditModel.SprintId)
-                    .Select(x => x.Owner)
-                    .ToString();
 
                 sprintReport = db.SprintReport
                     .FirstOrDefault(x => x.SprintId == sprintReportEditModel.SprintId && x.CheckListItemId == sprintReportEditModel.CheckListItemId);
 
                 switch (SprintManagementService.CheckStatus(sprintReportEditModel.SprintId))
                 {
-                    case "approved":
+                    case SStatus.Approved:
                         sprintReport.Result = sprintReportEditModel.Result;
                         sprintReport.UserComment = sprintReportEditModel.UserComment;
-                        sprintReport.ManagerComment = sprintReportEditModel.ManagerComment;
-                        sprintReport.Approved = sprintReportEditModel.Approved;
-
-                        db.SaveChanges();
-                        break;
-                    
-                    case "requestforclosure":
-                        sprintReport.Result = sprintReportEditModel.Result;
-                        sprintReport.UserComment = sprintReportEditModel.UserComment;
-                        sprintReport.ManagerComment = sprintReportEditModel.ManagerComment;
-
-                        db.SaveChanges();
-                        break;
-                    
-                    case "closed":
-                        sprintReport.ManagerComment = sprintReportEditModel.ManagerComment;
+                        sprintReport.Status = sprintReportEditModel.Status.ToString();
 
                         db.SaveChanges();
                         break;
                 }
+
             }
 
             return GetSprintReportItemById(sprintReport.SprintReportLineItemId);
@@ -133,7 +116,7 @@ namespace flexli_erp_webapi.Services
                             TaskId = task,
                             CheckListItemId = checkListItem.CheckListItemId,
                             Description = checkListItem.Description,
-                            ResultType = checkListItem.ResultType,
+                            ResultType = checkListItem.ResultType.ToString(),
                             UserComment = checkListItem.UserComment,
                             Approved = "no action",
                             Status = CStatus.NotCompleted.ToString(),
@@ -253,8 +236,15 @@ namespace flexli_erp_webapi.Services
         {
             using (var db = new ErpContext())
             {
-                return db.SprintReport.Where(x => x.CheckListItemId == checkListItemId)
-                    .Select(x => x.SprintReportLineItemId).ToString();
+                var sprintReport = db.SprintReport
+                    .FirstOrDefault(x => x.CheckListItemId == checkListItemId);
+
+                if (sprintReport == null)
+                {
+                    return null;
+                }
+
+                return sprintReport.SprintReportLineItemId;
             }
         }
     }
