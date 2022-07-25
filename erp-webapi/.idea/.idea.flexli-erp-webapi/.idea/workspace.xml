@@ -35,14 +35,15 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_23-07-2022_18_50__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_23-07-2022_18_50__Default_Changelist_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/CheckList.cs" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/DataModels/Sprint.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintEditModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/EditModels/SprintReportEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/SprintReportEditModel.cs" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/EditModels/CheckListItemEditModel.cs" afterDir="false" />
+>>>>>>> origin/Sprint_Module
       <change beforePath="$PROJECT_DIR$/Services/CheckListManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/CheckListManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/SprintManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SprintManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/SprintReportManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/SprintReportManagementService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/TaskManagementService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/TaskManagementService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -420,7 +421,11 @@
       <workItem from="1658544568410" duration="15672000" />
       <workItem from="1658652333816" duration="8631000" />
       <workItem from="1658667340160" duration="12117000" />
+<<<<<<< HEAD
       <workItem from="1658729579134" duration="15718000" />
+=======
+      <workItem from="1658740790841" duration="528000" />
+>>>>>>> origin/Sprint_Module
     </task>
     <servers />
   </component>
