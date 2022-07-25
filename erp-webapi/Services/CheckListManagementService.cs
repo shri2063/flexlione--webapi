@@ -225,7 +225,6 @@ namespace flexli_erp_webapi.Services
                     TaskId = existingCheckList.TaskId,
                     Description = existingCheckList.Description,
                     Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
-                    Attachment = existingCheckList.Attachment,
                     WorstCase = existingCheckList.WorstCase,
                     BestCase = existingCheckList.BestCase,
                     ResultType = existingCheckList.ResultType,

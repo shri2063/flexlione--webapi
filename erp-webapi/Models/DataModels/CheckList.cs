@@ -20,9 +20,6 @@ namespace flexli_erp_webapi.DataModels
         [Column("status")]
         public string Status { get; set; }
         
-        [Column("attachment")]
-        public string Attachment { get; set; }
-        
         [Column("worst_case")]
         public int? WorstCase { get; set; }
         
