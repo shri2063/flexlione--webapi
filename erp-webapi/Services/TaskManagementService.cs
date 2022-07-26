@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using flexli_erp_webapi.BsonModels;
@@ -56,6 +57,21 @@ namespace flexli_erp_webapi.Services
 
         }
 
+        public static List<string> GetTaskIdsForSprint(string sprintId)
+        {
+            List<string> taskIds;
+            using (var db = new ErpContext())
+            {
+
+                taskIds = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(y => y.TaskId)
+                    .ToList();
+            }
+
+            return taskIds;
+        }
+        
        
         public  static TaskDetailEditModel CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel)
         {
@@ -150,6 +166,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
+       
         public static void DeleteTask(string taskId)
         {
             using (var db = new ErpContext())
@@ -215,9 +232,27 @@ namespace flexli_erp_webapi.Services
                 TaskDetail existingTask = db.TaskDetail
                     .FirstOrDefault(x => x.TaskId == taskId);
                 
-                // Case: TaskDetail does not exist
+                //[Check]: Task does not exist
                 if (existingTask == null)
                     throw new KeyNotFoundException("TaskDetail does not exist");
+                
+                // [Check]: Task is not linked to some other sprint
+                if (existingTask.SprintId != null)
+                {
+                    throw new ConstraintException("task already link to sprint" +  existingTask.SprintId);
+                }
+
+                Sprint sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == sprintId);
+                //[Check]: Sprint does not exist
+                if (sprint == null)
+                    throw new KeyNotFoundException("Sprint does not exist");
+
+                // [Check]: Sprint is in planning stage
+                if (sprint.Status != SStatus.Planning.ToString())
+                {
+                    throw new ConstraintException("cannot link task to sprint as sprint is not in planning stage");
+                }
 
                 existingTask.SprintId = sprintId;
                 db.SaveChanges();
@@ -246,6 +281,15 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new KeyNotFoundException("Cannot remove task from sprint, it is " +
                                                    "already scheduled  ");
+                }
+
+                Sprint sprint = db.Sprint
+                    .FirstOrDefault(x => x.SprintId == existingTask.SprintId);
+                
+                // Case: Sprint is already approved
+                if (sprint.Approved && !sprint.Closed)
+                {
+                    throw new ConstraintException("cannot delete the task as sprint is already approved");
                 }
                 
                 existingTask.SprintId = null;
@@ -367,7 +411,6 @@ namespace flexli_erp_webapi.Services
                 task = db.TaskDetail
                     .FirstOrDefault(x => x.TaskId == taskDetailEditModel.TaskId);
 
-
                 if (task != null) // update
                 {
 
@@ -382,24 +425,32 @@ namespace flexli_erp_webapi.Services
                     task.Description = taskDetailEditModel.Description;
                     task.AssignedTo = taskDetailEditModel.AssignedTo.ToLower();
                     task.Deadline = taskDetailEditModel.Deadline;
-                    task.Score = taskDetailEditModel.Score;
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
+                    task.EditedAt = DateTime.Now;
+
+                   //[Action] If Sprint status = planning or Sprint not allocated then you can change acceptance criteria
+                    if (task.SprintId != null? task.Status == SStatus.Planning.ToString(): true  )
+                    {
+                        task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
+                    }
 
                     db.SaveChanges();
                 }
                 else
                 {
+                    var dateTime = DateTime.Now;
                     task = new TaskDetail
                     {
                         TaskId = GetNextAvailableId(),
                         ParentTaskId = taskDetailEditModel.ParentTaskId,
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = dateTime,
                         CreatedBy = taskDetailEditModel.CreatedBy,
                         Status = taskDetailEditModel.Status.ToString().ToLower(),
                         Description = taskDetailEditModel.Description,
                         AssignedTo = taskDetailEditModel.AssignedTo,
                         Deadline = taskDetailEditModel.Deadline,
-                        Score = taskDetailEditModel.Score,
+                        Score = 0,
+                        EditedAt = dateTime,
                         ExpectedHours = taskDetailEditModel.ExpectedHours,
                         IsRemoved = false
                         
@@ -488,14 +539,16 @@ namespace flexli_erp_webapi.Services
                     Deadline = existingTask.Deadline,
                     CreatedBy = existingTask.CreatedBy,
                     AssignedTo = existingTask.AssignedTo,
-                    Score = existingTask.Score,
                     Status =  (EStatus) Enum.Parse(typeof(EStatus), existingTask.Status, true),
                     Description = existingTask.Description,
                     PositionAfter = existingTask.PositionAfter,
                     Rank = existingTask.Rank,
                     SprintId = existingTask.SprintId,
                     IsRemoved = existingTask.IsRemoved,
-                    ExpectedHours = existingTask.ExpectedHours
+                    ExpectedHours = existingTask.ExpectedHours,
+                    Score = existingTask.Score,
+                    AcceptanceCriteria = existingTask.AcceptanceCriteria,
+                    EditedAt = existingTask.EditedAt
                 };
 
                 return taskDetailEditModel;
@@ -533,6 +586,67 @@ namespace flexli_erp_webapi.Services
             }
 
             return positionedTask;
+        }
+
+        public static void UpdateProvisionalTaskScore(string sprintId)
+        {
+            List<TaskDetail> tasks;
+
+            using (var db = new ErpContext())
+            {
+                tasks = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .ToList();
+                
+                tasks.ForEach(task =>
+                {
+                    List<CheckListItemEditModel>
+                        checkListItems = CheckListManagementService.GetCheckList(task.TaskId);
+                    
+                    int complete = 0;
+                    int completeEssential = 0;
+                    int essential = 0;
+                    
+                    checkListItems.ForEach(checkListItem =>
+                    {
+                        if (checkListItem.Essential)
+                            essential++;
+
+                        if (checkListItem.Essential && checkListItem.Status == CStatus.Completed)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+                        
+                        else if (checkListItem.Status == CStatus.Completed)
+                        {
+                            complete++;
+                        }
+
+                    });
+                    
+                    if (completeEssential < essential)
+                        task.Score = 0;
+
+                    else if (complete > task.AcceptanceCriteria)
+                        task.Score = Convert.ToInt32(task.ExpectedHours / 3);
+
+                    db.SaveChanges();
+
+                });
+            }
+        }
+
+        public static void UpdateEditedAt(string taskId)
+        {
+            using (var db = new ErpContext())
+            {
+                TaskDetail taskDetail = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
+                
+                taskDetail.EditedAt = DateTime.Now;
+                db.SaveChanges();
+            }
         }
     }
 }

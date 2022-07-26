@@ -14,10 +14,10 @@ namespace flexli_erp_webapi.Services
         {
             TaskHierarchyEditModel taskHierarchy = GetTaskHierarchyByIdFromDb(taskId);
             taskHierarchy.TotalHoursSpent = TaskSummaryManagementService
-                .GetAllTaskSummaryByTaskId(taskId,"allChildren")
+                .GetAllTaskSummaryByTaskId(taskId,null, null, "allChildren")
                 .Sum(x => x.ActualHour);
             taskHierarchy.TotalEstimatedHours = TaskSummaryManagementService
-                .GetAllTaskSummaryByTaskId(taskId,"allChildren")
+                .GetAllTaskSummaryByTaskId(taskId,null, null,"allChildren")
                 .Sum(x => x.ExpectedHour);
 
             if (include == null)
@@ -83,7 +83,7 @@ namespace flexli_erp_webapi.Services
 
             }
         }
-        private static TaskHierarchyEditModel GetTaskHierarchyByIdFromDb (string taskId)
+        public static TaskHierarchyEditModel GetTaskHierarchyByIdFromDb (string taskId)
         {
             using (var db = new ErpContext())
             {
@@ -111,7 +111,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        private static List<string> GetUpStreamTaskIdsForTaskId(string taskId)
+        public static List<string> GetUpStreamTaskIdsForTaskId(string taskId)
         {
             List<string> taskIds = new List<string>();
             taskIds.Add(taskId);

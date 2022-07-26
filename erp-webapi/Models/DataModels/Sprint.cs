@@ -23,14 +23,19 @@ namespace flexli_erp_webapi.DataModels
         public DateTime ToDate { get; set; }
         
         [Column("score")]
-        public int Score { get; set; }
+        public int? Score { get; set; }
+
+        [Column("status")]
+        public string Status { get; set; }
         
-        [Column("deliverable")]
-        public string Deliverable { get; set; }
+        [Column("approved")]
+        public bool Approved { get; set; }
         
-        [Column("delivered")]
-        public string Delivered { get; set; }
+        [Column("closed")]
+        public bool Closed { get; set; }
         
+        [Column("sprint_no")]
+        public int? SprintNo { get; set; }
        
         
     }

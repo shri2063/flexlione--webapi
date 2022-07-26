@@ -16,8 +16,12 @@ namespace flexli_erp_webapi
         
         public DbSet<Profile> Profile { get; set; }
         
+        public DbSet<ProfileManager> ProfileManager { get; set; }
+
         public DbSet<Sprint> Sprint { get; set; }
         
+        public DbSet<SprintReport> SprintReport { get; set; }
+
         public DbSet<TaskSchedule> TaskSchedule { get; set; }
         
         public DbSet<TaskSummary> TaskSummary { get; set; }

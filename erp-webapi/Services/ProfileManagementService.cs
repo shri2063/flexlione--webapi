@@ -128,7 +128,7 @@ namespace flexli_erp_webapi.Services
                 {
                     profile = new Profile()
                     {
-                        ProfileId = GetNextAvailableId(),
+                        ProfileId = GetNextAvailableId("profile"),
                         Name = profileEditModel.Name.ToLower(),
                         Type = profileEditModel.Type,
                         EmailId = profileEditModel.EmailId,
@@ -142,17 +142,29 @@ namespace flexli_erp_webapi.Services
             return GetProfileById(profile.ProfileId);
         }
 
-        private static string GetNextAvailableId()
+        private static string GetNextAvailableId(string type)
         {
+            int a = 0;
             using (var db = new ErpContext())
             {
-                var a = db.Profile
-                    .Select(x => Convert.ToInt32(x.ProfileId))
-                    .DefaultIfEmpty(0)
-                    .Max();
+                if (type == "profile")
+                {
+                    a = db.Profile
+                        .Select(x => Convert.ToInt32(x.ProfileId))
+                        .DefaultIfEmpty(0)
+                        .Max();
+                }
+                
+                // next id for profile
+                else if (type == "manager")
+                {
+                    a = db.ProfileManager
+                        .Select(x => Convert.ToInt32(x.Id))
+                        .DefaultIfEmpty(0)
+                        .Max();
+                }
                 return Convert.ToString(a + 1);
             }
-          
         }
         
         public static void DeleteProfile(string profileId)
@@ -171,6 +183,79 @@ namespace flexli_erp_webapi.Services
                 }
 
 
+            }
+        }
+
+        public static ProfileManagerEditModel AddManager(string userId, string managerId)
+        {
+            // add manager
+            ProfileManager profileManager;
+
+            using (var db = new ErpContext())
+            {
+                // check if combination doesn't exists then add
+                if (!db.ProfileManager.Any(x => x.UserId == userId && x.ManagerId == managerId))
+                {
+                    profileManager = new ProfileManager()
+                    {
+                        Id = GetNextAvailableId("manager"),
+                        UserId = userId,
+                        ManagerId = managerId
+                    };
+
+                    db.ProfileManager.Add(profileManager);
+                    db.SaveChanges();
+                }
+            }
+            return GetManagerForUser(userId, managerId);
+        }
+        
+        public static void DeleteManager(string userId, string managerId)
+        {
+            using (var db = new ErpContext())
+            {
+                // Get Selected Manager
+                ProfileManager existingProfileManager = db.ProfileManager
+                    .FirstOrDefault(x => x.UserId == userId && x.ManagerId==managerId);
+                
+                if (existingProfileManager != null)
+                {
+                    
+                    db.ProfileManager.Remove(existingProfileManager);
+                    db.SaveChanges();
+                }
+
+            }
+        }
+
+        private static ProfileManagerEditModel GetManagerForUser(string userId, string managerId)
+        {
+            ProfileManagerEditModel profileManagerEditModel = new ProfileManagerEditModel()
+            {
+                UserId = userId,
+                ManagerId = managerId
+            };
+
+            return profileManagerEditModel;
+        }
+        
+        // CS1591.cs  
+        // compile with: /W:4 /doc:x.xml  
+  
+        /// Needed to approve Sprint
+        public static bool CheckManagerValidity(string userId, string managerId)
+        {
+            using (var db = new ErpContext())
+            {
+                List<string> managers = db.ProfileManager
+                    .Where(x => x.UserId == userId)
+                    .Select(x => x.ManagerId)
+                    .ToList();
+
+                if (managers.Contains(managerId))
+                    return true;
+
+                return false;
             }
         }
     }

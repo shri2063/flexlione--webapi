@@ -17,7 +17,7 @@ namespace flexli_erp_webapi.Repository
        
         private readonly ITagContext _tagContext;
         
-        public TagTaskListRepository (ITagContext tagContext, ITagRepository tagRepository)
+        public TagTaskListRepository (ITagContext tagContext)
         {
             _tagContext = tagContext ?? throw new ArgumentNullException(nameof(tagContext));
         }

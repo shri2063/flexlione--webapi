@@ -30,7 +30,7 @@ namespace flexli_erp_webapi.Controller
 
         public List<TaskScheduleEditModel> GetTaskScheduleForProfileId(string profileId, int month, int year)
         {
-            return TaskScheduleManagementService.GetAllTaskScheduleByProfileId(profileId, month, year);
+            return TaskScheduleManagementService.GetAllTaskScheduleByProfileIdAndMonth(profileId, month, year);
         }
         
        

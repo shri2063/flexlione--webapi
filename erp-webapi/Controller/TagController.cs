@@ -66,7 +66,10 @@ namespace flexli_erp_webapi.Controller
         {
             return _tagTaskListRepository.GetTagTaskListForTag(search, tagType);
         }
-        
+        /// <summary>
+        /// tagType values ("SearchType", "HashType")
+        /// </summary>
+        /// <returns></returns>
         [HttpPut("AddTag")]
         [Consumes("application/json")]
 
