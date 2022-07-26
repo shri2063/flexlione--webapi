@@ -312,5 +312,40 @@ namespace flexli_erp_webapi.Services
                 return sprintReport.SprintReportLineItemId;
             }
         }
+
+        public static void UpdateProvisionalScoreInSprintReport(string sprintId)
+        {
+            List<SprintReport> sprintReports;
+            using (var db = new ErpContext())
+            {
+                sprintReports = db.SprintReport
+                    .Where(x => x.SprintId == sprintId)
+                    .ToList();
+                
+                sprintReports.ForEach(sprintReport =>
+                {
+                    if (sprintReport.Status == CStatus.Completed.ToString())
+                    {
+                        if(sprintReport.ResultType==CResultType.Numeric.ToString() && Convert.ToInt32(sprintReport.Result)>=sprintReport.WorstCase && Convert.ToInt32(sprintReport.Result) <= sprintReport.BestCase)
+                        {
+                            sprintReport.Score = 1;
+                            db.SaveChanges();
+                        }
+
+                        if (sprintReport.ResultType == CResultType.Boolean.ToString() && sprintReport.Result == "true")
+                        {
+                            sprintReport.Score = 1;
+                            db.SaveChanges();
+                        }
+
+                        if (sprintReport.ResultType == CResultType.File.ToString() && sprintReport.Result != null)
+                        {
+                            sprintReport.Score = 1;
+                            db.SaveChanges();
+                        }
+                    }
+                });
+            }
+        }
     }
 }
