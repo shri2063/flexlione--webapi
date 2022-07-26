@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace flexli_erp_webapi.EditModels
 {
+
+    public enum SStatus { Planning, RequestForApproval, Approved, RequestForClosure, Closed, Reviewed };
+
     public class SprintEditModel
     {
         public string SprintId { get; set; }
@@ -15,13 +18,20 @@ namespace flexli_erp_webapi.EditModels
         
         public DateTime ToDate { get; set; }
         
-        public int Score { get; set; }
+        public int? Score { get; set; }
         
-        public string Deliverable { get; set; }
+        public SStatus Status { get; set; }
         
-        public string Delivered { get; set; }
+        public int? SprintNo { get; set; }
+
+        public bool Approved { get; set; }
         
-        public List<TaskDetailEditModel> Tasks { get; set; }
+        public bool Closed { get; set; }
+        
+        public List<TaskDetailEditModel> PlannedTasks { get; set; }
+        
+        public List<TaskDetailEditModel> UnPlannedTasks { get; set; }
+        
         
     }
 }

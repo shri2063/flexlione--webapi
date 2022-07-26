@@ -31,6 +31,10 @@ namespace flexli_erp_webapi.EditModels
         
         public int? Score { get; set; }
         
+        public int? AcceptanceCriteria { get; set; }
+
+        public DateTime? EditedAt { get; set; }
+        
         public int? Rank { get; set; }
 
         public bool? IsRemoved { get; set; } = false;

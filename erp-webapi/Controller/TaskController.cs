@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.LinkedListModel;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.DataModels;
 using Microsoft.AspNetCore.Mvc;
 using flexli_erp_webapi.Models;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Cors;
 
 
@@ -19,10 +23,20 @@ namespace flexli_erp_webapi.Controller
     
     public class TaskController : ControllerBase
     {
+       
+        
+        private readonly ITagRepository _tagRepository;
+        private readonly ITagTaskListRepository _tagTaskListRepository;
+       
+        public TaskController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository)
+        {
+            _tagRepository = tagRepository;
+            _tagTaskListRepository = tagTaskListRepository;
+        }
         
         [HttpGet("GetTaskById")]
         [Consumes("application/json")]
-        
+
         public ActionResult<TaskDetailEditModel> GetTaskById([FromQuery] string taskId,string include = null)
         {
             return TaskManagementService.GetTaskById(taskId,include);
@@ -38,27 +52,41 @@ namespace flexli_erp_webapi.Controller
         
         /// <summary>
         /// Create or update tasks
-        /// Note that if you are creating new taskDetail - what taskDetail Id you mention does not matter
+        /// Note that if you are creating new taskDetail - what  Id you mention does not matter
         /// It will assign serially
         /// position after you can keep empty ("")
         /// </summary>
         [HttpPut("CreateOrUpdateTask")]
         [Consumes("application/json")]
         
-        public ActionResult<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
+
+        public async Task<ActionResult<TaskDetailEditModel>> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
+
         {
-            return TaskManagementService.CreateOrUpdateTask(taskDetail);
-        }
-        
-        [HttpPut("GetLinkedList")]
+             TaskDetailEditModel createdTask = TaskManagementService.CreateOrUpdateTask(taskDetail);
+            // [Action] : Add created task in search tags with common keywords. 
+           /*
+            IEnumerable<Tag> tagList = await _tagRepository.GetSearchTagList(ETagType.SearchTag);
+            // running on separate thread
+            await Task.Run(() =>
+            {
+                _tagTaskListRepository.ParseTaskDescriptionForSearchTags(taskDetail.Description, createdTask.TaskId, tagList);
+            });
+            */
+            
+            return createdTask; }
+        /// <summary>
+        /// Create or update tasks
+        /// [Check] Task not linked to another sprint
+        /// </summary>
+        [HttpPut("LinkTaskToSprint")]
         [Consumes("application/json")]
         
-        public LinkedChildTaskHead GetLinkedList(string taskId = null)
+        public TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
         {
-            List<TaskDetailEditModel> taskList = TaskManagementService.GetTaskById(taskId, "children").Children;
-            return LinkedListService.CreateLinkedList(taskList);
+            return TaskManagementService.LinkTaskToSprint(taskId, sprintId);
         }
-
+        
         
         [HttpDelete("DeleteTask")]
         [Consumes("application/json")]
@@ -78,21 +106,22 @@ namespace flexli_erp_webapi.Controller
             TaskManagementService.RemoveTask(taskId);
             return Ok();
         }
-        
-        [HttpPut("LinkTaskToSprint")]
-        [Consumes("application/json")]
-        
-        public TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
-        {
-            return TaskManagementService.LinkTaskToSprint(taskId, sprintId);
-        }
-        
+
         [HttpPut("RemoveTaskFromSprint")]
         [Consumes("application/json")]
         
         public TaskDetailEditModel RemoveTaskToSprint(string taskId)
         {
             return TaskManagementService.RemoveTaskFromSprint(taskId);
+        }
+
+        [HttpPost("UpdateActualScoreOfTask")]
+        [Consumes("application/json")]
+
+        public TaskDetailEditModel UpdateActualScoreOfTask(string taskId, string include, int actualScore)
+        {
+            // return TaskManagementService.UpdateActualScoreOfTask(taskId, include, actualScore);
+            return null;
         }
     }
 }

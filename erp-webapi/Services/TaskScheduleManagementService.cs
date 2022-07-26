@@ -39,18 +39,20 @@ namespace flexli_erp_webapi.Services
         }
 
 
-        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileId(string profileId, int month, int year,
-            string include = null)
+        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndMonth(string profileId, int month,int year, string include = null)
         {
-            List<string> taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId, month, year);
+            List<string> taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId,month,year);
             List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
-            taskScheduleIds.ForEach(x => { taskScheduleList.Add(GetTaskScheduleById(x)); });
-
+            taskScheduleIds.ForEach(x =>
+            {
+                taskScheduleList.Add(GetTaskScheduleById(x));
+            });
+            
             taskScheduleList.ForEach(x =>
             {
-
+                
                 {
-                    TaskSummaryEditModel taskSummary = TaskSummaryManagementService.GetTaskSummaryById(x.TaskSummaryId);
+                    TaskSummaryEditModel taskSummary =  TaskSummaryManagementService.GetTaskSummaryById(x.TaskSummaryId);
                     if (taskSummary != null)
                     {
                         x.TaskSummary = new TaskShortSummaryEditModel()
@@ -58,13 +60,31 @@ namespace flexli_erp_webapi.Services
                             TaskSummaryId = taskSummary.TaskSummaryId,
                             TaskId = taskSummary.TaskId,
                             ActualOutput = taskSummary.ActualOutput
-                        };
+                        }; 
                     }
                 }
             });
-
+            
             return taskScheduleList;
 
+        }
+
+        
+        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndDateRange(string profileId,DateTime fromDate, DateTime toDate )
+        {
+            List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
+            using (var db = new ErpContext())
+            {
+               List<TaskSchedule> taskSchedules = db.TaskSchedule
+                    .Where(x => x.Owner == profileId && 
+                                x.Date >= fromDate && x.Date <= toDate)
+                    .ToList();
+               
+               taskSchedules.ForEach(x => taskScheduleList
+                   .Add(GetTaskScheduleById(x.TaskScheduleId)));
+            }
+
+            return taskScheduleList;
         }
         
         private static List<string> GetTaskScheduleIdsForProfileId(string profileId, int month, int year)
@@ -165,6 +185,8 @@ namespace flexli_erp_webapi.Services
                     };
                     db.TaskSchedule.Add(taskSchedule);
                     db.SaveChanges();
+                    // [Action]: Updated edited time of Task Module
+                    TaskManagementService.UpdateEditedAt(taskSchedule.TaskId);
                 }
             }
 

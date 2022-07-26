@@ -6,12 +6,21 @@ using System.Threading.Tasks;
 using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
 
 namespace flexli_erp_webapi.Services
 {
     public class SearchManagementService
     {
-        public static List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery)
+        private readonly ITagTaskListRepository _tagTaskListRepository;
+        
+        public SearchManagementService(ITagTaskListRepository tagTaskListRepository)
+        {
+            _tagTaskListRepository = tagTaskListRepository;
+        }
+        
+        public  List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery)
         {
 
             List<TaskDetailEditModel> taskList = new List<TaskDetailEditModel>();
@@ -47,10 +56,13 @@ namespace flexli_erp_webapi.Services
             };
         }
 
-        private static List<TaskSearchView> SearchByTag(SearchQueryEditModel searchQuery)
+        private  List<TaskSearchView> SearchByTag(SearchQueryEditModel searchQuery)
         {
-            List<TaskSearchView> searchTaskList = TagManagementService
-                .GetSearchTagResult("description", searchQuery.Tag)
+            // [Assumption] Treating Synchronously assuming that awaiting TaskList for tag will not take long 
+            List<TaskSearchView> searchTaskList = _tagTaskListRepository
+                .GetTagTaskListForTag(searchQuery.Tag, ETagType.SearchTag)
+                .GetAwaiter()
+                .GetResult()
                 .Tasks
                 .ToList();
             
@@ -89,7 +101,7 @@ namespace flexli_erp_webapi.Services
             {
                 
                     searchTaskList = searchTaskList.Where(y =>
-                        searchQuery.CreatedBy.Contains(y.Status))
+                        searchQuery.Status.Contains(y.Status))
                         .ToList();
                
             }

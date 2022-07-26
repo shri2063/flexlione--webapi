@@ -56,19 +56,18 @@ namespace flexli_erp_webapi.Services
 
         }
         
-        public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, string include = null)
+        public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate = null, DateTime? toDate = null, string include = null)
         {
             List<string> taskSummaryIds =  GetTaskSummaryIdsForTaskId(taskId);
               
             List<TaskSummaryEditModel> taskSummaryList = new List<TaskSummaryEditModel>();
-            taskSummaryIds.ForEach(x =>
-            {
-                taskSummaryList.Add(GetTaskSummaryById(x));
-            });
+            taskSummaryList = GetFilteredTaskSummaryById(taskSummaryIds, fromDate, toDate);
+
             if (include == null)
             {
                 return taskSummaryList;
             }
+            List<TaskSummaryEditModel> childTaskSummaryList = new List<TaskSummaryEditModel>();
             if (include.Contains("allChildren"))
             {
                 List<string> childTaskIds = TaskHierarchyManagementService
@@ -77,13 +76,11 @@ namespace flexli_erp_webapi.Services
                 List<string> childTaskSummaryIds = new List<string>();
                 childTaskIds.ForEach(x => childTaskSummaryIds
                     .AddRange(GetTaskSummaryIdsForTaskId(x)));
-                childTaskSummaryIds.ForEach(x =>
-                {
-                    taskSummaryList.Add(GetTaskSummaryById(x));
-                });
-                
+
+                childTaskSummaryList = GetFilteredTaskSummaryById(childTaskSummaryIds, fromDate, toDate);
+
             }
-            return taskSummaryList;
+            return taskSummaryList.Concat(childTaskSummaryList).ToList();
 
         }
         
@@ -199,7 +196,8 @@ namespace flexli_erp_webapi.Services
                     db.SaveChanges();
                 }
             }
-
+            // [Action]: Updated edited time of Task Module
+            TaskManagementService.UpdateEditedAt(taskSummary.TaskId);
             return GetTaskSummaryById(taskSummary.TaskSummaryId);
         }
         
@@ -338,5 +336,45 @@ namespace flexli_erp_webapi.Services
 
         }
 
+        private static List<TaskSummaryEditModel> GetFilteredTaskSummaryById(List<string> taskSummaryIds, DateTime? fromDate = null, DateTime? toDate = null)
+        {
+            List<TaskSummaryEditModel> taskSummaryList = new List<TaskSummaryEditModel>();
+            
+            taskSummaryIds.ForEach(x =>
+            {
+                if (fromDate == null && toDate == null)
+                {
+                    taskSummaryList.Add(GetTaskSummaryById(x));
+                }
+                else if (fromDate == null)
+                {
+                    TaskSummaryEditModel taskSummaryEditModel = GetTaskSummaryById(x);
+                    if (taskSummaryEditModel.Date <= toDate)
+                    {
+                        taskSummaryList.Add(taskSummaryEditModel);
+                    }
+                }
+                
+                else if (toDate == null)
+                {
+                    TaskSummaryEditModel taskSummaryEditModel = GetTaskSummaryById(x);
+                    if (taskSummaryEditModel.Date >= fromDate)
+                    {
+                        taskSummaryList.Add(taskSummaryEditModel);
+                    }
+                }
+
+                else
+                {
+                    TaskSummaryEditModel taskSummaryEditModel = GetTaskSummaryById(x);
+                    if (taskSummaryEditModel.Date >= fromDate && taskSummaryEditModel.Date <= toDate)
+                    {
+                        taskSummaryList.Add(taskSummaryEditModel);
+                    }
+                }
+            });
+
+            return taskSummaryList;
+        } 
     }
 }
