@@ -203,6 +203,7 @@ namespace flexli_erp_webapi.Services
                 Sprint existingSprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
                 
+               // [Check]: Sprint is in planning state 
                 if (existingSprint != null)
                 {
                     if (existingSprint.Status != SStatus.Planning.ToString())
@@ -362,6 +363,9 @@ namespace flexli_erp_webapi.Services
 
                 sprint.Status = SStatus.Closed.ToString();
                 sprint.Closed = true;
+                
+                // [Check]: If closed early then Sprint closing date needs to be updated
+                sprint.ToDate = DateTime.Today;
                 
                 // Provisional score of task
                 // TaskManagementService.UpdateProvisionalTaskScore(sprintId);

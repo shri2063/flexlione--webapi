@@ -15,20 +15,38 @@ namespace flexli_erp_webapi.Controller
     
     public class SprintReportController : ControllerBase
     {
+        /// <summary>
+        /// [R]Use to fetch Sprint report for a sprint
+        /// [Note]: Sprint No value is not  correct
+        /// </summary>
+        /// <returns></returns>
+        
         [HttpGet("GetSprintReportById")]
         [Consumes("application/json")]
         
-        public SprintReportEditModel GetSprintReportItemById(string sprintReportLineItemId)
+       
+        public List<SprintReportEditModel> GetSprintReportForSprint(string sprintId)
         {
-            return SprintReportManagementService.GetSprintReportItemById(sprintReportLineItemId);
+            return SprintReportManagementService.GetSprintReportForSprint(sprintId);
         }
+
+
+        /// <summary>
+        /// [R]Used For Updating Manager's comments and Approval
+        /// Sprint status should not be closed
+        /// validate approver id
+        ///  sprintReportLineItemId, Manager_comment (editable),Approved(editable)
+        /// Approved values ("no action", "true", "false")
+        /// </summary>
+        /// <returns></returns>
         
-        [HttpPut("ApproveSprintReportLineItem")]
+        [HttpPost("reviewCheckList")]
         [Consumes("application/json")]
         
-        public void ApproveSprintReportLineItem(string sprintId)
+        public ActionResult<CheckListItemEditModel> ReviewCheckList(SprintReportEditModel sprintReportEditModel, string approverId)
         {
-            SprintReportManagementService.ApproveSprintReportLineItems(sprintId);
+           
+            return Ok( SprintReportManagementService.ReviewCheckList(sprintReportEditModel, approverId));
         }
     }
 }

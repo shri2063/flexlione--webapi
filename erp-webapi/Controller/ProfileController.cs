@@ -21,10 +21,8 @@ namespace flexli_erp_webapi.Controller
     {
 
         /// <summary>
-        /// Read a Wave.Can Include 'orderList' and 'ptlStations'.
+        /// [R] Get Any profile by Id
         /// </summary>
-        /// <param name="profileId"></param>
-        /// <param name="include"></param>
         /// <returns></returns>
         [HttpGet("GetProfileById")]
         [Consumes("application/json")]
@@ -34,7 +32,10 @@ namespace flexli_erp_webapi.Controller
             return ProfileManagementService.GetProfileById(profileId,include);
         }
         
-        
+        /// <summary>
+        /// [R] Authenticate Profile
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("AuthenticateProfile")]
         [Consumes("application/json")]
 
@@ -42,7 +43,10 @@ namespace flexli_erp_webapi.Controller
         {
             return ProfileManagementService.AuthenticateProfile(emailId,password);
         }
-        
+        /// <summary>
+        /// [R] Get All profiles
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAllProfiles")]
         [Consumes("application/json")]
 
@@ -51,7 +55,10 @@ namespace flexli_erp_webapi.Controller
             return ProfileManagementService.GetAllProfiles();
         }
         
-       
+        /// <summary>
+        /// [R] Add or update profile
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("AddOrUpdateProfile")]
         [Consumes("application/json")]
         public ProfileEditModel AddOrUpdateProfile(ProfileEditModel profile)
@@ -59,7 +66,11 @@ namespace flexli_erp_webapi.Controller
             return ProfileManagementService.AddOrUpdateProfile(profile);
         }
         
-        [HttpDelete("DeleteSprint")]
+        /// <summary>
+        /// [R] Delete profile
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("DeleteProfile")]
         [Consumes("application/json")]
         
         public ActionResult<string> DeleteProfile(string profileId)
@@ -68,6 +79,10 @@ namespace flexli_erp_webapi.Controller
             return Ok();
         }
 
+        /// <summary>
+        /// [R] Add Manager. User can have multiple manager
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("AddManager")]
         [Consumes("application/json")]
 

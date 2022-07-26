@@ -38,27 +38,30 @@ namespace flexli_erp_webapi.Controller
         
         /// <summary>
         /// Create or update tasks
-        /// Note that if you are creating new taskDetail - what taskDetail Id you mention does not matter
+        /// Note that if you are creating new taskDetail - what  Id you mention does not matter
         /// It will assign serially
         /// position after you can keep empty ("")
         /// </summary>
         [HttpPut("CreateOrUpdateTask")]
         [Consumes("application/json")]
         
+       
         public ActionResult<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
         {
             return TaskManagementService.CreateOrUpdateTask(taskDetail);
         }
-        
-        [HttpPut("GetLinkedList")]
+        /// <summary>
+        /// Create or update tasks
+        /// [Check] Task not linked to another sprint
+        /// </summary>
+        [HttpPut("LinkTaskToSprint")]
         [Consumes("application/json")]
         
-        public LinkedChildTaskHead GetLinkedList(string taskId = null)
+        public TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
         {
-            List<TaskDetailEditModel> taskList = TaskManagementService.GetTaskById(taskId, "children").Children;
-            return LinkedListService.CreateLinkedList(taskList);
+            return TaskManagementService.LinkTaskToSprint(taskId, sprintId);
         }
-
+        
         
         [HttpDelete("DeleteTask")]
         [Consumes("application/json")]
@@ -78,15 +81,7 @@ namespace flexli_erp_webapi.Controller
             TaskManagementService.RemoveTask(taskId);
             return Ok();
         }
-        
-        [HttpPut("LinkTaskToSprint")]
-        [Consumes("application/json")]
-        
-        public TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
-        {
-            return TaskManagementService.LinkTaskToSprint(taskId, sprintId);
-        }
-        
+
         [HttpPut("RemoveTaskFromSprint")]
         [Consumes("application/json")]
         

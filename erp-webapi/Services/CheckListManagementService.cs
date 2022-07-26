@@ -11,19 +11,10 @@ namespace flexli_erp_webapi.Services
 {
     public class CheckListManagementService
     {
-        public static List<CheckListItemEditModel> GetCheckList(string taskId, string include)
+        public static List<CheckListItemEditModel> GetCheckList(string taskId)
         {
            
-            using (var db = new ErpContext())
-            {
-               
-                if (include.Contains("items"))
-                {
-                    return GetCheckListForATaskId(taskId);
-                }
-
-                throw new KeyNotFoundException("Error in finding required check list");
-            }
+            return GetCheckListForATaskId(taskId);
         }
         public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
@@ -72,6 +63,10 @@ namespace flexli_erp_webapi.Services
         {
             var closureStatus = new List<string> { SStatus.Closed.ToString(), SStatus.RequestForClosure.ToString() };
             CheckListItemEditModel editCheckList = GetCheckListById(checkListItemEditModel.CheckListItemId);
+            if (editCheckList == null)
+            {
+                editCheckList = new CheckListItemEditModel();
+            }
             if (! closureStatus.Contains(sprintStatus.ToString()))
             {
                 editCheckList.UserComment = checkListItemEditModel.UserComment;
@@ -90,6 +85,8 @@ namespace flexli_erp_webapi.Services
 
             return editCheckList;
         }
+
+       
 
         public static void DeleteCheckListItem(string checkListItemId)
         {

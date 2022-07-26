@@ -170,6 +170,8 @@ namespace flexli_erp_webapi.Services
                     };
                     db.TaskSchedule.Add(taskSchedule);
                     db.SaveChanges();
+                    // [Action]: Updated edited time of Task Module
+                    TaskManagementService.UpdateEditedAt(taskSchedule.TaskId);
                 }
             }
 

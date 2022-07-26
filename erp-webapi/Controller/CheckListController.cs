@@ -18,15 +18,24 @@ namespace flexli_erp_webapi.Controller
     
     public class CheckListController : ControllerBase
     {
-        
+        /// <summary>
+        /// [R]Get Check List for a Task id
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetCheckList")]
         [Consumes("application/json")]
         
-        public List<CheckListItemEditModel> GetCheckList([FromQuery] string include,string taskId = null)
+        public List<CheckListItemEditModel> GetCheckListForTaskId(string taskId = null)
         {
-            return CheckListManagementService.GetCheckList(taskId,include);
+            return CheckListManagementService.GetCheckList(taskId);
         }
-        
+        /// <summary>
+        /// [R]Checklist can added only if sprint is in planning stage
+        /// Checklist params could be modified based upon sprint state. Eg, description cannot be cannot be change once froze
+        /// Not used for Updating Manager's comment and Approving checklist. (Check Sprint Report)
+        /// result-Type {"File","Numeric","Boolean"} Status {"NotCompleted","Completed"}
+        /// </summary>
+        /// <returns></returns>
         [HttpPut("CreateOrUpdateCheckListItem")]
         [Consumes("application/json")]
         
@@ -34,6 +43,10 @@ namespace flexli_erp_webapi.Controller
         {
             return CheckListManagementService.CreateOrUpdateCheckListItem(checkListItemItem);
         }
+        /// <summary>
+        /// [R]Checklist can be deleted only if sprint is in planning stage/not linked to sprint
+        /// </summary>
+        /// <returns></returns>
         
         [HttpDelete("DeleteCheckListItem")]
         [Consumes("application/json")]

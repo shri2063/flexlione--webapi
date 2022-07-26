@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
@@ -8,6 +9,42 @@ namespace flexli_erp_webapi.Services
 {
     public class SprintReportManagementService
     {
+       
+        public static List<SprintReportEditModel> GetSprintReportForSprint(string sprintId)
+        {
+          
+            
+            List<SprintReportEditModel> sprintReport = new List<SprintReportEditModel>();
+
+            var sprintReportLineItemIds = GetSprintReportLineItemIdsForSprint(sprintId);
+
+            if (sprintReportLineItemIds == null)
+            {
+                return sprintReport;
+            }
+            
+            sprintReportLineItemIds.ForEach(x =>
+            {
+                sprintReport.Add(GetSprintReportItemById(x));
+            });
+            return sprintReport;
+        }
+
+
+        private static List<string> GetSprintReportLineItemIdsForSprint(string sprintId)
+        {
+            List<string> sprintReportLineItemIds = new List<string>();
+            using (var db = new ErpContext())
+            {
+                sprintReportLineItemIds = db.SprintReport
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(y => y.SprintReportLineItemId)
+                    .ToList();
+
+
+                return sprintReportLineItemIds;
+            }
+        }
         public static SprintReportEditModel GetSprintReportItemById(string sprintReportLineItemId)
         {
             SprintReport sprintReport;
@@ -51,6 +88,8 @@ namespace flexli_erp_webapi.Services
         public static SprintReportEditModel UpdateSprintReportLineItem(SprintReportEditModel sprintReportEditModel)
         {
             SprintReport sprintReport;
+            
+            
             using (var db = new ErpContext())
             {
 
@@ -73,27 +112,53 @@ namespace flexli_erp_webapi.Services
             return GetSprintReportItemById(sprintReport.SprintReportLineItemId);
         }
         
-        public static void ApproveSprintReportLineItems(string sprintId)
+     
+        
+        public static SprintReportEditModel ReviewCheckList(SprintReportEditModel sprintReportEditModel, string approverId)
         {
-            using (var db = new ErpContext())
+            // If checklist exist - get Sprint Status from DB
+            var sprintReportLineItem = GetSprintReportItemById(sprintReportEditModel.SprintReportLineItemId);
+            if (sprintReportLineItem == null)
             {
-                SprintReport sprintReport;
-                List<string> sprintReportLineItemIds = db.SprintReport
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.SprintReportLineItemId)
-                    .ToList();
+                throw new KeyNotFoundException("Sprint report does not exist" + sprintReportEditModel.SprintReportLineItemId);
+            }
+
+            var sprint = SprintManagementService.GetSprintById(sprintReportLineItem.SprintId);
+            
+            // [check] Approver id is valid
+
+            if (!ProfileManagementService.CheckManagerValidity(sprint.Owner, approverId))
+            {
+                throw new ConstraintException("Not valid approver Id: " + approverId);
+            }
                 
-                sprintReportLineItemIds.ForEach(x=>
+                
+            //[Check]: Sprint is not reviewed
+            if (sprint.Status != SStatus.Reviewed)
+            {
+                using (var db = new ErpContext())
+                {
+
+                    SprintReport sprintReport = db.SprintReport
+                        .FirstOrDefault(x => x.SprintReportLineItemId == sprintReportEditModel.SprintReportLineItemId);
+                    
+                    if (sprintReportEditModel.ManagerComment != null)
                     {
-                        sprintReport = db.SprintReport.FirstOrDefault(s => s.SprintReportLineItemId == x);
-                        sprintReport.Approved = "true";
-                        db.SaveChanges();
+                        sprintReport.ManagerComment = sprintReportEditModel.ManagerComment;
                     }
                     
-                );
+                    if (sprintReportEditModel.Approved != null)
+                    {
+                        sprintReport.Approved = sprintReportEditModel.Approved;
+                    }
+                   
+                 
+                    db.SaveChanges();
+                }
             }
+
+            return GetSprintReportItemById(sprintReportEditModel.SprintReportLineItemId);
         }
-        
         public static void AddSprintReportLineItem(string sprintId)
         {
             using (var db = new ErpContext())
@@ -105,7 +170,7 @@ namespace flexli_erp_webapi.Services
 
                 foreach (var task in tasks)
                 {
-                    List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, "items");
+                    List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task);
 
                     foreach (var checkListItem in checkListItems)
                     {

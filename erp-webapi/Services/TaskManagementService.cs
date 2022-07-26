@@ -404,8 +404,8 @@ namespace flexli_erp_webapi.Services
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
                     task.EditedAt = DateTime.Now;
 
-                    var values = new List<string> {SStatus.Planning.ToString(), SStatus.RequestForApproval.ToString(), SStatus.Closed.ToString() };
-                    if (values.Contains(SprintManagementService.CheckStatus(task.SprintId).ToString()))
+                   //[Action] If Sprint status = planning or Sprint not allocated then you can change acceptance criteria
+                    if (task.SprintId != null? task.Status == SStatus.Planning.ToString(): true  )
                     {
                         task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
                     }
@@ -577,7 +577,7 @@ namespace flexli_erp_webapi.Services
                 tasks.ForEach(task =>
                 {
                     List<CheckListItemEditModel>
-                        checkListItems = CheckListManagementService.GetCheckList(task.TaskId, "items");
+                        checkListItems = CheckListManagementService.GetCheckList(task.TaskId);
                     
                     int complete = 0;
                     int completeEssential = 0;
