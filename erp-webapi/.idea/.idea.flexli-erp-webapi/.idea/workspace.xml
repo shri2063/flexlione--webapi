@@ -5,8 +5,6 @@
     <projectFile>flexli-erp-webapi.csproj</projectFile>
     <projectFile>ConsoleApp1/ConsoleApp1.csproj</projectFile>
     <projectFile>../ConsoleApp2/ConsoleApp2.csproj</projectFile>
-    <projectFile profileName="IIS Express">flexli-erp-webapi.csproj</projectFile>
-    <projectFile profileName="flexStore">flexli-erp-webapi.csproj</projectFile>
     <projectFile pubXmlPath="Properties/PublishProfiles/FolderProfile.pubxml">flexli-erp-webapi.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
@@ -32,10 +30,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ac732f-a082-4366-9613-9b0ed1fa22ca" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/FileAttachmentController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ErpContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ErpContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flexli-erp-webapi.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/flexli-erp-webapi.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Startup.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,20 +43,18 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript File" />
+        <option value="XML File" />
       </list>
     </option>
-  </component>
-  <component name="Git.Merge.Settings">
-    <option name="BRANCH" value="alpha" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.2.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3eec868b837667eaf552abb624a89c3ea387938/Check.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/SearchController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Controller/TaskController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Services/SprintManagementService.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -122,7 +117,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="Toolset" />
   </component>
   <component name="ProjectId" id="23awSKHkDOpFj9D8gGqn5FuuTFW" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -140,10 +135,31 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.flexStore">
+  <component name="RunManager" selected="Publish to folder.Publish flexli-erp-webapi to folder (14)">
+    <configuration name="Publish flexli-erp-webapi to folder (10)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (11)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (12)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (13)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (14)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
     <configuration name="Publish flexli-erp-webapi to folder (1)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
@@ -166,6 +182,18 @@
     </configuration>
     <configuration name="Publish flexli-erp-webapi to folder (6)" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
       <riderPublish runtime="win-x64" target_folder="$PROJECT_DIR$/../publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (7)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (8)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Publish flexli-erp-webapi to folder (9)" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/bin/Release/netcoreapp2.1/publish" target_framework="netcoreapp2.1" uuid_high="-3596523917752447540" uuid_low="-7764986485510117418" />
       <method v="2" />
     </configuration>
     <configuration name="Publish flexli-erp-webapi to folder" type="DotNetFolderPublish" factoryName="Publish to folder" temporary="true">
@@ -259,6 +287,14 @@
       <item itemvalue=".NET Launch Settings Profile.flexli-erp-webapi" />
       <item itemvalue=".NET Project.ConsoleApp1" />
       <item itemvalue=".NET Project.ConsoleApp2" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (10)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (11)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (12)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (13)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (14)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (7)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (8)" />
+      <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (9)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (5)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder (3)" />
       <item itemvalue="Publish to folder.Publish flexli-erp-webapi to folder" />
@@ -345,17 +381,9 @@
       <workItem from="1655203427875" duration="85000" />
       <workItem from="1655203539599" duration="183000" />
       <workItem from="1655203752704" duration="64000" />
-      <workItem from="1656066919010" duration="7976000" />
-      <workItem from="1656135509645" duration="10500000" />
-      <workItem from="1656304959780" duration="1225000" />
-      <workItem from="1656307815110" duration="11146000" />
-      <workItem from="1656397230195" duration="6465000" />
-      <workItem from="1656479667662" duration="11190000" />
-      <workItem from="1656588983815" duration="4045000" />
-      <workItem from="1657022006917" duration="7265000" />
-      <workItem from="1657116370859" duration="2712000" />
-      <workItem from="1657440239339" duration="6066000" />
-      <workItem from="1657538787245" duration="2322000" />
+      <workItem from="1655291233652" duration="8869000" />
+      <workItem from="1655459331439" duration="1922000" />
+      <workItem from="1657190478591" duration="10392000" />
     </task>
     <servers />
   </component>
@@ -377,6 +405,9 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -396,7 +427,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>179</line>
+          <line>166</line>
           <properties documentPath="C:\Users\bhole\Desktop\ERP\flexli-erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="90" />
           <option name="timeStamp" value="25" />
         </line-breakpoint>
@@ -504,15 +535,9 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>253</line>
+          <line>255</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="236" containingFunctionPresentation="method 'UpdateDailyTaskActualTime'" />
           <option name="timeStamp" value="53" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Services/TaskSummaryManagementService.cs</url>
-          <line>261</line>
-          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskSummaryManagementService.cs" initialLine="244" containingFunctionPresentation="method 'UpdateDailyTaskActualTime'" />
-          <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Controller/TaskController.cs</url>
@@ -543,6 +568,19 @@
           <line>464</line>
           <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi\Services\TaskManagementService.cs" initialLine="464" containingFunctionPresentation="method 'GetTaskByIdFromDb'" />
           <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Controller/FileAttachmentController.cs</url>
+          <line>42</line>
+          <properties documentPath="C:\Users\Hi\Desktop\ERP\erp-webapi-with-unit-testing\erp-webapi\Controller\FileAttachmentController.cs" initialLine="41" containingFunctionPresentation="method 'Upload'">
+            <startOffsets>
+              <option value="1474" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1529" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="68" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
