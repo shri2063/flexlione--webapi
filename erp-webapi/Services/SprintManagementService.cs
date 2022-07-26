@@ -364,28 +364,34 @@ namespace flexli_erp_webapi.Services
                 sprint.Closed = true;
                 
                 // Provisional score of task
-                // TaskManagementService.UpdateProvisionalTaskScore(sprintId);
-                //
-                // List<int?> taskScores = db.TaskDetail
-                //     .Where(x => x.SprintId == sprintId)
-                //     .Select(x => x.Score)
-                //     .ToList();
-                //
-                // // Provisional score of sprint
-                // sprint.Score = taskScores.Sum();
-                
-                db.SaveChanges();
-                
-                // Unlinking tasks from sprint
-                List<string> tasks = db.TaskDetail
+                List<string> taskIds = db.TaskDetail
                     .Where(x => x.SprintId == sprintId)
                     .Select(x => x.TaskId)
                     .ToList();
                 
-                tasks.ForEach(x =>
+                taskIds.ForEach(taskId =>
+                {
+                    TaskManagementService.UpdateProvisionalTaskScore(taskId);
+                });
+                
+                List<int?> taskScores = db.TaskDetail
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.Score)
+                    .ToList();
+                
+                // Provisional score of sprint
+                sprint.Score = taskScores.Sum();
+                
+                db.SaveChanges();
+                
+                // Unlinking tasks from sprint
+                taskIds.ForEach(x =>
                 {
                     TaskManagementService.RemoveTaskFromSprint(x);
                 });
+                
+                // Provisional Score Sprint Report
+                SprintReportManagementService.UpdateProvisionalScoreInSprintReport(sprintId);
 
             }
             

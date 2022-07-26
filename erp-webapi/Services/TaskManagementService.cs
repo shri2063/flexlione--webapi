@@ -564,52 +564,74 @@ namespace flexli_erp_webapi.Services
             return positionedTask;
         }
 
-        public static void UpdateProvisionalTaskScore(string sprintId)
+        public static void UpdateProvisionalTaskScore(string taskId)
         {
-            List<TaskDetail> tasks;
-
+            TaskDetail task;
             using (var db = new ErpContext())
             {
-                tasks = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .ToList();
+                task = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
                 
-                tasks.ForEach(task =>
+                List<CheckListItemEditModel>
+                    checkListItems = CheckListManagementService.GetCheckList(task.TaskId, "items");
+                    
+                int complete = 0;
+                int completeEssential = 0;
+                int essential = 0;
+                    
+                checkListItems.ForEach(checkListItem =>
                 {
-                    List<CheckListItemEditModel>
-                        checkListItems = CheckListManagementService.GetCheckList(task.TaskId, "items");
-                    
-                    int complete = 0;
-                    int completeEssential = 0;
-                    int essential = 0;
-                    
-                    checkListItems.ForEach(checkListItem =>
-                    {
-                        if (checkListItem.Essential)
-                            essential++;
+                    if (checkListItem.Essential)
+                        essential++;
 
-                        if (checkListItem.Essential && checkListItem.Status == CStatus.Completed)
+                    if (checkListItem.Essential && checkListItem.Status == CStatus.Completed)
+                    {
+                        if(checkListItem.ResultType==CResultType.Numeric && Convert.ToInt32(checkListItem.Result)>=checkListItem.WorstCase && Convert.ToInt32(checkListItem.Result) <= checkListItem.BestCase)
                         {
                             complete++;
                             completeEssential++;
                         }
+
+                        if (checkListItem.ResultType == CResultType.Boolean && checkListItem.Result == "true")
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+
+                        if (checkListItem.ResultType == CResultType.File && checkListItem.Result != null)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+                    }
                         
-                        else if (checkListItem.Status == CStatus.Completed)
+                    else if (checkListItem.Status == CStatus.Completed)
+                    {
+                        if(checkListItem.ResultType==CResultType.Numeric && Convert.ToInt32(checkListItem.Result)>=checkListItem.WorstCase && Convert.ToInt32(checkListItem.Result) <= checkListItem.BestCase)
                         {
                             complete++;
                         }
 
-                    });
-                    
-                    if (completeEssential < essential)
-                        task.Score = 0;
+                        if (checkListItem.ResultType == CResultType.Boolean && checkListItem.Result == "true")
+                        {
+                            complete++;
+                        }
 
-                    else if (complete > task.AcceptanceCriteria)
-                        task.Score = Convert.ToInt32(task.ExpectedHours / 3);
-
-                    db.SaveChanges();
+                        if (checkListItem.ResultType == CResultType.File && checkListItem.Result != null)
+                        {
+                            complete++;
+                        }
+                    }
 
                 });
+                    
+                if (completeEssential < essential || complete < task.AcceptanceCriteria)
+                    task.Score = 0;
+
+                else if (complete >= task.AcceptanceCriteria && completeEssential == essential)
+                    task.Score = Convert.ToInt32(task.ExpectedHours / 3);
+
+                db.SaveChanges();
             }
         }
 
