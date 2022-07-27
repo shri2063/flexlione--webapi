@@ -18,10 +18,32 @@ namespace flexli_erp_webapi.Services
               profileEditModel.Sprints = SprintManagementService.GetSprintsByProfileId(profileId);
           }
 
+          profileEditModel.Managers = GetAllManagersForUser(profileId);
           return profileEditModel;
 
         }
-        
+
+        private static List<ProfileManagerEditModel> GetAllManagersForUser(string profileId)
+        {
+            List<ProfileManagerEditModel> managers = new List<ProfileManagerEditModel>();
+            List<string> managerIds;
+            using (var db = new ErpContext())
+            {
+                managerIds = db.ProfileManager
+                    .Where(x => x.UserId == profileId)
+                    .Select(x => x.ManagerId)
+                    .ToList();
+                
+                managerIds.ForEach(managerId =>
+                {
+                    ProfileManagerEditModel profileManagerEditModel = GetManagerForUser(profileId, managerId);
+                    managers.Add(profileManagerEditModel);
+                });
+            }
+
+            return managers;
+        }
+
         public static List<ProfileEditModel> GetAllProfiles()
         {
          List<ProfileEditModel> profiles = new List<ProfileEditModel>();
@@ -178,6 +200,20 @@ namespace flexli_erp_webapi.Services
                 
                 if (existingProfile != null)
                 {
+                    // [check] all those profile manager pairs which contain profileId as any of two variable
+                    List<ProfileManager> managersAndUsers = db.ProfileManager
+                        .Where(x => x.UserId == profileId || x.ManagerId == profileId)
+                        .ToList();
+
+                    // [check] if managers and users not null then deleted them from profile-manager table
+                    if (managersAndUsers != null)
+                    {
+                        managersAndUsers.ForEach(s =>
+                        {
+                            db.ProfileManager.Remove(s);
+                            db.SaveChanges();
+                        });
+                    }
                     
                     db.Profile.Remove(existingProfile);
                     db.SaveChanges();

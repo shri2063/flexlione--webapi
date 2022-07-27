@@ -163,6 +163,13 @@ namespace flexli_erp_webapi.Services
         {
             using (var db = new ErpContext())
             {
+                SprintEditModel sprint = SprintManagementService.GetSprintById(sprintId);
+
+                if (sprint == null)
+                {
+                    throw new KeyNotFoundException("invalid sprint id, sprint doesn't exist");
+                }
+                
                 List<string> tasks = db.TaskDetail
                     .Where(task => task.SprintId == sprintId)
                     .Select(task => task.TaskId)
