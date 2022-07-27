@@ -210,7 +210,7 @@ namespace flexli_erp_webapi.Services
           
         }
 
-        public static bool AllSprintReportLineItemsStatusNotNoChange(string sprintId)
+        public static bool AllSprintReportLineItemsStatusNotNotCompleted(string sprintId)
         {
             using (var db = new ErpContext())
             {
@@ -222,7 +222,7 @@ namespace flexli_erp_webapi.Services
                 int flag = 0;
                 status.ForEach(x =>
                 {
-                    if (x == "NotCompleted")
+                    if (x == CStatus.NotCompleted.ToString())
                     {
                         flag = 1;
                     }
@@ -235,7 +235,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static void PublishActualScores(string sprintId)
+        public static void PublishActualScoresForSprintReport(string sprintId)
         {
             Sprint sprint;
             List<SprintReport> sprintReports;
@@ -251,7 +251,7 @@ namespace flexli_erp_webapi.Services
                 {
                     if (x.Approved == SApproved.NoAction.ToString())
                     {
-                        x.Approved = "true";
+                        x.Approved = "True";
                         db.SaveChanges();
                     }
 
@@ -261,39 +261,28 @@ namespace flexli_erp_webapi.Services
                     CheckList checkList = db.CheckList
                         .FirstOrDefault(s => s.CheckListItemId == x.CheckListItemId);
 
-                    if (x.Approved == "false" && checkList.Essential)
+                    if (x.Approved == SApproved.False.ToString() && checkList.Essential)
                     {
                         x.Score = 0;
                         db.SaveChanges();
                     }
                     
-                    else if (x.Approved == "false" && !checkList.Essential)
+                    else if (x.Approved == SApproved.False.ToString() && !checkList.Essential)
                     {
-                        if (x.Score > 0)
+                        if (x.Score != 0)
                         {
-                            TaskDetail taskDetail = db.TaskDetail
-                                .FirstOrDefault(z => z.TaskId==x.TaskId);
-
-                            taskDetail.AcceptanceCriteria--;
-                            db.SaveChanges();
-                            
-                            TaskManagementService.UpdateProvisionalTaskScore(x.SprintId);
+                            // TaskDetail taskDetail = db.TaskDetail
+                            //     .FirstOrDefault(z => z.TaskId==x.TaskId);
+                            //
+                            // taskDetail.AcceptanceCriteria--;
+                            // db.SaveChanges();
+                            //
+                            // TaskManagementService.UpdateProvisionalTaskScore(x.SprintId);
                         }
                     }
 
                 });
-                
-                List<int?> taskScores = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.Score)
-                    .ToList();
-                
-                // Provisional score of sprint
-                sprint.Score = taskScores.Sum();
-                
-                db.SaveChanges();
-                
-                
+
             }
         }
 

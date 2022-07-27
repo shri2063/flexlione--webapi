@@ -494,15 +494,37 @@ namespace flexli_erp_webapi.Services
                     throw new ConstraintException("Sprint cannot be reviewed as status is not closed");
                 }
 
-                if (!SprintReportManagementService.AllSprintReportLineItemsStatusNotNoChange(sprintId))
-                {
-                    throw new ConstraintException("Sprint report line items have status no change");
-                }
-
                 sprint.Status = SStatus.Reviewed.ToString();
+
+                // Actual Score Sprint Report
+                SprintReportManagementService.PublishActualScoresForSprintReport(sprintId);
+
+                List<string> taskIds = db.SprintReport
+                    .Where(x => x.SprintId == sprintId)
+                    .Select(x => x.TaskId)
+                    .ToList();
+                
+                // Actual Score Task
+                taskIds.ForEach(taskId =>
+                {
+                    TaskManagementService.PublishActualScoresForTask(taskId, sprintId);
+                });
+
+                // Actual score of sprint
+                List<int?> taskScores = new List<int?>();
+                taskIds.ForEach(taskId =>
+                {
+                    taskScores = db.TaskDetail
+                        .Where(x => x.TaskId == taskId)
+                        .Select(x => x.Score)
+                        .ToList();
+                });
+                
+                sprint.Score = taskScores.Sum();
+                
                 db.SaveChanges();
 
-                // SprintReportManagementService.PublishActualScores(sprintId);
+
 
             }
             return GetSprintById(sprintId);
