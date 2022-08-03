@@ -38,4 +38,10 @@
       <_ContentIncludedByDefault Remove="Communication_Server\edge_json_model.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="appsettings.Development.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+    </ItemGroup>
+
 </Project>

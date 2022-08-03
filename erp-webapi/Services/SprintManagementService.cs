@@ -21,9 +21,11 @@ namespace flexli_erp_webapi.Services
             {
                 return null;
             }
+
+           
             sprintIds.ForEach(x =>
            {
-              sprints.Add(GetSprintById(x,new List<string>(include))); 
+              sprints.Add(GetSprintById(x,include != null? new List<string>(include): null)); 
            });
 
             return sprints;

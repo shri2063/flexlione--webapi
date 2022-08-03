@@ -10,6 +10,7 @@ using flexli_erp_webapi.LinkedListModel;
 using flexli_erp_webapi.Repository;
 using flexli_erp_webapi.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 
 namespace flexli_erp_webapi.Services
@@ -59,17 +60,40 @@ namespace flexli_erp_webapi.Services
 
         public static List<string> GetTaskIdsForSprint(string sprintId)
         {
-            List<string> taskIds;
-            using (var db = new ErpContext())
+            List<string> taskIds = new List<string>();
+            var sprint = SprintManagementService.GetSprintById(sprintId);
+            if (sprint == null)
             {
-
-                taskIds = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(y => y.TaskId)
-                    .ToList();
+                return taskIds;
             }
+            //[case] - Sprint is not closed
+            var sprintClosed = new List<SStatus> { SStatus.Closed, SStatus.Reviewed };
+            if (!sprintClosed.Contains(sprint.Status))
+            {
+                using (var db = new ErpContext())
+                {
 
-            return taskIds;
+                    taskIds = db.TaskDetail
+                        .Where(x => x.SprintId == sprintId)
+                        .Select(y => y.TaskId)
+                        .ToList();
+                }
+
+                return taskIds;
+            }
+            // [case] sprint is closed
+           using (var db = new ErpContext())
+           {
+
+               taskIds = db.SprintReport
+                   .Where(x => x.SprintId == sprintId)
+                   .Select(y => y.TaskId)
+                   .Distinct()
+                   .ToList();
+           }
+           
+           return taskIds;
+           
         }
         
        
