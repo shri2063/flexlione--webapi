@@ -44,9 +44,19 @@ namespace flexli_erp_webapi.Services
                 }
                 
             }
+            // [Check]: If result type is numeric then best and worst case params cannot be null
+
+            if (checkListItemEditModel.ResultType == CResultType.Numeric)
+            {
+                if (!checkListItemEditModel.BestCase.HasValue || !checkListItemEditModel.WorstCase.HasValue)
+                {
+                    throw new KeyNotFoundException("If result type is numeric then best and worst case params cannot be null");  
+                }
+            }
             // [check] Checklist params could be modified based upon sprint state
             var updatedCheckList = ApplySprintStatusBasedCheck(checkListItemEditModel, sprint != null ?sprint.Status: SStatus.Planning);
            
+        
             
             updatedCheckList = CreateOrUpdateCheckListInDb(updatedCheckList);
              

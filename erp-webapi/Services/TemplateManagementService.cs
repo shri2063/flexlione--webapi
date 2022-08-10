@@ -3,245 +3,178 @@ using System.Collections.Generic;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
+using flexli_erp_webapi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace flexli_erp_webapi.Services
 {
-    public class TemplateManagementService
+    ///<Summary>
+    /// ToDo
+    ///</Summary>
+    public class TemplateManagementService: ITemplateManagementService
     {
-        public static TemplateEditModel GetTemplateById(string templateId, string include = null)
+
+        private readonly ITemplateRepository _templateRepository;
+        
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
+        public TemplateManagementService(ITemplateRepository templateRepository)
         {
-            TemplateEditModel templateEditModel = GetTemplateByIdFromDb(templateId);
-            if (include == null)
-            {
-                return templateEditModel;  
-            }
-
-            if (include.Contains("taskDetails"))
-            {
-                templateEditModel.TaskList = GetTasksForTemplateId(templateId);
-            }
-
-            return templateEditModel;
+            _templateRepository = templateRepository;
         }
 
-        public static List<TemplateEditModel> GetAllTemplates(string include = null)
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
+        public TemplateEditModel GetTemplateById(string templateId, List<string> include = null)
         {
-            List<TemplateEditModel> templates = new List<TemplateEditModel>();
-            List<string> templateIds;
-
-            using (var db = new ErpContext())
+            TemplateEditModel templateEditModel =_templateRepository.GetTemplateById(templateId);
+            if (include.IfNotNull(x => x.Count) == 0)
             {
-                templateIds = db.Template
-                    .Select(x => x.TemplateId)
-                    .ToList();
-            }
-            templateIds.ForEach(x =>
-            {
-                templates.Add(GetTemplateById(x));
-            });
-
-            return templates;
-        }
-
-        private static TemplateEditModel GetTemplateByIdFromDb (string templateId)
-        {
-            using (var db = new ErpContext())
-            {
-                
-                Template existingTemplate= db.Template
-                    .FirstOrDefault(x => x.TemplateId == templateId);
-                
-                if ( existingTemplate== null)
-                    return null;
-                
-                // Case: In case you have to update data received from db
-
-                TemplateEditModel templateEditModel = new TemplateEditModel()
-                {
-                   TemplateId =  existingTemplate.TemplateId,
-                   Description = existingTemplate.Description
-                };
-
                 return templateEditModel;
             }
 
+            if (include.Contains("child"))
+            {
+                templateEditModel.ChildTemplates = _templateRepository.GetChildrenTemplates(templateId);
+            }
+            return templateEditModel;
         }
-        
-         public static TemplateEditModel AddOrUpdateTemplate(TemplateEditModel templateEditModel)
-        {
-            return AddOrUpdateTemplateInDb(templateEditModel);
 
-        }
-        
-        private static TemplateEditModel AddOrUpdateTemplateInDb(TemplateEditModel templateEditModel)
+        public List<TemplateEditModel> GetTemplateList()
         {
-            Template template;
+            return _templateRepository.GetAllTemplates();
+        }
+
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
+        public  void DeleteTemplate(string templateId)
+        {
+           
+            TemplateEditModel existingTemplate = _templateRepository.GetTemplateById(templateId);
+            if (existingTemplate == null)
+            {
+                return;
+            }
+            // [check] : If Template has any parent template
+            if (existingTemplate.ChildTemplateIds.Count > 0)
+            {
+                throw new KeyNotFoundException("One or more child templates exist: " + 
+                                               JsonSerializer.Serialize(existingTemplate.ChildTemplateIds));
+            }
             
-            using (var db = new ErpContext())
+            // [check] : If it serves as a clone template
+            if (existingTemplate.CloneTemplateId == null)
             {
-                 template = db.Template
-                    .FirstOrDefault(x => x.TemplateId == templateEditModel.TemplateId);
-
-
-                if (template != null) // update
-                {
-                    template.TemplateId = templateEditModel.TemplateId;
-                    template.Description = templateEditModel.Description;
-                    db.SaveChanges();
-                }
-                else
-                {
-                    template = new Template()
-                    {
-                        TemplateId = GetNextAvailableIdForTemplate(),
-                        Description = templateEditModel.Description
-                    };
-                    db.Template.Add(template);
-                    db.SaveChanges();
-                }
+                throw new KeyNotFoundException("Serves as a clone template ");
             }
-
-            return GetTemplateById(template.TemplateId);
+            _templateRepository.DeleteTemplate(templateId);
         }
         
-        private static string GetNextAvailableIdForTemplate()
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
+        public  TemplateEditModel CreateOrUpdateTemplate(TemplateEditModel templateIdEditModel)
         {
-            using (var db = new ErpContext())
-            {
-                var a = db.Template
-                    .Select(x => Convert.ToInt32(x.TemplateId))
-                    .DefaultIfEmpty(0)
-                    .Max();
-                return Convert.ToString(a + 1);
-            }
-          
+           return _templateRepository.CreateOrUpdateTemplate(templateIdEditModel);
         }
         
-        private static string GetNextAvailableIdForTemplateTask()
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
+        public  TemplateEditModel CloneTemplate(string templateId)
         {
-            using (var db = new ErpContext())
-            {
-                var a = db.TemplateTask
-                    .Select(x => Convert.ToInt32(x.TemplateTaskId))
-                    .DefaultIfEmpty(0)
-                    .Max();
-                return Convert.ToString(a + 1);
-            }
-          
-        }
+            TemplateEditModel currentTemplateEditModel = _templateRepository.GetTemplateById(templateId);
 
-        public static List<TaskDetailEditModel> GetTasksForTemplateId(string templateId)
-        {
-            List<TaskDetailEditModel> taskDetailList = new List<TaskDetailEditModel>();
-            using (var db = new ErpContext())
-            {
-                List<TemplateTask> templateTasks = db.TemplateTask
-                    .Where(x => x.TemplateId == templateId)
-                    .ToList();
+            var cloneTemplateEditModel = currentTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for clone does not exist: "
+                + templateId);
+            
+            cloneTemplateEditModel.TemplateId = "newTemplate";
+            cloneTemplateEditModel.CloneTemplateId = templateId;
 
-                if (templateTasks.Count == 0)
-                {
-                    throw  new Exception("Relation between template and tasks does not exist");
-                }
-                templateTasks.ForEach(x =>
-               {
-                   taskDetailList.Add(TaskManagementService.GetTaskById(x.TaskId)); 
-               });
-                
-            }
-
-            return taskDetailList;
-        }
-
-        public static TemplateEditModel AddTaskListToTemplate(List<string> taskIdList, string templateId)
-        {
-            taskIdList.ForEach(taskId =>
-            {
-                TemplateTask templateTask;
-                using (var db = new ErpContext())
-                {
-                    templateTask = db.TemplateTask
-                        .FirstOrDefault(x => x.TemplateId == templateId && x.TaskId == taskId);
-
-
-                    if (templateTask != null) // update
-                    {
-                        templateTask.TemplateId = templateId;
-                        templateTask.TaskId = taskId;
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-                        templateTask = new TemplateTask()
-                        {
-                            TemplateTaskId = GetNextAvailableIdForTemplateTask(),
-                            TemplateId = templateId,
-                            TaskId = taskId
-                        };
-                        db.TemplateTask.Add(templateTask);
-                        db.SaveChanges();
-                    }
-                }
-
-               
-            });
-            return GetTemplateById(templateId, "taskDetails");
+            return _templateRepository.CreateOrUpdateTemplate(cloneTemplateEditModel);
         }
         
-        public static void RemoveTaskListFromTemplate(List<string> taskIdList, string templateId)
+        
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
+        public  TemplateEditModel ReplaceChildTemplate(string oldTemplateId, string newTemplateId, string parentTemplateId)
         {
-            taskIdList.ForEach(taskId =>
-            {
-                TemplateTask templateTask;
-                using (var db = new ErpContext())
-                {
-                    templateTask = db.TemplateTask
-                        .FirstOrDefault(x => x.TemplateId == templateId && x.TaskId == taskId);
+            TemplateEditModel parentTemplateEditModel = _templateRepository.GetTemplateById(parentTemplateId);
 
+            //[check] : Parent template id exists
+            var checkParentTemplate = parentTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for parent does not exist: "
+                + parentTemplateId);
+            
+            TemplateEditModel oldTemplateEditModel = _templateRepository.GetTemplateById(oldTemplateId);
+            
+            //[Check] : Old template id exists
+            var checkOldTemplate = oldTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for old template does not exist: "
+                + parentTemplateId);
+            
+            
+            TemplateEditModel newTemplateEditModel = _templateRepository.GetTemplateById(newTemplateId);
+            //[Check] : new template id exists
+            var checkNewTemplate = newTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for old template does not exist: "
+                + parentTemplateId);
 
-                    if (templateTask == null) // update
-                    {
-                        return;
-                    }
+            parentTemplateEditModel.ChildTemplateIds =
+                (from s in _templateRepository.GetChildrenTemplates(parentTemplateId)
+                    select s.TemplateId).ToList();
 
-                    DeleteTemplateTask(templateTask.TemplateTaskId);
-                }
-            });
+            parentTemplateEditModel.ChildTemplateIds.Remove(oldTemplateId);
+            parentTemplateEditModel.ChildTemplateIds.Add(newTemplateId);
+
+            return _templateRepository.CreateOrUpdateTemplate(parentTemplateEditModel);
+        }
+
+        public TemplateEditModel AddChildTemplate(string childTemplateId, string parentTemplateId)
+        {
+            TemplateEditModel parentTemplateEditModel = _templateRepository.GetTemplateById(parentTemplateId);
+
+            // [Check]: If Parent template exists
+            var parentTemplateExists = parentTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for parent does not exist: "
+                + parentTemplateId);
+            
+            TemplateEditModel childTemplateEditModel = _templateRepository.GetTemplateById(childTemplateId);
+
+            // [Check]: If Child template exists
+            var childTemplateExists = childTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for child does not exist: "
+                + childTemplateId);
+
+            parentTemplateEditModel.ChildTemplateIds.Add(childTemplateId);
+
+            return _templateRepository.CreateOrUpdateTemplate(parentTemplateEditModel);
         }
         
-        public static void DeleteTemplate(string templateId)
+        public TemplateEditModel RemoveChildTemplate(string childTemplateId, string parentTemplateId)
         {
-            using (var db = new ErpContext())
-            {
-                // Get Selected Profile
-                Template existingTemplate = db.Template
-                    .FirstOrDefault(x => x.TemplateId == templateId);
-                
-                if (existingTemplate != null)
-                {
-                    
-                    db.Template.Remove(existingTemplate);
-                    db.SaveChanges();
-                }
-            }
-        }
-        
-        public static void DeleteTemplateTask(string templateTaskId)
-        {
-            using (var db = new ErpContext())
-            {
-                // Get Selected Profile
-                TemplateTask existingTemplateTask = db.TemplateTask
-                    .FirstOrDefault(x => x.TemplateTaskId == templateTaskId);
-                
-                if (existingTemplateTask != null)
-                {
-                    
-                    db.TemplateTask.Remove(existingTemplateTask);
-                    db.SaveChanges();
-                }
-            }
+            TemplateEditModel parentTemplateEditModel = _templateRepository.GetTemplateById(parentTemplateId);
+
+            // [Check]: If Parent template exists
+            var parentTemplateExists = parentTemplateEditModel ?? throw new KeyNotFoundException(
+                "Selected model for parent does not exist: "
+                + parentTemplateId);
+            
+            TemplateEditModel childTemplateEditModel = _templateRepository.GetTemplateById(childTemplateId);
+
+           
+
+            parentTemplateEditModel.ChildTemplateIds.Remove(childTemplateId);
+
+            return _templateRepository.CreateOrUpdateTemplate(parentTemplateEditModel);
         }
     }
 }

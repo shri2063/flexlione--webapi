@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
@@ -455,17 +456,27 @@ namespace flexli_erp_webapi.Services
                 // sprint.Score = taskScores.Sum();
                 
                 db.SaveChanges();
-                
-                // Unlinking tasks from sprint
-                List<string> tasks = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.TaskId)
-                    .ToList();
-                
-                tasks.ForEach(x =>
+
+                try
                 {
-                    TaskManagementService.RemoveTaskFromSprint(x);
-                });
+                    List<string> tasks = db.TaskDetail
+                        .Where(x => x.SprintId == sprintId)
+                        .Select(x => x.TaskId)
+                        .ToList();
+                
+                    tasks.ForEach(x =>
+                    {
+                        TaskManagementService.RemoveTaskFromSprint(x);
+                    });
+                }
+                catch (Exception e)
+                {
+                    sprint.Status = SStatus.Closed.ToString();
+                    sprint.Closed = true;
+                    throw new ConstraintException("DB Error in removing tasks from sprint. Try again");
+                }
+                // Unlinking tasks from sprint
+                
 
             }
             

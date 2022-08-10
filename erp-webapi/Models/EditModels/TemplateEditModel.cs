@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace flexli_erp_webapi.EditModels
 {
@@ -8,6 +9,15 @@ namespace flexli_erp_webapi.EditModels
 
         public string Description { get; set; }
         
-        public List<TaskDetailEditModel> TaskList { get; set; }
+        public List<string> ChildTemplateIds { get; set; }
+        public List<TemplateEditModel> ChildTemplates { get; set; }
+        
+        public TemplateEditModel CloneTemplate  { get; set; }
+        
+        public string CloneTemplateId  { get; set; }
+        
+        public string Owner { get; set; }
+        
+        public DateTime CreatedAt { get; set; }
     }
 }

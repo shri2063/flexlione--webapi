@@ -94,11 +94,12 @@ namespace flexli_erp_webapi.Services
             {
 
                 sprintReport = db.SprintReport
-                    .FirstOrDefault(x => x.SprintId == sprintReportEditModel.SprintId && x.CheckListItemId == sprintReportEditModel.CheckListItemId);
-
-                switch (SprintManagementService.CheckStatus(sprintReportEditModel.SprintId))
+                    .FirstOrDefault(x => x.SprintId == sprintReportEditModel.SprintId && x.CheckListItemId == sprintReportEditModel.CheckListItemId)
+                    ?? throw new KeyNotFoundException("Sprint report Id does not exist: " +
+                                                      sprintReportEditModel.SprintId);
+                switch (SprintManagementService.GetSprintById(sprintReportEditModel.SprintId).Closed)
                 {
-                    case SStatus.Approved:
+                    case false:
                         sprintReport.Result = sprintReportEditModel.Result;
                         sprintReport.UserComment = sprintReportEditModel.UserComment;
                         sprintReport.Status = sprintReportEditModel.Status.ToString();
@@ -301,15 +302,17 @@ namespace flexli_erp_webapi.Services
         {
             using (var db = new ErpContext())
             {
+                
                 var sprintReport = db.SprintReport
-                    .FirstOrDefault(x => x.CheckListItemId == checkListItemId);
+                    .Where(x => x.CheckListItemId == checkListItemId)
+                    .ToList();
+                // [Check] Multiple sprint report line item can have same checklist Item id. Use one with  sprint status not closed
+                var reqSprintReport = sprintReport.Find(x => ! SprintManagementService
+                    .GetSprintById(x.SprintId)
+                    .Closed);
 
-                if (sprintReport == null)
-                {
-                    return null;
-                }
 
-                return sprintReport.SprintReportLineItemId;
+                return reqSprintReport is null? null: reqSprintReport.SprintReportLineItemId ;
             }
         }
     }

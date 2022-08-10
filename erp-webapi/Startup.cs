@@ -7,6 +7,7 @@ using flexli_erp_webapi.DataLayer.Interface;
 using flexli_erp_webapi.Repository;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
+using flexli_erp_webapi.Services.Interfaces;
 using flexli_erp_webapi.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +44,9 @@ namespace flexli_erp_webapi
              services.AddScoped<ITagContext, TagContext>();
              services.AddScoped<ITagTaskListRepository, TagTaskListRepository>();
              services.AddScoped<ITagRepository, TagRepository>();
+             services.AddScoped<ITemplateRepository, TemplateRepository>();
              services.AddScoped<SearchManagementService, SearchManagementService>();
+             services.AddScoped<ITemplateManagementService, TemplateManagementService>();
              services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
