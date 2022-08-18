@@ -12,6 +12,13 @@ namespace flexli_erp_webapi.Services
         public static ProfileEditModel GetProfileById(string profileId, string include = null)
         {
           ProfileEditModel profileEditModel =  GetProfileByIdFromDb(profileId);
+          
+          // [check]: Profile exists
+
+          if (profileEditModel == null)
+          {
+              return null;
+          }
 
           if (include == "sprint")
           {
