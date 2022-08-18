@@ -43,5 +43,7 @@ namespace flexli_erp_webapi.DataModels
 
         public TaskDetail TaskDetail { get; set; }
         
+        public TaskSchedule TaskSchedule { get; set; }
+        
     }
 }

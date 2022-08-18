@@ -115,13 +115,6 @@ namespace flexli_erp_webapi.Controller
             return TaskManagementService.RemoveTaskFromSprint(taskId);
         }
 
-        [HttpPost("UpdateActualScoreOfTask")]
-        [Consumes("application/json")]
-
-        public TaskDetailEditModel UpdateActualScoreOfTask(string taskId, string include, int actualScore)
-        {
-            // return TaskManagementService.UpdateActualScoreOfTask(taskId, include, actualScore);
-            return null;
-        }
+       
     }
 }

@@ -16,5 +16,7 @@ namespace flexli_erp_webapi.EditModels
         
         public List<SprintEditModel> Sprints { get; set; }
         
+        public List<ProfileManagerEditModel> Managers { get; set; }
+        
     }
 }

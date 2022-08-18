@@ -7,7 +7,7 @@ namespace flexli_erp_webapi.Services.Interfaces
     {
         TemplateEditModel GetTemplateById(string templateId, List<string> include = null);
         
-        List<TemplateEditModel> GetTemplateList();
+        List<TemplateEditModel> GetSimilarTemplateList(string templateId = null);
         TemplateEditModel CreateOrUpdateTemplate(TemplateEditModel template);
 
         void DeleteTemplate(string templateId);

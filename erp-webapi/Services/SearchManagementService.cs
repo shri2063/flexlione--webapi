@@ -149,7 +149,10 @@ namespace flexli_erp_webapi.Services
                 {
                     query = query.Where(row => row.IsRemoved != true);
                 }
-                return query.ToList();
+
+                query = query.OrderByDescending(t => t.CreatedAt);
+                return query.Skip(0).Take(25).ToList();
+              
             }
 
            

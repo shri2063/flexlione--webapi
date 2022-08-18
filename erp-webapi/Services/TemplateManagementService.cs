@@ -44,10 +44,21 @@ namespace flexli_erp_webapi.Services
             }
             return templateEditModel;
         }
+        ///<Summary>
+        /// ToDo
+        ///</Summary>
 
-        public List<TemplateEditModel> GetTemplateList()
+        public List<TemplateEditModel> GetSimilarTemplateList(string templateId = null)
         {
-            return _templateRepository.GetAllTemplates();
+            List<TemplateEditModel> templateList =  _templateRepository.GetAllTemplates();
+
+            if (templateId == null)
+            {
+                return templateList;
+            }
+
+            var selectedTemplate = _templateRepository.GetTemplateById(templateId);
+            return templateList.FindAll(x => x.CloneTemplateId == selectedTemplate.CloneTemplateId);
         }
 
         ///<Summary>
@@ -96,7 +107,7 @@ namespace flexli_erp_webapi.Services
                 + templateId);
             
             cloneTemplateEditModel.TemplateId = "newTemplate";
-            cloneTemplateEditModel.CloneTemplateId = templateId;
+            cloneTemplateEditModel.CloneTemplateId = currentTemplateEditModel.CloneTemplateId;
 
             return _templateRepository.CreateOrUpdateTemplate(cloneTemplateEditModel);
         }

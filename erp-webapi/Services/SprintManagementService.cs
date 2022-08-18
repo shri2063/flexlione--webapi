@@ -228,6 +228,7 @@ namespace flexli_erp_webapi.Services
 
                 if (sprint != null) // update
                 {
+                    
                     sprint.Description = sprintEditModel.Description;
                     sprint.SprintNo = sprintEditModel.SprintNo;
                     sprint.Owner = sprintEditModel.Owner;
@@ -304,17 +305,20 @@ namespace flexli_erp_webapi.Services
             {
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId && x.Owner == userId);
-
+                
+                // [check] : if sprint or user not exist
                 if (sprint == null)
                 {
                     throw new KeyNotFoundException("Sprint Id or User Id does not exist");
                 }
 
+                // [check] : if status is not planning
                 if (sprint.Status != SStatus.Planning.ToString())
                 {
                     throw new ConstraintException("status is not planning, hence request for approval can't be made");
                 }
                 
+                // [check] : total expected hours of sprint should not be more than 6 hours * working days between sprint
                 if (TotalExpectedHours(sprintId) > 6*ValidSprintDays(sprintId))
                 {
                     throw new ConstraintException("expected hours more then total sprint time");
@@ -329,6 +333,7 @@ namespace flexli_erp_webapi.Services
 
         private static int TotalExpectedHours(string sprintId)
         {
+            // calculate total expected hours of all tasks in the sprint
             using (var db = new ErpContext())
             {
                 List<Decimal?> expectedHours = db.TaskDetail
@@ -342,6 +347,7 @@ namespace flexli_erp_webapi.Services
 
         private static int ValidSprintDays(string sprintId)
         {
+            // Calculate monday to friday working days in sprint
             Sprint sprint;
             using (var db = new ErpContext())
             {
@@ -375,21 +381,24 @@ namespace flexli_erp_webapi.Services
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
                 
+                // [check] : validate manager
                 if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
                 {
                     throw new ArgumentException("Approver id is not eligible to approve the sprint");
                 }
 
+                // [check] : if status is valid
                 if (sprint.Status != SStatus.RequestForApproval.ToString())
                 {
                     throw new ConstraintException("Sprint not requested for approval hence can't be approved");
                 }
-
+                
+                // Add entries in sprint report before changing status so that error is thrown before approved
+                SprintReportManagementService.AddSprintReportLineItem(sprint.SprintId);
+                
                 sprint.Status = SStatus.Approved.ToString();
                 sprint.Approved = true;
                 db.SaveChanges();
-
-                SprintReportManagementService.AddSprintReportLineItem(sprint.SprintId);
             }
             
             return GetSprintById(sprintId);
@@ -427,6 +436,11 @@ namespace flexli_erp_webapi.Services
             {
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
+                if (sprint == null)
+                {
+                    throw new ConstraintException("Sprint Id does not exist" + sprintId);
+                }
+                sprint.Score = 0;
                 
                 if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
                 {
@@ -438,45 +452,44 @@ namespace flexli_erp_webapi.Services
                     throw new ConstraintException("Sprint not requested for closure hence can't be closed");
                 }
 
+                var taskIds = TaskManagementService.GetTaskIdsForSprint(sprintId);
+                
+                
+                // [Action] - Update Provisional task Score
+                taskIds.ForEach(x =>
+                {
+                    sprint.Score = sprint.Score + TaskManagementService.CalculateTaskScore(x,sprintId);
+                });
+                
                 sprint.Status = SStatus.Closed.ToString();
                 sprint.Closed = true;
-                
                 // [Check]: If closed early then Sprint closing date needs to be updated
                 sprint.ToDate = DateTime.Today;
-                
-                // Provisional score of task
-                // TaskManagementService.UpdateProvisionalTaskScore(sprintId);
-                //
-                // List<int?> taskScores = db.TaskDetail
-                //     .Where(x => x.SprintId == sprintId)
-                //     .Select(x => x.Score)
-                //     .ToList();
-                //
-                // // Provisional score of sprint
-                // sprint.Score = taskScores.Sum();
-                
                 db.SaveChanges();
-
+                // [Action] - remove task link to sprint
+                var removedTask = new List<string>();
                 try
                 {
-                    List<string> tasks = db.TaskDetail
-                        .Where(x => x.SprintId == sprintId)
-                        .Select(x => x.TaskId)
-                        .ToList();
-                
-                    tasks.ForEach(x =>
+                    
+                    taskIds.ForEach(x =>
                     {
                         TaskManagementService.RemoveTaskFromSprint(x);
+                        removedTask.Add(x);
                     });
                 }
                 catch (Exception e)
                 {
-                    sprint.Status = SStatus.Closed.ToString();
-                    sprint.Closed = true;
-                    throw new ConstraintException("DB Error in removing tasks from sprint. Try again");
+                    sprint.Status = SStatus.RequestForClosure.ToString();
+                    sprint.Closed = false;
+                    db.SaveChanges();
+                    removedTask.ForEach(x => TaskManagementService.LinkTaskToSprint(x,sprint.SprintId));
+                    throw new ConstraintException(e.Message);
                 }
-                // Unlinking tasks from sprint
                 
+                
+                // Provisional Score Sprint Report
+                SprintReportManagementService.UpdateProvisionalScoreInSprintReport(sprintId);
+
 
             }
             
@@ -490,6 +503,11 @@ namespace flexli_erp_webapi.Services
             {
                 sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == sprintId);
+                if (sprint == null)
+                {
+                    throw new KeyNotFoundException("Sprint does not exist: " + sprintId);
+                }
+                sprint.Score = 0;
                 
                 if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
                 {
@@ -500,16 +518,20 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new ConstraintException("Sprint cannot be reviewed as status is not closed");
                 }
-
-                if (!SprintReportManagementService.AllSprintReportLineItemsStatusNotNoChange(sprintId))
+                var taskIds = TaskManagementService.GetTaskIdsForSprint(sprintId);
+                
+                
+                // [Action] - Update Actual task Score
+                taskIds.ForEach(x =>
                 {
-                    throw new ConstraintException("Sprint report line items have status no change");
-                }
+                    sprint.Score = sprint.Score + TaskManagementService.CalculateTaskScore(x,sprintId);
+                });
 
                 sprint.Status = SStatus.Reviewed.ToString();
+
                 db.SaveChanges();
 
-                // SprintReportManagementService.PublishActualScores(sprintId);
+
 
             }
             return GetSprintById(sprintId);

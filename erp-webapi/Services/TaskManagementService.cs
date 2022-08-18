@@ -61,28 +61,31 @@ namespace flexli_erp_webapi.Services
         public static List<string> GetTaskIdsForSprint(string sprintId)
         {
             List<string> taskIds = new List<string>();
+            
             var sprint = SprintManagementService.GetSprintById(sprintId);
             if (sprint == null)
             {
                 return taskIds;
             }
-            //[case] - Sprint is not closed
-            var sprintClosed = new List<SStatus> { SStatus.Closed, SStatus.Reviewed };
-            if (!sprintClosed.Contains(sprint.Status))
+            
+            var planningStage = new List<SStatus> { SStatus.Planning, SStatus.RequestForApproval };
+            if (planningStage.Contains(sprint.Status))
             {
-                using (var db = new ErpContext())
-                {
+                
+                    using (var db = new ErpContext())
+                    {
 
-                    taskIds = db.TaskDetail
-                        .Where(x => x.SprintId == sprintId)
-                        .Select(y => y.TaskId)
-                        .ToList();
-                }
+                        taskIds = db.TaskDetail
+                            .Where(x => x.SprintId == sprintId)
+                            .Select(y => y.TaskId)
+                            .ToList();
+                    }
 
-                return taskIds;
+                    return taskIds;
+                
             }
-            // [case] sprint is closed
-           using (var db = new ErpContext())
+
+            using (var db = new ErpContext())
            {
 
                taskIds = db.SprintReport
@@ -298,18 +301,16 @@ namespace flexli_erp_webapi.Services
                 if (existingTask == null)
                     throw new KeyNotFoundException("TaskDetail does not exist");
                 
-                // Rule: If Task has been scheduled in future for a task
-                // then task cannot be removed from sprint
-                if (existingTask.TaskSchedules.FindAll(
-                    x => x.Date >= DateTime.Today).Count > 0)
-                {
-                    throw new KeyNotFoundException("Cannot remove task from sprint, it is " +
-                                                   "already scheduled  ");
-                }
+                
 
                 Sprint sprint = db.Sprint
                     .FirstOrDefault(x => x.SprintId == existingTask.SprintId);
-                
+
+               // Case : Task Not link to any sprint
+                if (sprint == null)
+                {
+                    return GetTaskById(existingTask.TaskId);
+                }
                 // Case: Sprint is already approved
                 if (sprint.Approved && !sprint.Closed)
                 {
@@ -451,6 +452,7 @@ namespace flexli_erp_webapi.Services
                     task.Deadline = taskDetailEditModel.Deadline;
                     task.ExpectedHours = taskDetailEditModel.ExpectedHours;
                     task.EditedAt = DateTime.Now;
+                    task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0;
 
                    //[Action] If Sprint status = planning or Sprint not allocated then you can change acceptance criteria
                     if (task.SprintId != null? task.Status == SStatus.Planning.ToString(): true  )
@@ -473,10 +475,10 @@ namespace flexli_erp_webapi.Services
                         Description = taskDetailEditModel.Description,
                         AssignedTo = taskDetailEditModel.AssignedTo,
                         Deadline = taskDetailEditModel.Deadline,
-                        Score = 0,
                         EditedAt = dateTime,
                         ExpectedHours = taskDetailEditModel.ExpectedHours,
-                        IsRemoved = false
+                        IsRemoved = false,
+                        AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0,
                         
                     };
                     db.TaskDetail.Add(task);
@@ -612,54 +614,72 @@ namespace flexli_erp_webapi.Services
             return positionedTask;
         }
 
-        public static void UpdateProvisionalTaskScore(string sprintId)
+        public static int CalculateTaskScore(string taskId, string sprintId)
         {
-            List<TaskDetail> tasks;
 
-            using (var db = new ErpContext())
-            {
-                tasks = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .ToList();
-                
-                tasks.ForEach(task =>
+            TaskDetailEditModel task = GetTaskById(taskId);
+            List<SprintReportEditModel>
+                    sprintReportLineItems = SprintReportManagementService.GetSprintReportForSprint(sprintId)
+                        .FindAll(x => x.TaskId == taskId);
+                    
+                int complete = 0;
+                int completeEssential = 0;
+                int essential = 0;
+            
+                    
+                sprintReportLineItems.ForEach(sprintReportLineItem =>
                 {
-                    List<CheckListItemEditModel>
-                        checkListItems = CheckListManagementService.GetCheckList(task.TaskId);
                     
-                    int complete = 0;
-                    int completeEssential = 0;
-                    int essential = 0;
-                    
-                    checkListItems.ForEach(checkListItem =>
-                    {
-                        if (checkListItem.Essential)
-                            essential++;
+                    if (sprintReportLineItem.Essential)
+                        essential++;
 
-                        if (checkListItem.Essential && checkListItem.Status == CStatus.Completed)
+                    if (sprintReportLineItem.Essential && sprintReportLineItem.Status == CStatus.Completed && sprintReportLineItem.Approved != SApproved.False)
+                    {
+                        if(sprintReportLineItem.ResultType==CResultType.Numeric && Convert.ToInt32(sprintReportLineItem.Result)>=sprintReportLineItem.WorstCase && Convert.ToInt32(sprintReportLineItem.Result) <= sprintReportLineItem.BestCase)
                         {
                             complete++;
                             completeEssential++;
                         }
+
+                        if (sprintReportLineItem.ResultType == CResultType.Boolean && sprintReportLineItem.Result == "true")
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+
+                        if (sprintReportLineItem.ResultType == CResultType.File && sprintReportLineItem.Result != null)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+                    }
                         
-                        else if (checkListItem.Status == CStatus.Completed)
+                    else if (sprintReportLineItem.Status == CStatus.Completed && sprintReportLineItem.Approved != SApproved.False)
+                    {
+                        if(sprintReportLineItem.ResultType==CResultType.Numeric && Convert.ToInt32(sprintReportLineItem.Result)>=sprintReportLineItem.WorstCase && Convert.ToInt32(sprintReportLineItem.Result) <= sprintReportLineItem.BestCase)
                         {
                             complete++;
                         }
 
-                    });
-                    
-                    if (completeEssential < essential)
-                        task.Score = 0;
+                        if (sprintReportLineItem.ResultType == CResultType.Boolean && sprintReportLineItem.Result == "true")
+                        {
+                            complete++;
+                        }
 
-                    else if (complete > task.AcceptanceCriteria)
-                        task.Score = Convert.ToInt32(task.ExpectedHours / 3);
-
-                    db.SaveChanges();
+                        if (sprintReportLineItem.ResultType == CResultType.File && sprintReportLineItem.Result != null)
+                        {
+                            complete++;
+                        }
+                    }
 
                 });
-            }
+                    
+                if (completeEssential < essential || complete < task.AcceptanceCriteria)
+                   return 0;
+
+                return Convert.ToInt32(task.ExpectedHours / 3);
         }
+        
 
         public static void UpdateEditedAt(string taskId)
         {
@@ -669,6 +689,82 @@ namespace flexli_erp_webapi.Services
                     .FirstOrDefault(x => x.TaskId == taskId);
                 
                 taskDetail.EditedAt = DateTime.Now;
+                db.SaveChanges();
+            }
+        }
+
+        public static void PublishActualScoresForTask(string taskId, string sprintId)
+        {
+            TaskDetail task;
+            using (var db = new ErpContext())
+            {
+                task = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
+                
+                List<CheckListItemEditModel>
+                    checkListItems = CheckListManagementService.GetCheckList(task.TaskId);
+                    
+                int complete = 0;
+                int completeEssential = 0;
+                int essential = 0;
+                    
+                checkListItems.ForEach(checkListItem =>
+                {
+                    SprintReport sprintReport = db.SprintReport
+                        .FirstOrDefault(x =>
+                            x.SprintId == sprintId && x.TaskId == taskId &&
+                            x.CheckListItemId == checkListItem.CheckListItemId);
+                    
+                    if (checkListItem.Essential)
+                        essential++;
+
+                    if (checkListItem.Essential && checkListItem.Status == CStatus.Completed && sprintReport.Approved==SApproved.True.ToString())
+                    {
+                        if(checkListItem.ResultType==CResultType.Numeric && Convert.ToInt32(checkListItem.Result)>=checkListItem.WorstCase && Convert.ToInt32(checkListItem.Result) <= checkListItem.BestCase)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+
+                        if (checkListItem.ResultType == CResultType.Boolean && checkListItem.Result == "true")
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+
+                        if (checkListItem.ResultType == CResultType.File && checkListItem.Result != null)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+                    }
+                        
+                    else if (!checkListItem.Essential && checkListItem.Status == CStatus.Completed && sprintReport.Approved==SApproved.True.ToString())
+                    {
+                        if(checkListItem.ResultType==CResultType.Numeric && Convert.ToInt32(checkListItem.Result)>=checkListItem.WorstCase && Convert.ToInt32(checkListItem.Result) <= checkListItem.BestCase)
+                        {
+                            complete++;
+                        }
+
+                        if (checkListItem.ResultType == CResultType.Boolean && checkListItem.Result == "true")
+                        {
+                            complete++;
+                        }
+
+                        if (checkListItem.ResultType == CResultType.File && checkListItem.Result != null)
+                        {
+                            complete++;
+                        }
+                    }
+
+                });
+                    
+                if (completeEssential < essential || complete < task.AcceptanceCriteria)
+                    task.Score = 0;
+
+                else if (complete >= task.AcceptanceCriteria && completeEssential == essential)
+                    task.Score = Convert.ToInt32(task.ExpectedHours / 3);
+
                 db.SaveChanges();
             }
         }

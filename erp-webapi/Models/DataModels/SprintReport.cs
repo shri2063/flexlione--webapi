@@ -47,5 +47,8 @@ namespace flexli_erp_webapi.DataModels
         
         [Column("score")]
         public int? Score { get; set; }
+        
+        [Column("essential")]
+        public bool Essential { get; set; }
     }
 }

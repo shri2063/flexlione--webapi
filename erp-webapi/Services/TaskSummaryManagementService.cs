@@ -109,6 +109,7 @@ namespace flexli_erp_webapi.Services
                 
                 TaskSummary existingTaskSummary = db.TaskSummary
                     .Include(x =>x.TaskDetail)
+                    .Include(x=>x.TaskSchedule)
                     .FirstOrDefault(x => x.TaskSummaryId == taskSummaryId);
                 
                 // Case: TaskDetail does not exist
@@ -130,7 +131,19 @@ namespace flexli_erp_webapi.Services
                     TaskScheduleId = existingTaskSummary.TaskScheduleId,
                     Stamp = existingTaskSummary.Stamp,
                     Action = existingTaskSummary.Action,
-                    SystemHours = existingTaskSummary.SystemHours
+                    SystemHours = existingTaskSummary.SystemHours,
+                    TaskSchedule = new TaskShortScheduleEditModel()
+                    {
+                        TaskScheduleId = existingTaskSummary.TaskSchedule.TaskScheduleId,
+                        IsPlanned = existingTaskSummary.TaskSchedule.IsPlanned,
+                        StartHour = existingTaskSummary.TaskSchedule.StartHour
+                    },
+                    Task = new TaskShortDetailEditModel()
+                    {
+                        TaskId = existingTaskSummary.TaskDetail.TaskId,
+                        Description = existingTaskSummary.TaskDetail.Description,
+                        Status = (EStatus) Enum.Parse(typeof(EStatus), existingTaskSummary.TaskDetail.Status, true)
+                    }
                 };
 
                 return taskSummaryEditModel;

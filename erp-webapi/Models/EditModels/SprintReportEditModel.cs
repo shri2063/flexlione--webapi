@@ -30,5 +30,7 @@
         public int? BestCase { get; set; }
         
         public int? Score { get; set; }
+        
+        public bool Essential { get; set; }
     }
 }

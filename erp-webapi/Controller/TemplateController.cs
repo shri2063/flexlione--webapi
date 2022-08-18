@@ -44,13 +44,13 @@ namespace flexli_erp_webapi.Controller
         
         ///<Summary>
         ///</Summary>
-        [HttpGet("GetTemplateList")]
+        [HttpGet("GetSimilarTemplateList")]
         [Consumes("application/json")]
 
        
-        public List<TemplateEditModel> GetTemplateList()
+        public List<TemplateEditModel> GetSimilarTemplateList(string templateId = null)
         {
-            return _templateManagementService.GetTemplateList();
+            return _templateManagementService.GetSimilarTemplateList(templateId);
         }
         
         ///<Summary>
@@ -88,20 +88,6 @@ namespace flexli_erp_webapi.Controller
         }
         
        
-        ///<summary>
-        /// [Check] Cannot delete template if child template exist
-        /// [No Check] No check for parent templates currently
-        /// [Check] Cannot delete if serves as a clone template
-        ///</summary>
-        /// <returns></returns>
-        [HttpDelete("DeleteTemplate")]
-        [Consumes("application/json")]
-
-        public ActionResult DeleteTemplate(string templatedId)
-        {
-            _templateManagementService.DeleteTemplate(templatedId);
-            return Ok();
-        }
         
         ///<summary>
         /// [Check] : Parent Template exists

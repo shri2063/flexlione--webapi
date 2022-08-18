@@ -29,6 +29,8 @@ namespace flexli_erp_webapi.Services
             });
             return sprintReport;
         }
+        
+       
 
 
         private static List<string> GetSprintReportLineItemIdsForSprint(string sprintId)
@@ -164,6 +166,13 @@ namespace flexli_erp_webapi.Services
         {
             using (var db = new ErpContext())
             {
+                SprintEditModel sprint = SprintManagementService.GetSprintById(sprintId);
+
+                if (sprint == null)
+                {
+                    throw new KeyNotFoundException("invalid sprint id, sprint doesn't exist");
+                }
+                
                 List<string> tasks = db.TaskDetail
                     .Where(task => task.SprintId == sprintId)
                     .Select(task => task.TaskId)
@@ -211,7 +220,7 @@ namespace flexli_erp_webapi.Services
           
         }
 
-        public static bool AllSprintReportLineItemsStatusNotNoChange(string sprintId)
+        public static bool AllSprintReportLineItemsStatusNotNotCompleted(string sprintId)
         {
             using (var db = new ErpContext())
             {
@@ -223,7 +232,7 @@ namespace flexli_erp_webapi.Services
                 int flag = 0;
                 status.ForEach(x =>
                 {
-                    if (x == "NotCompleted")
+                    if (x == CStatus.NotCompleted.ToString())
                     {
                         flag = 1;
                     }
@@ -236,14 +245,13 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static void PublishActualScores(string sprintId)
+        public static void PublishActualScoresForSprintReport(string sprintId)
         {
             Sprint sprint;
             List<SprintReport> sprintReports;
             using (var db = new ErpContext())
             {
-                sprint = db.Sprint
-                    .FirstOrDefault(x => x.SprintId == sprintId);
+              
                 sprintReports = db.SprintReport
                     .Where(x => x.SprintId == sprintId)
                     .ToList();
@@ -252,7 +260,7 @@ namespace flexli_erp_webapi.Services
                 {
                     if (x.Approved == SApproved.NoAction.ToString())
                     {
-                        x.Approved = "true";
+                        x.Approved = "True";
                         db.SaveChanges();
                     }
 
@@ -262,39 +270,28 @@ namespace flexli_erp_webapi.Services
                     CheckList checkList = db.CheckList
                         .FirstOrDefault(s => s.CheckListItemId == x.CheckListItemId);
 
-                    if (x.Approved == "false" && checkList.Essential)
+                    if (x.Approved == SApproved.False.ToString() && checkList.Essential)
                     {
                         x.Score = 0;
                         db.SaveChanges();
                     }
                     
-                    else if (x.Approved == "false" && !checkList.Essential)
+                    else if (x.Approved == SApproved.False.ToString() && !checkList.Essential)
                     {
-                        if (x.Score > 0)
+                        if (x.Score != 0)
                         {
-                            TaskDetail taskDetail = db.TaskDetail
-                                .FirstOrDefault(z => z.TaskId==x.TaskId);
-
-                            taskDetail.AcceptanceCriteria--;
-                            db.SaveChanges();
-                            
-                            TaskManagementService.UpdateProvisionalTaskScore(x.SprintId);
+                            // TaskDetail taskDetail = db.TaskDetail
+                            //     .FirstOrDefault(z => z.TaskId==x.TaskId);
+                            //
+                            // taskDetail.AcceptanceCriteria--;
+                            // db.SaveChanges();
+                            //
+                            // TaskManagementService.UpdateProvisionalTaskScore(x.SprintId);
                         }
                     }
 
                 });
-                
-                List<int?> taskScores = db.TaskDetail
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.Score)
-                    .ToList();
-                
-                // Provisional score of sprint
-                sprint.Score = taskScores.Sum();
-                
-                db.SaveChanges();
-                
-                
+
             }
         }
 
@@ -313,6 +310,41 @@ namespace flexli_erp_webapi.Services
 
 
                 return reqSprintReport is null? null: reqSprintReport.SprintReportLineItemId ;
+            }
+        }
+
+        public static void UpdateProvisionalScoreInSprintReport(string sprintId)
+        {
+            List<SprintReport> sprintReports;
+            using (var db = new ErpContext())
+            {
+                sprintReports = db.SprintReport
+                    .Where(x => x.SprintId == sprintId)
+                    .ToList();
+                
+                sprintReports.ForEach(sprintReport =>
+                {
+                    if (sprintReport.Status == CStatus.Completed.ToString())
+                    {
+                        if(sprintReport.ResultType==CResultType.Numeric.ToString() && Convert.ToInt32(sprintReport.Result)>=sprintReport.WorstCase && Convert.ToInt32(sprintReport.Result) <= sprintReport.BestCase)
+                        {
+                            sprintReport.Score = 1;
+                            db.SaveChanges();
+                        }
+
+                        if (sprintReport.ResultType == CResultType.Boolean.ToString() && sprintReport.Result == "true")
+                        {
+                            sprintReport.Score = 1;
+                            db.SaveChanges();
+                        }
+
+                        if (sprintReport.ResultType == CResultType.File.ToString() && sprintReport.Result != null)
+                        {
+                            sprintReport.Score = 1;
+                            db.SaveChanges();
+                        }
+                    }
+                });
             }
         }
     }
