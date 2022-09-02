@@ -19,15 +19,15 @@ namespace flexli_erp_webapi.Controller
     public class CheckListController : ControllerBase
     {
         /// <summary>
-        /// [R]Get Check List for a Task id
+        /// [R]Get Check List for a Task or Template.checkListType = ["Task,"Template"]
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetCheckList")]
         [Consumes("application/json")]
         
-        public List<CheckListItemEditModel> GetCheckListForTaskId(string taskId = null)
+        public List<CheckListItemEditModel> GetCheckListByTypeId(string typeId, ECheckListType checkListType)
         {
-            return CheckListManagementService.GetCheckList(taskId);
+            return CheckListManagementService.GetCheckList(typeId, checkListType);
         }
         /// <summary>
         /// [R]Checklist can added only if sprint is in planning stage

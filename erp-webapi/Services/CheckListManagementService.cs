@@ -5,24 +5,28 @@ using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 
 namespace flexli_erp_webapi.Services
 {
     public class CheckListManagementService
     {
-        public static List<CheckListItemEditModel> GetCheckList(string taskId)
+        public static List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type)
         {
            
-            return GetCheckListForATaskId(taskId);
+            return GetCheckListForTypeId(taskId,type);
         }
         public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 
-          
+            if (checkListItemEditModel.CheckListType == ECheckListType.Template)
+            {
+                return CreateOrUpdateCheckListInDb(checkListItemEditModel);
+            }
             // If checklist exist - get Sprint Status from DB
             var checkList = GetCheckListById(checkListItemEditModel.CheckListItemId);
-            var task = (checkList != null)?TaskManagementService.GetTaskById(checkList.TaskId): null;
+            var task = (checkList != null)?TaskManagementService.GetTaskById(checkList.TypeId): null;
             var sprint = (task != null) ?SprintManagementService.GetSprintById(
                 task.SprintId): null;
             
@@ -30,7 +34,7 @@ namespace flexli_erp_webapi.Services
             // If checklist does not exist - get Sprint Status from checklist param in function
             if (checkList == null)
             {
-                task = (checkListItemEditModel.TaskId != null)?TaskManagementService.GetTaskById(checkListItemEditModel.TaskId)
+                task = (checkListItemEditModel.TypeId != null)?TaskManagementService.GetTaskById(checkListItemEditModel.TypeId)
                     : throw new KeyNotFoundException("Task Id not mentioned");
                 sprint = (task != null) ?SprintManagementService.GetSprintById(
                     task.SprintId): throw new KeyNotFoundException("Task does not exist");
@@ -91,7 +95,7 @@ namespace flexli_erp_webapi.Services
             if (sprintStatus == SStatus.Planning)
             {
                 editCheckList.Description = checkListItemEditModel.Description;
-                editCheckList.TaskId = checkListItemEditModel.TaskId;
+                editCheckList.TypeId = checkListItemEditModel.TypeId;
                 editCheckList.WorstCase = checkListItemEditModel.WorstCase;
                 editCheckList.BestCase = checkListItemEditModel.BestCase;
                 editCheckList.ResultType = checkListItemEditModel.ResultType;
@@ -116,10 +120,10 @@ namespace flexli_erp_webapi.Services
 
 
 
-                if (existingCheckList != null)
+                if (existingCheckList != null && existingCheckList.CheckListType  == ECheckListType.Task.ToString())
                 {
                     var sprintId = db.TaskDetail
-                        .FirstOrDefault(x => x.TaskId == existingCheckList.TaskId)
+                        .FirstOrDefault(x => x.TaskId == existingCheckList.TypeId)
                         .SprintId
                         ;
 
@@ -133,9 +137,11 @@ namespace flexli_erp_webapi.Services
                     }
                    
                     
-                    db.CheckList.Remove(existingCheckList);
-                    db.SaveChanges();
+                    
                 }
+                
+                db.CheckList.Remove(existingCheckList);
+                db.SaveChanges();
 
 
             }
@@ -165,7 +171,7 @@ namespace flexli_erp_webapi.Services
                 }
 
                 checkList.Description = checkListItemEditModel.Description; 
-                checkList.TaskId = checkListItemEditModel.TaskId;
+                checkList.TypeId = checkListItemEditModel.TypeId;
                 checkList.WorstCase = checkListItemEditModel.WorstCase; 
                 checkList.BestCase = checkListItemEditModel.BestCase;
                 checkList.ResultType = checkListItemEditModel.ResultType.ToString();
@@ -174,6 +180,7 @@ namespace flexli_erp_webapi.Services
                 checkList.Status = checkListItemEditModel.Status.ToString(); 
                 checkList.Result = checkListItemEditModel.Result; 
                 checkList.ManagerComment = checkListItemEditModel.ManagerComment;
+                checkList.CheckListType = checkListItemEditModel.CheckListType.ToString();
                 
                
                 
@@ -227,14 +234,14 @@ namespace flexli_erp_webapi.Services
           
         }
         
-        private static List<CheckListItemEditModel> GetCheckListForATaskId(string  taskId)
+        private static List<CheckListItemEditModel> GetCheckListForTypeId(string  typeId, ECheckListType type)
         {
 
             List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
             using (var db = new ErpContext())
             {
                 List<string> checkList = db.CheckList
-                    .Where(x => x.TaskId == taskId)
+                    .Where(x => x.TypeId == typeId && x.CheckListType == type.ToString())
                     .Select(t => t.CheckListItemId)
                     .ToList();
 
@@ -259,7 +266,7 @@ namespace flexli_erp_webapi.Services
                 CheckListItemEditModel checkListItemEditModel = new CheckListItemEditModel()
                 {
                     CheckListItemId = existingCheckList.CheckListItemId,
-                    TaskId = existingCheckList.TaskId,
+                    TypeId = existingCheckList.TypeId,
                     Description = existingCheckList.Description,
                     Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
                     WorstCase = existingCheckList.WorstCase,
@@ -268,7 +275,8 @@ namespace flexli_erp_webapi.Services
                     Result = existingCheckList.Result,
                     Essential = existingCheckList.Essential,
                     UserComment = existingCheckList.UserComment,
-                    ManagerComment = existingCheckList.ManagerComment
+                    ManagerComment = existingCheckList.ManagerComment,
+                    CheckListType = (ECheckListType) Enum.Parse(typeof(ECheckListType), existingCheckList.CheckListType, true),
                     
                     
                 };

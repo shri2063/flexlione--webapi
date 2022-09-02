@@ -18,7 +18,7 @@ namespace flexli_erp_webapi.Services.Interfaces
         
         TemplateEditModel AddChildTemplate(string childTemplateId, string parentTemplateId);
         
-        TemplateEditModel RemoveChildTemplate(string childTemplateId, string parentTemplateId);
+        TemplateEditModel RemoveChildTemplate(string childTemplateId, string ParentTemplateId);
 
 
 

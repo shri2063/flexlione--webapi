@@ -21,16 +21,18 @@ namespace flexli_erp_webapi.Controller
     {
 
         private readonly ITemplateManagementService _templateManagementService;
+        private readonly TemplateMainService _templateMainService;
 
         ///<Summary>
         /// ToDo
         ///</Summary>
-        public TemplateController(ITemplateManagementService templateManagementService)
+        public TemplateController(ITemplateManagementService templateManagementService, TemplateMainService templateMainService)
         {
             _templateManagementService = templateManagementService;
+            _templateMainService = templateMainService;
         }
         /// <summary>
-        /// Include - child
+        /// Include - children
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetTemplateById")]
@@ -39,7 +41,7 @@ namespace flexli_erp_webapi.Controller
        
         public TemplateEditModel GetTemplateById(string templateId, List<string> include = null)
         {
-            return _templateManagementService.GetTemplateById(templateId, include);
+            return _templateMainService.GetTemplateById(templateId, include);
         }
         
         ///<Summary>
@@ -65,7 +67,7 @@ namespace flexli_erp_webapi.Controller
         }
         
         ///<summary>
-        /// [ToDo]: Cannot add/remove child templates from here
+        /// 
         ///</summary>
         [HttpPost("CreateOrUpdateTemplate")]
         [Consumes("application/json")]
@@ -114,11 +116,34 @@ namespace flexli_erp_webapi.Controller
             return _templateManagementService.RemoveChildTemplate(childTemplateId, parentTemplateId);
             
         }
+        
+       
+        ///<summary>
+        /// 
+        ///</summary>
+        [HttpPost("GenerateTaskFromTemplate")]
+        [Consumes("application/json")]
+
+        public List<TaskDetailEditModel> GenerateTaskFromTemplate(TaskTemplateEditModel taskTemplate)
+        {
+            return _templateMainService.GenerateMultipleTaskFromTemplate(taskTemplate);
+
+        }
 
 
 
+        
+        ///<summary>
+        /// 
+        ///</summary>
+        [HttpPost("GetAllRolesForTemplateId")]
+        [Consumes("application/json")]
 
+        public List<string> GetAllRolesForTemplateId(string templateId, List<string> include = null)
+        {
+            return _templateMainService.GetAllRolesForTemplateId(templateId, include);
 
+        }
 
         
 

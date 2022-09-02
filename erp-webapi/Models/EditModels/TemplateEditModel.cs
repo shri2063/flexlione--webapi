@@ -6,11 +6,11 @@ namespace flexli_erp_webapi.EditModels
     public class TemplateEditModel
     {
         public string TemplateId { get; set; }
-
         public string Description { get; set; }
         
-        public List<string> ChildTemplateIds { get; set; }
         public List<TemplateEditModel> ChildTemplates { get; set; }
+        
+        public List<TemplateEditModel> ParentTemplates { get; set; }
         
         public TemplateEditModel CloneTemplate  { get; set; }
         
@@ -19,5 +19,7 @@ namespace flexli_erp_webapi.EditModels
         public string Owner { get; set; }
         
         public DateTime CreatedAt { get; set; }
+        
+        public string Role { get; set; }
     }
 }
