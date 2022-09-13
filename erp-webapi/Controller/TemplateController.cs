@@ -32,7 +32,7 @@ namespace flexli_erp_webapi.Controller
             _templateMainService = templateMainService;
         }
         /// <summary>
-        /// Include - children
+        /// Include - ["children","parent"]
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetTemplateById")]
@@ -134,7 +134,8 @@ namespace flexli_erp_webapi.Controller
 
         
         ///<summary>
-        /// 
+        /// If include is null -> Only immediate reference template + immediate children roles will be included
+        /// If include = "allChildren" -> then  immediate reference template + exhaustive children roles will be included
         ///</summary>
         [HttpPost("GetAllRolesForTemplateId")]
         [Consumes("application/json")]

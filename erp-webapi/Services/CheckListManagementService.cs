@@ -271,7 +271,8 @@ namespace flexli_erp_webapi.Services
                     Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
                     WorstCase = existingCheckList.WorstCase,
                     BestCase = existingCheckList.BestCase,
-                    ResultType = (CResultType) Enum.Parse(typeof(CResultType), existingCheckList.ResultType, true),
+                    ResultType = existingCheckList.ResultType != null?
+                        (CResultType) Enum.Parse(typeof(CResultType), existingCheckList.ResultType, true): CResultType.File,
                     Result = existingCheckList.Result,
                     Essential = existingCheckList.Essential,
                     UserComment = existingCheckList.UserComment,

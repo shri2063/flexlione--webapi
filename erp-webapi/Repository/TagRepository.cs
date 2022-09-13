@@ -29,7 +29,7 @@ namespace flexli_erp_webapi.Repository
         }
         public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType)
         {
-            var documents = _tagContext.Tag.Find(new BsonDocument()).ToList(); 
+           
             return await _tagContext
                 .Tag
                 .Find(x => x.Type == tagType)
