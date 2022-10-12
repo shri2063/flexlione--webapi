@@ -221,6 +221,7 @@ namespace flexli_erp_webapi.Services
         private static SprintEditModel AddOrUpdateSprintInDb(SprintEditModel sprintEditModel)
         {
             Sprint sprint;
+            Decimal newSprintNo = 1;
             
             using (var db = new ErpContext())
             {
@@ -241,10 +242,34 @@ namespace flexli_erp_webapi.Services
                 }
                 else
                 {
+                    var sprintNo = db.Sprint
+                        .Where(x=>x.Owner==sprintEditModel.Owner)
+                        .Select(x => Convert.ToDecimal(x.SprintNo))
+                        .DefaultIfEmpty(1)
+                        .Max();
+
+                    if (sprintNo != 1)
+                    {
+                        var prevSprint = db.Sprint
+                            .FirstOrDefault(x => Convert.ToDecimal(x.SprintNo) == sprintNo);
+                        
+                        if (sprintEditModel.FromDate > prevSprint.ToDate &&
+                            sprintEditModel.ToDate.Subtract(sprintEditModel.FromDate).Days>=10)
+                        {
+                            newSprintNo = Math.Truncate(sprintNo) + 1;
+                        }
+                        
+                        else if (sprintEditModel.FromDate < prevSprint.ToDate ||
+                                 sprintEditModel.ToDate.Subtract(sprintEditModel.FromDate).Days < 10)
+                        {
+                            newSprintNo = sprintNo + Convert.ToDecimal(0.1);
+                        }
+                    }
+
                     sprint = new Sprint()
                     {
                         SprintId = GetNextAvailableId(),
-                        SprintNo = 0,
+                        SprintNo = newSprintNo,
                         Description = sprintEditModel.Description,
                         Owner = sprintEditModel.Owner,
                         FromDate = sprintEditModel.FromDate,
