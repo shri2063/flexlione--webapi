@@ -11,11 +11,48 @@ namespace flexli_erp_webapi.Services
 {
     public class CheckListManagementService
     {
-        public static List<CheckListItemEditModel> GetCheckList(string taskId)
+        public static List<CheckListItemEditModel> GetCheckList(string taskId, int? pageIndex, int? pageSize)
         {
-           
+            if (pageIndex != null && pageSize != null)
+            {
+                // type casting of nullable int to int
+                return GetCheckListPageForATaskId(taskId, (int) pageIndex, (int) pageSize);
+            }
+            
             return GetCheckListForATaskId(taskId);
         }
+
+        private static List<CheckListItemEditModel> GetCheckListPageForATaskId(string taskId, int pageIndex, int pageSize)
+        {
+            List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
+            using (var db = new ErpContext())
+            {
+                if (pageIndex > 0 && pageSize > 0)
+                {
+                    // skip take logic
+                    List<string> checkList = db.CheckList
+                        .Where(x => x.TaskId == taskId)
+                        .Select(t => t.CheckListItemId)
+                        .Skip((pageIndex - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    if (checkList.Count == 0)
+                    {
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                    }
+                    checkList.ForEach(
+                        x => checkListEditModels.Add(
+                            GetCheckListById(x)));
+
+                    return checkListEditModels;
+                }
+        
+                throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+
+            }
+        }
+
         public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 
@@ -227,7 +264,7 @@ namespace flexli_erp_webapi.Services
           
         }
         
-        private static List<CheckListItemEditModel> GetCheckListForATaskId(string  taskId)
+        private static List<CheckListItemEditModel> GetCheckListForATaskId(string taskId)
         {
 
             List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();

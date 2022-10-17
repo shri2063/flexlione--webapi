@@ -180,7 +180,7 @@ namespace flexli_erp_webapi.Services
 
                 foreach (var task in tasks)
                 {
-                    List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task);
+                    List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, null, null);
 
                     foreach (var checkListItem in checkListItems)
                     {
