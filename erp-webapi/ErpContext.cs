@@ -34,7 +34,7 @@ namespace flexli_erp_webapi
         
         
         
-        public DbSet<TemplateTask> TemplateTask { get; set; }
+        public DbSet<TemplateRelation> TemplateRelation { get; set; }
         
         public DbSet<RegisterTimeStamp> RegisterTimeStamp { get; set; }
 

@@ -10,8 +10,7 @@ namespace flexli_erp_webapi.Repository.Interfaces
         TemplateEditModel GetTemplateById(string templateId);
 
         List<TemplateEditModel> GetAllTemplates();
-
-        List<TemplateEditModel> GetChildrenTemplates(string templateId);
+        
         TemplateEditModel CreateOrUpdateTemplate(TemplateEditModel templateEditModel);
         
         bool DeleteTemplate(string templateId);

@@ -16,14 +16,16 @@ namespace flexli_erp_webapi.DataModels
         
         [Column("owner")] 
         public string Owner { get; set; }
-        
-        [Column("child_template_ids")] 
-        public List<string> ChildTemplateIds { get; set; }
-        
+
         [Column("clone")] 
         public string CloneTemplateId { get; set; }
         
         [Column("created_at")] 
         public DateTime CreatedAt { get; set; }
+        
+        [Column("role")] 
+        public string Role { get; set; }
+        
+      
     }
 }

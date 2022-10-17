@@ -12,7 +12,7 @@ namespace flexli_erp_webapi.DataModels
         public string CheckListItemId { get; set; }
         
         [Column("type_id")]
-        public string TaskId { get; set; }
+        public string TypeId { get; set; }
         
         [Column("description")]
         public string Description { get; set; }
@@ -41,5 +41,8 @@ namespace flexli_erp_webapi.DataModels
         
         [Column("essential")]
         public bool Essential { get; set; }
+        
+        [Column("check_list_type")]
+        public string CheckListType { get; set; }
  }
 }

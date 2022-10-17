@@ -702,7 +702,7 @@ namespace flexli_erp_webapi.Services
                     .FirstOrDefault(x => x.TaskId == taskId);
                 
                 List<CheckListItemEditModel>
-                    checkListItems = CheckListManagementService.GetCheckList(task.TaskId, null, null);
+                    checkListItems = CheckListManagementService.GetCheckList(task.TaskId, ECheckListType.Task);
                     
                 int complete = 0;
                 int completeEssential = 0;
