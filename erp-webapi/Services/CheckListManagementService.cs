@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using Microsoft.AspNetCore.Mvc;
@@ -288,5 +289,28 @@ namespace flexli_erp_webapi.Services
         }
 
 
+        public static CheckListItemEditModel AddNewChecklistItemForTaskWithNoChecklist(string taskId)
+        {
+            using (var db = new ErpContext())
+            {
+                TaskDetail task = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
+
+                CheckListItemEditModel dummyNewChecklistItem = new CheckListItemEditModel()
+                {
+                    CheckListItemId = "newChecklist",
+                    Description = task.Description,
+                    TypeId = task.TaskId,
+                    Status = CStatus.NotCompleted,
+                    WorstCase = 0,
+                    BestCase = 0,
+                    ResultType = CResultType.Boolean,
+                    Essential = true,
+                    CheckListType = ECheckListType.Task
+                };
+
+                return CreateOrUpdateCheckListInDb(dummyNewChecklistItem);
+            }
+        }
     }
 }

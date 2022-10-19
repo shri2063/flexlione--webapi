@@ -182,6 +182,12 @@ namespace flexli_erp_webapi.Services
                 {
                     List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, ECheckListType.Task);
 
+                    if (checkListItems.Count == 0)
+                    {
+                        CheckListItemEditModel dummyNewChecklistItem = CheckListManagementService.AddNewChecklistItemForTaskWithNoChecklist(task);
+                        checkListItems.Add(dummyNewChecklistItem);
+                    }
+
                     foreach (var checkListItem in checkListItems)
                     {
                         SprintReport sprintReport = new SprintReport()
