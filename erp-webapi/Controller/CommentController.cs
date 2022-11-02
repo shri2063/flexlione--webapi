@@ -20,9 +20,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetCommentsByTaskId")]
         [Consumes("application/json")]
         
-        public List<CommentEditModel> GetCommentsByTaskId(string taskId)
+        public List<CommentEditModel> GetCommentsByTaskId(string taskId, int? pageIndex = null, int? pageSize = null)
         {
-            return CommentManagementService.GetCommentsByTaskId(taskId);
+            return CommentManagementService.GetCommentsByTaskId(taskId, pageIndex, pageSize);
         }
         
         

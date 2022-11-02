@@ -41,9 +41,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetSprintByProfileId")]
         [Consumes("application/json")]
 
-        public List<SprintEditModel> GetSprintsByProfileId(string profileId, List<string> include)
+        public List<SprintEditModel> GetSprintsByProfileId(string profileId, List<string> include, int? pageIndex = null, int? pageSize = null)
         {
-            return SprintManagementService.GetSprintsByProfileId(profileId, include);
+            return SprintManagementService.GetSprintsByProfileId(profileId, include, pageIndex, pageSize);
         }
         
         /// <summary>

@@ -25,9 +25,9 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         
        
-        public List<SprintReportEditModel> GetSprintReportForSprint(string sprintId)
+        public List<SprintReportEditModel> GetSprintReportForSprint(string sprintId, int? pageIndex = null, int? pageSize = null)
         {
-            return SprintReportManagementService.GetSprintReportForSprint(sprintId);
+            return SprintReportManagementService.GetSprintReportForSprint(sprintId, pageIndex, pageSize);
         }
 
 

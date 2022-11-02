@@ -27,9 +27,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetDailyTaskSummary")]
         [Consumes("application/json")]
 
-        public List<TaskSummaryEditModel> GetDailyTaskSummary(string profileId, DateTime date)
+        public List<TaskSummaryEditModel> GetDailyTaskSummary(string profileId, DateTime date, int? pageIndex = null, int? pageSize = null)
         {
-            return TaskSummaryManagementService.GetDailyTaskSummary(profileId, date);
+            return TaskSummaryManagementService.GetDailyTaskSummary(profileId, date, pageIndex, pageSize);
         }
 
         
@@ -37,9 +37,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetAllTaskSummaryByTaskId")]
         [Consumes("application/json")]
 
-        public List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate, DateTime? toDate=null, string include=null)
+        public List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate, DateTime? toDate=null, string include=null, int? pageIndex = null, int? pageSize = null)
         {
-            return TaskSummaryManagementService.GetAllTaskSummaryByTaskId(taskId, fromDate, toDate, include);
+            return TaskSummaryManagementService.GetAllTaskSummaryByTaskId(taskId, fromDate, toDate, include, pageIndex, pageSize);
         }
 
         [HttpPost("AddOrUpdateTaskSummary")]
@@ -53,9 +53,9 @@ namespace flexli_erp_webapi.Controller
         [HttpPost("UpdateDailyTaskActualTime")]
         [Consumes("application/json")]
 
-        public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId, DateTime stamp, string action)
+        public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId, DateTime stamp, string action, int? pageIndex = null, int? pageSize = null)
         {
-            return TaskSummaryManagementService.UpdateDailyTaskActualTime(profileId, taskSummaryId, stamp, action);
+            return TaskSummaryManagementService.UpdateDailyTaskActualTime(profileId, taskSummaryId, stamp, action, pageIndex, pageSize);
         }
         
         [HttpDelete("DeleteTaskSummary")]

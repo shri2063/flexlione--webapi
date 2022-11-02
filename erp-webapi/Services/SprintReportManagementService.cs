@@ -10,15 +10,16 @@ namespace flexli_erp_webapi.Services
     public class SprintReportManagementService
     {
        
-        public static List<SprintReportEditModel> GetSprintReportForSprint(string sprintId)
+        public static List<SprintReportEditModel> GetSprintReportForSprint(string sprintId, int? pageIndex = null, int? pageSize = null)
         {
           
             
             List<SprintReportEditModel> sprintReport = new List<SprintReportEditModel>();
+            List<string> sprintReportLineItemIds = new List<string>();
+            
+            sprintReportLineItemIds = GetSprintReportLineItemIdsForSprint(sprintId, pageIndex, pageSize);
 
-            var sprintReportLineItemIds = GetSprintReportLineItemIdsForSprint(sprintId);
-
-            if (sprintReportLineItemIds == null)
+            if (sprintReportLineItemIds.Count == 0)
             {
                 return sprintReport;
             }
@@ -29,18 +30,39 @@ namespace flexli_erp_webapi.Services
             });
             return sprintReport;
         }
-        
-       
 
-
-        private static List<string> GetSprintReportLineItemIdsForSprint(string sprintId)
+        private static List<string> GetSprintReportLineItemIdsForSprint(string sprintId, int? pageIndex = null, int? pageSize = null)
         {
             List<string> sprintReportLineItemIds = new List<string>();
             using (var db = new ErpContext())
             {
+                // [Check] : Pagination
+                if (pageIndex != null && pageSize != null)
+                {
+                    if (pageIndex <= 0 || pageSize <= 0)
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                    // skip take logic
+                    sprintReportLineItemIds = db.SprintReport
+                        .Where(x => x.SprintId == sprintId)
+                        .Select(y => y.SprintReportLineItemId).AsEnumerable()
+                        .OrderByDescending(Convert.ToInt32)
+                        .Skip(((int) pageIndex - 1) * (int) pageSize)
+                        .Take((int) pageSize)
+                        .ToList();
+
+                    if (sprintReportLineItemIds.Count == 0)
+                    {
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                    }
+
+                    return sprintReportLineItemIds;
+                }
+                
                 sprintReportLineItemIds = db.SprintReport
                     .Where(x => x.SprintId == sprintId)
-                    .Select(y => y.SprintReportLineItemId)
+                    .Select(y => y.SprintReportLineItemId).AsEnumerable()
+                    .OrderByDescending(Convert.ToInt32)
                     .ToList();
 
 
@@ -181,6 +203,12 @@ namespace flexli_erp_webapi.Services
                 foreach (var task in tasks)
                 {
                     List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, ECheckListType.Task);
+
+                    if (checkListItems.Count == 0)
+                    {
+                        CheckListItemEditModel dummyNewChecklistItem = CheckListManagementService.AddNewChecklistItemForTaskWithNoChecklist(task);
+                        checkListItems.Add(dummyNewChecklistItem);
+                    }
 
                     foreach (var checkListItem in checkListItems)
                     {

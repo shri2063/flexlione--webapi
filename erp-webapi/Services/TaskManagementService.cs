@@ -166,8 +166,13 @@ namespace flexli_erp_webapi.Services
            return GetTaskById(updatedTaskDetail.TaskId);
         }
         
-        public static List<TaskShortDetailEditModel> GetTaskIdList(string parentTaskId = null)
+        public static List<TaskShortDetailEditModel> GetTaskIdList(string parentTaskId = null, int? pageIndex = null, int? pageSize = null)
         {
+            if (pageIndex != null && pageSize != null)
+            {
+                return GetTaskIdListPageForParentTaskId(parentTaskId, (int) pageIndex, (int) pageSize);
+            }
+            
             using (var db = new ErpContext())
             {
                 if (parentTaskId == null)
@@ -193,7 +198,56 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-       
+        private static List<TaskShortDetailEditModel> GetTaskIdListPageForParentTaskId(string parentTaskId, int pageIndex, int pageSize)
+        {
+            using (var db = new ErpContext())
+            {
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                // skip take logic
+                List<TaskShortDetailEditModel> taskShortDetailEditModels;
+                    
+                if (parentTaskId == null)
+                {
+                    taskShortDetailEditModels = db.TaskDetail
+                        .Select(t => new TaskShortDetailEditModel()
+                        {
+                            TaskId = t.TaskId,
+                            Description = t.Description,
+                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true)
+                        })
+                        .OrderByDescending(x=>Convert.ToInt32(x.TaskId))
+                        .Skip((pageIndex - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+                }
+                else
+                {
+                    taskShortDetailEditModels = db.TaskDetail
+                        .Where(t => t.ParentTaskId == parentTaskId)
+                        .Select(t => new TaskShortDetailEditModel()
+                        {
+                            TaskId = t.TaskId,
+                            Description = t.Description
+                        })
+                        .OrderByDescending(t=>Convert.ToInt32(t.TaskId))
+                        .Skip((pageIndex - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+                }
+
+                if (taskShortDetailEditModels.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+
+                return taskShortDetailEditModels;
+
+            }
+        }
+
+
         public static void DeleteTask(string taskId)
         {
             using (var db = new ErpContext())

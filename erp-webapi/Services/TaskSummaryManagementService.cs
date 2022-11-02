@@ -19,19 +19,26 @@ namespace flexli_erp_webapi.Services
 
         }
 
-        public static List<TaskSummaryEditModel> GetDailyTaskSummary(string profileId, DateTime date)
+        public static List<TaskSummaryEditModel> GetDailyTaskSummary(string profileId, DateTime date, int? pageIndex = null, int? pageSize = null)
         {
             List<string> taskSummaryIds;
             List<TaskSummaryEditModel> taskSummaryList 
                 = new List<TaskSummaryEditModel>();
             using (var db = new ErpContext())
             {
-                taskSummaryIds = db.TaskSummary
-                    .Where(x => x.Date.ToString("yyyy-MM-dd") == date.ToString("yyyy-MM-dd"))
-                    .Include(x => x.TaskId)
-                    .Where(x => x.TaskDetail.AssignedTo == profileId)
-                    .Select(x => x.TaskSummaryId)
-                    .ToList();
+                if (pageIndex != null && pageSize != null)
+                {
+                    taskSummaryIds = GetTaskSummaryIdsPageForAProfileId(profileId, date, (int) pageIndex, (int) pageSize);
+                }
+                else
+                {
+                    taskSummaryIds = db.TaskSummary
+                        .Where(x => x.Date.ToString("yyyy-MM-dd") == date.ToString("yyyy-MM-dd"))
+                        .Include(x => x.TaskId)
+                        .Where(x => x.TaskDetail.AssignedTo == profileId)
+                        .Select(x => x.TaskSummaryId)
+                        .ToList();
+                }
             }
             taskSummaryIds.ForEach(x => taskSummaryList.Add(
                 GetTaskSummaryById(x)));
@@ -55,10 +62,45 @@ namespace flexli_erp_webapi.Services
             return taskSummaryList;
 
         }
-        
-        public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate = null, DateTime? toDate = null, string include = null)
+
+        private static List<string> GetTaskSummaryIdsPageForAProfileId(string profileId, DateTime date, int pageIndex, int pageSize)
         {
-            List<string> taskSummaryIds =  GetTaskSummaryIdsForTaskId(taskId);
+            using (var db = new ErpContext())
+            {
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                var taskSummaryIds = db.TaskSummary
+                    .Where(x => x.Date.ToString("yyyy-MM-dd") == date.ToString("yyyy-MM-dd"))
+                    .Include(x => x.TaskId)
+                    .Where(x => x.TaskDetail.AssignedTo == profileId)
+                    .Select(x => x.TaskSummaryId)
+                    .OrderByDescending(x=>Convert.ToInt32(x))
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                
+                if (taskSummaryIds.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+
+                return taskSummaryIds;
+            }
+        }
+
+        public static List<TaskSummaryEditModel> GetAllTaskSummaryByTaskId(string taskId, DateTime? fromDate = null, DateTime? toDate = null, string include = null, int? pageIndex = null, int? pageSize = null)
+        {
+            List<string> taskSummaryIds;
+            
+            if (pageIndex != null && pageSize != null)
+            {
+                taskSummaryIds = GetTaskSummaryIdsPageForTaskId(taskId, (int) pageIndex, (int) pageSize);
+            }
+            else
+            {
+                taskSummaryIds =  GetTaskSummaryIdsForTaskId(taskId);
+            }
               
             List<TaskSummaryEditModel> taskSummaryList = new List<TaskSummaryEditModel>();
             taskSummaryList = GetFilteredTaskSummaryById(taskSummaryIds, fromDate, toDate);
@@ -83,8 +125,34 @@ namespace flexli_erp_webapi.Services
             return taskSummaryList.Concat(childTaskSummaryList).ToList();
 
         }
-        
-       
+
+        private static List<string> GetTaskSummaryIdsPageForTaskId(string taskId, int pageIndex, int pageSize)
+        {
+            using (var db = new ErpContext())
+            {
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                // skip take logic
+                var taskSummaryIds = db.TaskSummary
+                    .Where(x => x.TaskId == taskId)
+                    .Select(x => x.TaskSummaryId)
+                    .OrderByDescending(x=>Convert.ToInt32(x))
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                if (taskSummaryIds.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+
+                return taskSummaryIds;
+
+            }
+        }
+
+
         private static List<string> GetTaskSummaryIdsForTaskId(string taskId, string include = null)
         {
             List<string> taskSummaryIds;
@@ -234,7 +302,7 @@ namespace flexli_erp_webapi.Services
         }
 
         public static List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId,
-            DateTime stamp, string action)
+            DateTime stamp, string action, int? pageIndex = null, int? pageSize = null)
         {
             if (GetTaskSummaryByIdFromDb(taskSummaryId) == null)
             {
@@ -283,6 +351,11 @@ namespace flexli_erp_webapi.Services
                 });
                 
                 taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
+                
+                if (pageIndex != null && pageSize != null)
+                {
+                    return GetTaskSummaryListPage(taskSummaryList, (int) pageIndex, (int) pageSize);
+                }
 
                 return taskSummaryList;
 
@@ -305,7 +378,32 @@ namespace flexli_erp_webapi.Services
                 
             taskSummaryList.Add(UpdateTaskSummaryActionAndActualTimeInDb(taskSummaryId, stamp, action));
             
+            if (pageIndex != null && pageSize != null)
+            {
+                return GetTaskSummaryListPage(taskSummaryList, (int) pageIndex, (int) pageSize);
+            }
+            
             return taskSummaryList;
+        }
+
+        private static List<TaskSummaryEditModel> GetTaskSummaryListPage(List<TaskSummaryEditModel> taskSummaryList, int pageIndex, int pageSize)
+        {
+            if (pageIndex <= 0 || pageSize <= 0)
+                throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+            // skip take logic
+            var taskSummaryPage = taskSummaryList
+                .OrderByDescending(x=>Convert.ToInt32(x.TaskSummaryId))
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            if (taskSummaryPage.Count == 0)
+            {
+                throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+            }
+
+            return taskSummaryPage;
         }
 
         private static TaskSummaryEditModel UpdateTaskSummaryActionAndActualTimeInDb(string taskSummaryId,
