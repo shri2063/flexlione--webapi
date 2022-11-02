@@ -28,9 +28,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetTaskScheduleForProfileId")]
         [Consumes("application/json")]
 
-        public List<TaskScheduleEditModel> GetTaskScheduleForProfileId(string profileId, int month, int year)
+        public List<TaskScheduleEditModel> GetTaskScheduleForProfileId(string profileId, int month, int year, string include = null,  int? pageIndex = null, int? pageSize = null)
         {
-            return TaskScheduleManagementService.GetAllTaskScheduleByProfileIdAndMonth(profileId, month, year);
+            return TaskScheduleManagementService.GetAllTaskScheduleByProfileIdAndMonth(profileId, month, year, include, pageIndex, pageSize);
         }
         
        

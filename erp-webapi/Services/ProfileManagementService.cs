@@ -11,22 +11,22 @@ namespace flexli_erp_webapi.Services
     {
         public static ProfileEditModel GetProfileById(string profileId, string include = null)
         {
-          ProfileEditModel profileEditModel =  GetProfileByIdFromDb(profileId);
-          
-          // [check]: Profile exists
+            ProfileEditModel profileEditModel = GetProfileByIdFromDb(profileId);
 
-          if (profileEditModel == null)
-          {
-              return null;
-          }
+            // [check]: Profile exists
 
-          if (include == "sprint")
-          {
-              profileEditModel.Sprints = SprintManagementService.GetSprintsByProfileId(profileId);
-          }
+            if (profileEditModel == null)
+            {
+                return null;
+            }
 
-          profileEditModel.Managers = GetAllManagersForUser(profileId);
-          return profileEditModel;
+            if (include == "sprint")
+            {
+                profileEditModel.Sprints = SprintManagementService.GetSprintsByProfileId(profileId);
+            }
+
+            profileEditModel.Managers = GetAllManagersForUser(profileId);
+            return profileEditModel;
 
         }
 
@@ -40,7 +40,7 @@ namespace flexli_erp_webapi.Services
                     .Where(x => x.UserId == profileId)
                     .Select(x => x.ManagerId)
                     .ToList();
-                
+
                 managerIds.ForEach(managerId =>
                 {
                     ProfileManagerEditModel profileManagerEditModel = GetManagerForUser(profileId, managerId);
@@ -53,15 +53,19 @@ namespace flexli_erp_webapi.Services
 
         public static List<ProfileEditModel> GetAllProfiles()
         {
-         List<ProfileEditModel> profiles = new List<ProfileEditModel>();
-            GetAllProfileIds()
-               .ForEach(x => 
-                   profiles.Add(GetProfileByIdFromDb(x)));
+            
 
-            return profiles;
+            List<ProfileEditModel> profiles = new List<ProfileEditModel>();
+
+            GetAllProfileIds()
+                .ForEach(x =>
+                    profiles.Add(GetProfileByIdFromDb(x)));
+
+                return profiles;
         }
 
-        public static List<string> GetAllProfileIds()
+
+    public static List<string> GetAllProfileIds()
         {
             using (var db = new ErpContext())
             {

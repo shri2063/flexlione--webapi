@@ -8,9 +8,14 @@ namespace flexli_erp_webapi.Services
 {
     public class CommentManagementService
     {
-        public static List<CommentEditModel> GetCommentsByTaskId(string taskId)
+        public static List<CommentEditModel> GetCommentsByTaskId(string taskId, int? pageIndex = null, int? pageSize = null)
         {
 
+            if (pageIndex != null && pageSize != null)
+            {
+                return GetCommentsPageForTaskId(taskId, (int) pageIndex, (int) pageSize);
+            }
+            
             List<CommentEditModel> commentEditModels;
            
             using (var db = new ErpContext())
@@ -30,7 +35,39 @@ namespace flexli_erp_webapi.Services
             return commentEditModels.OrderByDescending(x =>
                 x.CreatedAt).ToList();
         }
-        
+
+        private static List<CommentEditModel> GetCommentsPageForTaskId(string taskId, int pageIndex, int pageSize)
+        {
+            using (var db = new ErpContext())
+            {
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                // skip take logic
+                var commentEditModels = db.Comment
+                    .Where(x => x.TaskId == taskId)
+                    .Select(s => new CommentEditModel()
+                    {
+                        CommentId = s.CommentId,
+                        CreatedAt = s.CreatedAt,
+                        CreatedBy = s.CreatedBy,
+                        TaskId = s.TaskId,
+                        Message = s.Message
+                    })
+                    .OrderByDescending(x=>Convert.ToInt32(x.CommentId))
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                if (commentEditModels.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+                return commentEditModels;
+
+            }
+        }
+
         public static CommentEditModel CreateOrUpdateComment(CommentEditModel commentEditModel)
         {
             Comment comment;

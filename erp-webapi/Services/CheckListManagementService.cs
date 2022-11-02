@@ -13,11 +13,45 @@ namespace flexli_erp_webapi.Services
 {
     public class CheckListManagementService
     {
-        public static List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type)
+        public static List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type, int? pageIndex = null, int? pageSize = null)
         {
-           
+            if (pageIndex != null && pageSize != null)
+            {
+                return GetCheckListPageForTaskId(taskId, type, (int) pageIndex, (int) pageSize);
+            }
             return GetCheckListForTypeId(taskId,type);
         }
+        
+        private static List<CheckListItemEditModel> GetCheckListPageForTaskId(string taskId, ECheckListType type, int pageIndex, int pageSize)
+        {
+            List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
+            using (var db = new ErpContext())
+            {
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                // skip take logic
+                List<string> checkList = db.CheckList
+                    .Where(x => x.TypeId == taskId && x.CheckListType == type.ToString())
+                    .Select(t => t.CheckListItemId)
+                    .OrderByDescending(t=>Convert.ToInt32(t))
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                if (checkList.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+                checkList.ForEach(
+                    x => checkListEditModels.Add(
+                        GetCheckListById(x)));
+
+                return checkListEditModels;
+
+            }
+        }
+
         public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 

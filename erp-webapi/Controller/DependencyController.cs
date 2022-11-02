@@ -18,17 +18,17 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetUpstreamDependenciesByTaskId")]
         [Consumes("application/json")]
         
-        public List<DependencyEditModel> GetUpstreamDependenciesByTaskId(string taskId,string include = null)
+        public List<DependencyEditModel> GetUpstreamDependenciesByTaskId(string taskId,string include = null, int? pageIndex = null, int? pageSize = null)
         {
-            return DependencyManagementService.GetUpstreamDependenciesByTaskId(taskId,include);
+            return DependencyManagementService.GetUpstreamDependenciesByTaskId(taskId,include, pageIndex, pageSize);
         }
         
         [HttpGet("GetDownstreamDependenciesByTaskId")]
         [Consumes("application/json")]
         
-        public List<DependencyEditModel> GetDownstreamDependenciesByTaskId(string taskId,string include = null)
+        public List<DependencyEditModel> GetDownstreamDependenciesByTaskId(string taskId,string include = null, int? pageIndex = null, int? pageSize = null)
         {
-            return DependencyManagementService.GetDownstreamDependenciesByTaskId(taskId,include);
+            return DependencyManagementService.GetDownstreamDependenciesByTaskId(taskId,include, pageIndex, pageSize);
         }
         
         

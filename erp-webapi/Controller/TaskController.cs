@@ -45,9 +45,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetTaskIdList")]
         [Consumes("application/json")]
         
-        public List<TaskShortDetailEditModel> GetTaskIdList(string taskId = null)
+        public List<TaskShortDetailEditModel> GetTaskIdList(string taskId = null, int? pageIndex = null, int? pageSize = null)
         {
-            return TaskManagementService.GetTaskIdList(taskId);
+            return TaskManagementService.GetTaskIdList(taskId, pageIndex, pageSize);
         }
         
         /// <summary>

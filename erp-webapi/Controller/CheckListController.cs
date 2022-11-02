@@ -25,9 +25,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetCheckList")]
         [Consumes("application/json")]
         
-        public List<CheckListItemEditModel> GetCheckListByTypeId(string typeId, ECheckListType checkListType)
+        public List<CheckListItemEditModel> GetCheckListByTypeId(string typeId, ECheckListType checkListType, int? pageIndex = null, int? pageSize = null)
         {
-            return CheckListManagementService.GetCheckList(typeId, checkListType);
+            return CheckListManagementService.GetCheckList(typeId, checkListType, pageIndex, pageSize);
         }
         /// <summary>
         /// [R]Checklist can added only if sprint is in planning stage

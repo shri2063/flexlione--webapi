@@ -12,29 +12,29 @@ namespace flexli_erp_webapi.Services
     public class SprintManagementService
     {
         
-        public static List<SprintEditModel> GetSprintsByProfileId(string profileId, List<string> include = null)
+        public static List<SprintEditModel> GetSprintsByProfileId(string profileId, List<string> include = null, int? pageIndex = null, int? pageSize = null)
         {
-            List<string> sprintIds = GetSprintIdsForProfileId(profileId);
+          
+            List<string> sprintIds = GetSprintIdsForProfileId(profileId, pageIndex, pageSize);
             List<SprintEditModel> sprints = new List<SprintEditModel>();
-            // [Check] Atleast one Sprint exisits
-
+            
+            // [Check] At-least one Sprint exists
             if (sprintIds == null)
             {
                 return null;
             }
 
-           
             sprintIds.ForEach(x =>
-           {
+            {
 
-              sprints.Add(GetSprintById(x,include != null?new List<string>(include):null)); 
+                sprints.Add(GetSprintById(x,include != null?new List<string>(include):null)); 
 
-           });
+            });
 
             return sprints;
 
         }
-        
+
         public static SprintEditModel GetSprintById(string sprintId, List<string> include = null)
         {
             SprintEditModel sprint =  GetSprintByIdFromDb(sprintId);
@@ -129,14 +129,35 @@ namespace flexli_erp_webapi.Services
             return unPlannedTasks;
         }
 
-        private static List<string> GetSprintIdsForProfileId(string profileId, string include = null)
+        private static List<string> GetSprintIdsForProfileId(string profileId, int? pageIndex = null, int? pageSize = null, string include = null)
         {
             List<string> sprintIds = new List<string>();
             using (var db = new ErpContext())
             {
+                // [Check] : Pagination
+                if (pageIndex != null && pageSize != null)
+                {
+                    if (pageIndex <= 0 || pageSize <= 0)
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                    // skip take logic
+                    sprintIds = db.Sprint
+                        .Where(x => x.Owner == profileId)
+                        .Select(x => x.SprintId).AsEnumerable()
+                        .OrderByDescending(Convert.ToInt32)
+                        .Skip(((int) pageIndex - 1) * (int) pageSize).Take((int) pageSize).ToList();
+
+                    if (sprintIds.Count == 0)
+                    {
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                    }
+                    return sprintIds;
+                }
+                             
                 sprintIds = db.Sprint
                     .Where(x => x.Owner == profileId)
-                    .Select(x => x.SprintId)
+                    .Select(x => x.SprintId).AsEnumerable()
+                    .OrderByDescending(Convert.ToInt32)
                     .ToList();
             }
 
