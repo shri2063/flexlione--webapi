@@ -22,7 +22,7 @@ namespace flexli_erp_webapi.EditModels
         
         public SStatus Status { get; set; }
         
-        public int? SprintNo { get; set; }
+        public decimal? SprintNo { get; set; }
 
         public bool Approved { get; set; }
         

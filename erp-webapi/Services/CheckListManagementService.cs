@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,45 @@ namespace flexli_erp_webapi.Services
 {
     public class CheckListManagementService
     {
-        public static List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type)
+        public static List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type, int? pageIndex = null, int? pageSize = null)
         {
-           
+            if (pageIndex != null && pageSize != null)
+            {
+                return GetCheckListPageForTaskId(taskId, type, (int) pageIndex, (int) pageSize);
+            }
             return GetCheckListForTypeId(taskId,type);
         }
+        
+        private static List<CheckListItemEditModel> GetCheckListPageForTaskId(string taskId, ECheckListType type, int pageIndex, int pageSize)
+        {
+            List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
+            using (var db = new ErpContext())
+            {
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                // skip take logic
+                List<string> checkList = db.CheckList
+                    .Where(x => x.TypeId == taskId && x.CheckListType == type.ToString())
+                    .Select(t => t.CheckListItemId)
+                    .OrderByDescending(t=>Convert.ToInt32(t))
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                if (checkList.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+                checkList.ForEach(
+                    x => checkListEditModels.Add(
+                        GetCheckListById(x)));
+
+                return checkListEditModels;
+
+            }
+        }
+
         public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 
@@ -288,5 +323,28 @@ namespace flexli_erp_webapi.Services
         }
 
 
+        public static CheckListItemEditModel AddNewChecklistItemForTaskWithNoChecklist(string taskId)
+        {
+            using (var db = new ErpContext())
+            {
+                TaskDetail task = db.TaskDetail
+                    .FirstOrDefault(x => x.TaskId == taskId);
+
+                CheckListItemEditModel dummyNewChecklistItem = new CheckListItemEditModel()
+                {
+                    CheckListItemId = "newChecklist",
+                    Description = task.Description,
+                    TypeId = task.TaskId,
+                    Status = CStatus.NotCompleted,
+                    WorstCase = 0,
+                    BestCase = 0,
+                    ResultType = CResultType.Boolean,
+                    Essential = true,
+                    CheckListType = ECheckListType.Task
+                };
+
+                return CreateOrUpdateCheckListInDb(dummyNewChecklistItem);
+            }
+        }
     }
 }

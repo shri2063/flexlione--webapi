@@ -39,9 +39,12 @@ namespace flexli_erp_webapi.Services
         }
 
 
-        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndMonth(string profileId, int month,int year, string include = null)
+        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndMonth(string profileId, int month,int year, string include = null, int? pageIndex = null, int? pageSize = null)
         {
-            List<string> taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId,month,year);
+            List<string> taskScheduleIds;
+            
+            taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId,month,year, pageIndex, pageSize);
+            
             List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
             taskScheduleIds.ForEach(x =>
             {
@@ -69,7 +72,6 @@ namespace flexli_erp_webapi.Services
 
         }
 
-        
         public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndDateRange(string profileId,DateTime fromDate, DateTime toDate )
         {
             List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
@@ -87,11 +89,35 @@ namespace flexli_erp_webapi.Services
             return taskScheduleList;
         }
         
-        private static List<string> GetTaskScheduleIdsForProfileId(string profileId, int month, int year)
+        private static List<string> GetTaskScheduleIdsForProfileId(string profileId, int month, int year, int? pageIndex = null, int? pageSize = null)
         {
             List<string> taskScheduleIds;
             using (var db = new ErpContext())
             {
+                // [Check] : Pagination
+                if (pageIndex != null && pageSize != null)
+                {
+                    if (pageIndex <= 0 || pageSize <= 0)
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                    // skip take logic
+                    taskScheduleIds = db.TaskSchedule
+                        .Where(x => x.Owner == profileId && 
+                                    x.Date.Month == month && x.Date.Year == year)
+                        .Select(x => x.TaskScheduleId).AsEnumerable()
+                        .OrderByDescending(Convert.ToInt32)
+                        .Skip(((int) pageIndex - 1) * (int) pageSize)
+                        .Take((int) pageSize)
+                        .ToList();
+
+                    if (taskScheduleIds.Count == 0)
+                    {
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                    }
+
+                    return taskScheduleIds;
+                }
+                
                 taskScheduleIds = db.TaskSchedule
                     .Where(x => x.Owner == profileId && 
                                 x.Date.Month == month && x.Date.Year == year)
