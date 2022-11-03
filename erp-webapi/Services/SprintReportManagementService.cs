@@ -203,6 +203,11 @@ namespace flexli_erp_webapi.Services
                 foreach (var task in tasks)
                 {
                     List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, ECheckListType.Task);
+                        
+                    // It is necessary to have atleast one checklist for each task
+                    // in order to make sprint - task - checklist pair entry
+                    // So if task with no checklist added to sprint,
+                    // create a new dummy checklist for that task
 
                     if (checkListItems.Count == 0)
                     {

@@ -322,17 +322,19 @@ namespace flexli_erp_webapi.Services
 
         }
 
-
+        // Create dummy new checklist item for task with no checklist items
         public static CheckListItemEditModel AddNewChecklistItemForTaskWithNoChecklist(string taskId)
         {
+            var checkListId = "newChecklist";
             using (var db = new ErpContext())
             {
                 TaskDetail task = db.TaskDetail
                     .FirstOrDefault(x => x.TaskId == taskId);
 
+                // new checklist item with description same as task, result type boolean and essential = true
                 CheckListItemEditModel dummyNewChecklistItem = new CheckListItemEditModel()
                 {
-                    CheckListItemId = "newChecklist",
+                    CheckListItemId = checkListId,
                     Description = task.Description,
                     TypeId = task.TaskId,
                     Status = CStatus.NotCompleted,
