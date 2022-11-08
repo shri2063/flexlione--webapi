@@ -59,7 +59,7 @@ namespace flexli_erp_webapi.Services
 
        
 
-        public List<TemplateEditModel> GetSimilarTemplateList(string templateId = null)
+        public List<TemplateEditModel> GetSimilarTemplateList(string templateId = null, int? pageIndex = null, int? pageSize = null)
         {
             List<TemplateEditModel> templateList =  _templateRepository.GetAllTemplates();
 
@@ -69,7 +69,34 @@ namespace flexli_erp_webapi.Services
             }
 
             var selectedTemplate = _templateRepository.GetTemplateById(templateId);
+
+            //[check]: Pagination Check
+            if (pageIndex != null && pageSize != null)
+            {
+                return GetSimilarTemplateListPage(templateList, selectedTemplate.CloneTemplateId, (int) pageIndex, (int) pageSize);
+            }
             return templateList.FindAll(x => x.CloneTemplateId == selectedTemplate.CloneTemplateId);
+        }
+
+        private List<TemplateEditModel> GetSimilarTemplateListPage(List<TemplateEditModel> templateList, string selectedTemplateCloneTemplateId, int pageIndex, int pageSize)
+        {
+            if (pageIndex <= 0 || pageSize <= 0)
+                throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+            // skip take logic
+            List<TemplateEditModel> filteredTemplateList = templateList
+                .FindAll(x=>x.CloneTemplateId == selectedTemplateCloneTemplateId)
+                .OrderByDescending(t=>Convert.ToInt32(t.TemplateId))
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();;
+
+            if (filteredTemplateList.Count == 0)
+            {
+                throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+            }
+
+            return filteredTemplateList;
         }
 
         ///<Summary>

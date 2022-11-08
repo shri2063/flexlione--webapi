@@ -43,9 +43,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetTagList")]
         [Consumes("application/json")]
 
-        public async Task<ActionResult<IEnumerable<Tag>>> GetTagList(ETagType tagType)
+        public async Task<ActionResult<IEnumerable<Tag>>> GetTagList(ETagType tagType, int? pageIndex = null, int? pageSize = null)
         {
-            var tagList= await _tagRepository.GetSearchTagList(tagType);
+            var tagList= await _tagRepository.GetSearchTagList(tagType, pageIndex, pageSize);
             return Ok(tagList);
         }
         
@@ -53,10 +53,10 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         
 
-        public async Task<ActionResult<IEnumerable<Tag>>> GetTag(string tag, TagRepository.ESearchType searchType, ETagType tagType)
+        public async Task<ActionResult<IEnumerable<Tag>>> GetTag(string tag, TagRepository.ESearchType searchType, ETagType tagType, int? pageIndex = null, int? pageSize = null)
         {
            
-            return Ok(  await _tagRepository.GetSearchTag(tag, searchType, tagType));
+            return Ok(  await _tagRepository.GetSearchTag(tag, searchType, tagType, pageIndex, pageSize));
         }
         
         [HttpGet("GetTaskListForTag")]

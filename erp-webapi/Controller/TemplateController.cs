@@ -50,9 +50,9 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
 
        
-        public List<TemplateEditModel> GetSimilarTemplateList(string templateId = null)
+        public List<TemplateEditModel> GetSimilarTemplateList(string templateId = null, int? pageIndex = null, int? pageSize = null)
         {
-            return _templateManagementService.GetSimilarTemplateList(templateId);
+            return _templateManagementService.GetSimilarTemplateList(templateId, pageIndex, pageSize);
         }
         
         ///<Summary>
