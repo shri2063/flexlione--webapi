@@ -27,25 +27,101 @@ namespace flexli_erp_webapi.Repository
             _tagContext = tagContext ?? throw new ArgumentNullException(nameof(tagContext));
             _tagTaskListRepository = tagTaskListRepository;
         }
-        public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType)
+        public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType, int? pageIndex = null, int? pageSize = null)
         {
-           
-            return await _tagContext
+
+            var tagList = await _tagContext
                 .Tag
                 .Find(x => x.Type == tagType)
                 .ToListAsync();
             
-            
-            
+            //[Check]: Pagination check
+            if (pageIndex != null && pageSize != null)
+            {
+                // pageIndex, pageSize must be only positive integers
+                if (pageIndex <= 0 || pageSize <= 0)
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                
+                // skip limit logic
+                var filteredList = tagList
+                    .OrderByDescending(x => x.Id)
+                    .Skip(((int)pageIndex - 1) * (int)pageSize)
+                    .Take((int)pageSize)
+                    .ToList();
+
+                if (filteredList.Count == 0)
+                {
+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                }
+
+                return filteredList;
+            }
+
+            return tagList;
+
         }
 
-        public async Task<IEnumerable<Tag>>GetSearchTag(string searchTag, ESearchType searchType , ETagType tagType)
+        public async Task<IEnumerable<Tag>>GetSearchTag(string searchTag, ESearchType searchType , ETagType tagType, int? pageIndex = null, int? pageSize = null)
         {
 
             try
-            {
+            { 
+                // [Check]: Pagination Check
+                if (pageIndex != null && pageSize != null)
+                {
+                    if (pageIndex <= 0 || pageSize <= 0)
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+
+                    List<Tag> tagList;
+
+                    // skip limit logic
+                    switch (searchType)
+                    {
+                        case ESearchType.weak:
+                            tagList = await _tagContext
+                                .Tag
+                                .Find(x => x.Keyword.Contains(searchTag.ToLower())
+                                           && x.Type == tagType)
+                                .ToListAsync();
+                            
+                            var filteredList = tagList
+                                .OrderByDescending(x => x.Id)
+                                .Skip(((int)pageIndex - 1) * (int)pageSize)
+                                .Take((int)pageSize)
+                                .ToList();
+
+                            if (filteredList.Count == 0)
+                            {
+                                throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                            }
+
+                            return filteredList;
+                    }
+
+                    switch (searchType) { case ESearchType.strong: tagList = await _tagContext
+                        .Tag
+                        .Find(x => x.Keyword == searchTag.ToLower()
+                                   && x.Type == tagType)
+                        .ToListAsync(); 
+                        
+                        var filteredList = tagList
+                            .OrderByDescending(x => x.Id)
+                            .Skip(((int)pageIndex - 1) * (int)pageSize)
+                            .Take((int)pageSize)
+                            .ToList();
+                        
+                        if (filteredList.Count == 0)
+                        {
+                            throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                        }
+
+                        return filteredList;
+                    }
+                    
+                    throw new KeyNotFoundException("Cannot get result for tag " + searchTag);
+                }
                 
-                    switch (searchType) { case ESearchType.weak: return await _tagContext
+                switch (searchType) { case ESearchType.weak: return await _tagContext
                         .Tag
                         .Find(x => x.Keyword.Contains(searchTag.ToLower()) 
                                    && x.Type == tagType)
