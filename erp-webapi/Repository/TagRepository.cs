@@ -68,9 +68,7 @@ namespace flexli_erp_webapi.Repository
            
         }
 
-   
-
-
+        
         public async Task<IEnumerable<Tag>> CreateSearchTag(string keyword, ETagType tagType)
         {
             Tag newTag = new Tag()
