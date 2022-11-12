@@ -65,27 +65,36 @@ namespace flexli_erp_webapi.Services
 
             if (templateId == null)
             {
+                //[check]: Pagination Check
+                if (pageIndex != null && pageSize != null)
+                {
+                    return GetSimilarTemplateListPage(templateList, (int) pageIndex, (int) pageSize);
+                }
+                
                 return templateList;
             }
 
             var selectedTemplate = _templateRepository.GetTemplateById(templateId);
+            
+            var filteredTemplateList = templateList.FindAll(x => x.CloneTemplateId == selectedTemplate.CloneTemplateId);
 
             //[check]: Pagination Check
             if (pageIndex != null && pageSize != null)
             {
-                return GetSimilarTemplateListPage(templateList, selectedTemplate.CloneTemplateId, (int) pageIndex, (int) pageSize);
+                return GetSimilarTemplateListPage(filteredTemplateList, (int) pageIndex, (int) pageSize);
             }
-            return templateList.FindAll(x => x.CloneTemplateId == selectedTemplate.CloneTemplateId);
+
+            return filteredTemplateList;
+
         }
 
-        private List<TemplateEditModel> GetSimilarTemplateListPage(List<TemplateEditModel> templateList, string selectedTemplateCloneTemplateId, int pageIndex, int pageSize)
+        private List<TemplateEditModel> GetSimilarTemplateListPage(List<TemplateEditModel> templateList, int pageIndex, int pageSize)
         {
             if (pageIndex <= 0 || pageSize <= 0)
                 throw new ArgumentException("Incorrect value for pageIndex or pageSize");
                 
             // skip take logic
             List<TemplateEditModel> filteredTemplateList = templateList
-                .FindAll(x=>x.CloneTemplateId == selectedTemplateCloneTemplateId)
                 .OrderByDescending(t=>Convert.ToInt32(t.TemplateId))
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)

@@ -209,7 +209,7 @@ namespace flexli_erp_webapi.Services
                     string taskDescription = db.TaskDetail
                         .Where(x => x.TaskId == task)
                         .Select(x => x.Description)
-                        .ToString();
+                        .SingleOrDefault();
                     
                     List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, ECheckListType.Task);
                         
