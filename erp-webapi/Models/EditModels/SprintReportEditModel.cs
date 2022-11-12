@@ -9,6 +9,8 @@
         
         public string TaskId { get; set; }
         
+        public string TaskDescription { get; set; }
+        
         public string CheckListItemId { get; set; }
         
         public string Description { get; set; }

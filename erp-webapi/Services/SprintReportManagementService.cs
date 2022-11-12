@@ -92,6 +92,7 @@ namespace flexli_erp_webapi.Services
             {
                 SprintReportLineItemId = sprintReport.SprintReportLineItemId,
                 TaskId = sprintReport.TaskId,
+                TaskDescription = sprintReport.TaskDescription,
                 CheckListItemId = sprintReport.CheckListItemId,
                 Description = sprintReport.Description,
                 ResultType = (CResultType) Enum.Parse(typeof(CResultType), sprintReport.ResultType,true),
@@ -202,6 +203,14 @@ namespace flexli_erp_webapi.Services
 
                 foreach (var task in tasks)
                 {
+                    // TaskDetailEditModel taskDetailEditModel = TaskManagementService.GetTaskById(task);
+                    
+                    // Fetching description of given task
+                    string taskDescription = db.TaskDetail
+                        .Where(x => x.TaskId == task)
+                        .Select(x => x.Description)
+                        .ToString();
+                    
                     List<CheckListItemEditModel> checkListItems = CheckListManagementService.GetCheckList(task, ECheckListType.Task);
                         
                     // It is necessary to have atleast one checklist for each task
@@ -222,6 +231,7 @@ namespace flexli_erp_webapi.Services
                             SprintReportLineItemId = GetNextAvailableId(),
                             SprintId = sprintId,
                             TaskId = task,
+                            TaskDescription = taskDescription,
                             CheckListItemId = checkListItem.CheckListItemId,
                             Description = checkListItem.Description,
                             ResultType = checkListItem.ResultType.ToString(),

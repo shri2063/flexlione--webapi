@@ -7,9 +7,9 @@ namespace flexli_erp_webapi.Repository.Interfaces
 {
     public interface ITagRepository
     {
-        Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType);
+        Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType, int? pageIndex = null, int? pageSize = null);
 
-        Task<IEnumerable<Tag>>GetSearchTag(string keyword, TagRepository.ESearchType searchType, ETagType tagType);
+        Task<IEnumerable<Tag>>GetSearchTag(string keyword, TagRepository.ESearchType searchType, ETagType tagType, int? pageIndex = null, int? pageSize = null);
         
 
         Task<IEnumerable<Tag>> CreateSearchTag(string keyword, ETagType tagType);

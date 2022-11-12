@@ -15,6 +15,9 @@ namespace flexli_erp_webapi.DataModels
         [Column("task_id")]
         public string TaskId { get; set; }
         
+        [Column("task_description")]
+        public string TaskDescription { get; set; }
+        
         [Column("checklist_item_id")]
         public string CheckListItemId { get; set; }
         
