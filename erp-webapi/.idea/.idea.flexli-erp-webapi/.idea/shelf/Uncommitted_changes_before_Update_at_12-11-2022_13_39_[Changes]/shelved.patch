@@ -1,54 +1,9 @@
-Index: Repository/TagRepository.cs
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
-<+>using System;\r\nusing System.Collections.Generic;\r\nusing System.Linq;\r\nusing System.Threading.Tasks;\r\nusing flexli_erp_webapi.BsonModels;\r\nusing flexli_erp_webapi.DataLayer.Interface;\r\nusing flexli_erp_webapi.Repository.Interfaces;\r\nusing MongoDB.Bson;\r\nusing MongoDB.Bson.Serialization;\r\nusing MongoDB.Driver;\r\nusing Tag = flexli_erp_webapi.BsonModels.Tag;\r\n\r\nnamespace flexli_erp_webapi.Repository\r\n{\r\n    public class TagRepository: ITagRepository\r\n    {\r\n\r\n        private readonly ITagContext _tagContext;\r\n        private readonly ITagTaskListRepository _tagTaskListRepository;\r\n        public enum ESearchType\r\n        {\r\n            strong,\r\n            weak\r\n        }\r\n        public TagRepository(ITagContext tagContext, ITagTaskListRepository tagTaskListRepository)\r\n        {\r\n            _tagContext = tagContext ?? throw new ArgumentNullException(nameof(tagContext));\r\n            _tagTaskListRepository = tagTaskListRepository;\r\n        }\r\n        public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType)\r\n        {\r\n           \r\n            return await _tagContext\r\n                .Tag\r\n                .Find(x => x.Type == tagType)\r\n                .ToListAsync();\r\n            \r\n            \r\n            \r\n        }\r\n\r\n        public async Task<IEnumerable<Tag>>GetSearchTag(string searchTag, ESearchType searchType , ETagType tagType)\r\n        {\r\n\r\n            try\r\n            {\r\n                \r\n                    switch (searchType) { case ESearchType.weak: return await _tagContext\r\n                        .Tag\r\n                        .Find(x => x.Keyword.Contains(searchTag.ToLower()) \r\n                                   && x.Type == tagType)\r\n                        .ToListAsync(); }\r\n                    \r\n                    switch (searchType) { case ESearchType.strong: return await _tagContext\r\n                        .Tag\r\n                        .Find(x => x.Keyword == searchTag.ToLower()\r\n                                   && x.Type == tagType)\r\n                        .ToListAsync(); }\r\n\r\n                    throw new KeyNotFoundException(\"Cannot get result for tag \" + searchTag);\r\n\r\n            }\r\n            catch (Exception e)\r\n            {\r\n                Console.WriteLine(e);\r\n                throw new KeyNotFoundException(e.Message);\r\n            }\r\n           \r\n        }\r\n\r\n   \r\n\r\n\r\n        public async Task<IEnumerable<Tag>> CreateSearchTag(string keyword, ETagType tagType)\r\n        {\r\n            Tag newTag = new Tag()\r\n            {\r\n                Keyword = keyword,\r\n                Type = tagType\r\n            };\r\n\r\n            // Creating Tag document\r\n            // [dbCheck]: Unique constraint on keyword + tagType\r\n            await _tagContext.Tag.InsertOneAsync(newTag);\r\n\r\n            var createdTag = await GetSearchTag(keyword, ESearchType.strong, tagType);\r\n\r\n            if (createdTag == null)\r\n            {\r\n                throw new KeyNotFoundException(\"Tag not created\");\r\n            }\r\n            \r\n            // [Assumption]  There will be only one created Tag\r\n            var tagTaskList = await _tagTaskListRepository.CreateTagTaskListForTag(keyword, tagType);\r\n\r\n            if (tagTaskList == null)\r\n            {\r\n                await DeleteSearchTag(keyword, tagType);\r\n                throw new KeyNotFoundException(\"Tag Task List could not be created\");\r\n            }\r\n\r\n            return createdTag;\r\n        }\r\n\r\n        public async Task<bool> DeleteSearchTag(string \r\n            keyword, ETagType tagType)\r\n        {\r\n           \r\n            FilterDefinition<Tag> filterForTag = Builders<Tag>.Filter.Eq(p => p.Keyword, keyword.ToLower());\r\n\r\n            var deleteTaskTagList = await _tagTaskListRepository.DeleteTagTaskList(keyword, tagType);\r\n\r\n            if (deleteTaskTagList)\r\n            {\r\n                DeleteResult deleteTag = await _tagContext\r\n                    .Tag\r\n                    .DeleteOneAsync(filterForTag);\r\n                return deleteTag.IsAcknowledged;\r\n            }\r\n\r\n            return false;\r\n        }\r\n    }\r\n}
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Repository/TagRepository.cs b/Repository/TagRepository.cs
---- a/Repository/TagRepository.cs	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
-+++ b/Repository/TagRepository.cs	(date 1667396223394)
-@@ -27,16 +27,30 @@
-             _tagContext = tagContext ?? throw new ArgumentNullException(nameof(tagContext));
-             _tagTaskListRepository = tagTaskListRepository;
-         }
--        public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType)
-+        public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType, int? pageIndex = null, int? pageSize = null)
-         {
--           
--            return await _tagContext
-+
-+            var tagList = _tagContext
-                 .Tag
-                 .Find(x => x.Type == tagType)
-+                .Sort(_tagContext.Tag.ToString())
-                 .ToListAsync();
-             
-             
--            
-+            if (pageIndex != null && pageSize != null)
-+            {
-+                if (pageIndex <= 0 || pageSize <= 0)
-+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-+                
-+                // skip take logic
-+                
-+
-+                if ()
-+                {
-+                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-+                }
-+            }
-+
-         }
- 
-         public async Task<IEnumerable<Tag>>GetSearchTag(string searchTag, ESearchType searchType , ETagType tagType)
 Index: .idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07__Changes_.xml
 ===================================================================
 diff --git a/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07__Changes_.xml b/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07__Changes_.xml
 deleted file mode 100644
---- a/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07__Changes_.xml	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
-+++ /dev/null	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
+--- a/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07__Changes_.xml	(revision 0e80c2a27841b3e13be5db88320cdc8ba1b39b5c)
++++ /dev/null	(revision 0e80c2a27841b3e13be5db88320cdc8ba1b39b5c)
 @@ -1,4 +0,0 @@
 -<changelist name="Uncommitted_changes_before_Update_at_12-10-2022_16_07_[Changes]" date="1665571613191" recycled="true" deleted="true">
 -  <option name="PATH" value="$PROJECT_DIR$/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07_[Changes]/shelved.patch" />
@@ -59,8 +14,8 @@ Index: .idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Upda
 ===================================================================
 diff --git a/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07_[Changes]/shelved.patch b/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07_[Changes]/shelved.patch
 deleted file mode 100644
---- a/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07_[Changes]/shelved.patch	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
-+++ /dev/null	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
+--- a/.idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_12-10-2022_16_07_[Changes]/shelved.patch	(revision 0e80c2a27841b3e13be5db88320cdc8ba1b39b5c)
++++ /dev/null	(revision 0e80c2a27841b3e13be5db88320cdc8ba1b39b5c)
 @@ -1,899 +0,0 @@
 -Index: .idea/.idea.flexli-erp-webapi/.idea/shelf/Uncommitted_changes_before_Update_at_25-07-2022_16_41__Default_Changelist_.xml
 -===================================================================
@@ -961,45 +916,3 @@ deleted file mode 100644
 -                         Description = sprintEditModel.Description,
 -                         Owner = sprintEditModel.Owner,
 -                         FromDate = sprintEditModel.FromDate,
-Index: Repository/Interfaces/ITagRepository.cs
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
-<+>using System.Collections;\r\nusing System.Collections.Generic;\r\nusing System.Threading.Tasks;\r\nusing flexli_erp_webapi.BsonModels;\r\n\r\nnamespace flexli_erp_webapi.Repository.Interfaces\r\n{\r\n    public interface ITagRepository\r\n    {\r\n        Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType);\r\n\r\n        Task<IEnumerable<Tag>>GetSearchTag(string keyword, TagRepository.ESearchType searchType, ETagType tagType);\r\n        \r\n\r\n        Task<IEnumerable<Tag>> CreateSearchTag(string keyword, ETagType tagType);\r\n\r\n        Task<bool> DeleteSearchTag(string keyword, ETagType tagType);\r\n\r\n       \r\n        \r\n        \r\n        \r\n        \r\n\r\n\r\n    }\r\n}
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Repository/Interfaces/ITagRepository.cs b/Repository/Interfaces/ITagRepository.cs
---- a/Repository/Interfaces/ITagRepository.cs	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
-+++ b/Repository/Interfaces/ITagRepository.cs	(date 1667396223638)
-@@ -7,7 +7,7 @@
- {
-     public interface ITagRepository
-     {
--        Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType);
-+        Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType, int? pageIndex = null, int? pageSize = null);
- 
-         Task<IEnumerable<Tag>>GetSearchTag(string keyword, TagRepository.ESearchType searchType, ETagType tagType);
-         
-Index: Controller/TagController.cs
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
-<+>using System;\r\nusing System.Collections.Generic;\r\nusing System.ComponentModel.DataAnnotations;\r\nusing System.Reflection;\r\nusing System.Threading.Tasks;\r\nusing flexli_erp_webapi.BsonModels;\r\nusing flexli_erp_webapi.EditModels;\r\nusing flexli_erp_webapi.Services;\r\nusing flexli_erp_webapi.DataModels;\r\nusing flexli_erp_webapi.Repository;\r\nusing flexli_erp_webapi.Repository.Interfaces;\r\nusing Microsoft.AspNetCore.Cors;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing MongoDB.Driver;\r\nusing Newtonsoft.Json;\r\nusing Newtonsoft.Json.Converters;\r\nusing Tag = flexli_erp_webapi.BsonModels.Tag;\r\n\r\nnamespace flexli_erp_webapi.Controller\r\n{\r\n    \r\n    [Route(\"api/v1/[controller]\")]\r\n    [ApiController]\r\n    [ApiVersion(\"1.0\")]\r\n    [EnableCors(\"AllowOrigin\")]\r\n    [Produces(\"application/json\")]\r\n\r\n    public class TagController : ControllerBase\r\n    {\r\n        private readonly ITagRepository _tagRepository;\r\n        private readonly ITagTaskListRepository _tagTaskListRepository;\r\n        private readonly SearchManagementService _searchManagementService;\r\n       \r\n       // [ToDo] We need to create a separate tagmanagement Service (Business layer) with which Controller interacts.\r\n       // [ToDo] repository (DB layer) ideally should be directly injected into controller\r\n        public TagController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository, SearchManagementService searchManagementService)\r\n        {\r\n            _tagRepository = tagRepository;\r\n            _tagTaskListRepository = tagTaskListRepository;\r\n           _searchManagementService = searchManagementService;\r\n        }\r\n        \r\n        [HttpGet(\"GetTagList\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public async Task<ActionResult<IEnumerable<Tag>>> GetTagList(ETagType tagType)\r\n        {\r\n            var tagList= await _tagRepository.GetSearchTagList(tagType);\r\n            return Ok(tagList);\r\n        }\r\n        \r\n        [HttpGet(\"GetTag\")]\r\n        [Consumes(\"application/json\")]\r\n        \r\n\r\n        public async Task<ActionResult<IEnumerable<Tag>>> GetTag(string tag, TagRepository.ESearchType searchType, ETagType tagType)\r\n        {\r\n           \r\n            return Ok(  await _tagRepository.GetSearchTag(tag, searchType, tagType));\r\n        }\r\n        \r\n        [HttpGet(\"GetTaskListForTag\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public Task<TagTaskList> GetTaskListForTag(string search, ETagType tagType)\r\n        {\r\n            return _tagTaskListRepository.GetTagTaskListForTag(search, tagType);\r\n        }\r\n        /// <summary>\r\n        /// tagType values (\"SearchType\", \"HashType\")\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPut(\"AddTag\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public async Task<IEnumerable<Tag>> AddTag(string tag, ETagType tagType)\r\n        {\r\n            return await _tagRepository.CreateSearchTag(tag, tagType);\r\n        }\r\n        [HttpPut(\"ReviseTaskListForSearchTag\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public async Task<TagTaskList> ReviseTaskListForSearchTag(string tag)\r\n        {\r\n            return await _tagTaskListRepository.ReviseTaskListForSearchTag(tag);\r\n        }\r\n        \r\n        [HttpPut(\"AddTaskToTagTask\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public async Task<TagTaskList> AddTaskToTagTask(string tag, List<string> taskIdList, ETagType tagType)\r\n        {\r\n            return await _tagTaskListRepository.AddTaskToTagTask(tag, taskIdList, tagType);\r\n        }\r\n        \r\n        \r\n        \r\n        \r\n        \r\n        [HttpDelete(\"DeleteTag\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public Task<bool> DeleteTag(string tag, ETagType type)\r\n        {\r\n            return _tagRepository.DeleteSearchTag(tag, type);\r\n        }\r\n        \r\n    \r\n        [HttpDelete(\"RemoveTaskFromTagTask\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        public Task<TagTaskList> RemoveTaskFromTagTask(string tag, ETagType tagType,string taskId = null)\r\n        {\r\n            return _tagTaskListRepository.RemoveSearchTaskListFromTag(tag, tagType, taskId);\r\n        }\r\n        \r\n        \r\n        \r\n        \r\n        \r\n        [HttpPost(\"GetSearchResult\")]\r\n        [Consumes(\"application/json\")]\r\n\r\n        // Note: Here we are using TaskDetailModel Object for both Tag vs Detail Search\r\n        // In case of Tag Search, we will will convert Search model into TaskDetail model\r\n        public ActionResult<List<TaskDetailEditModel>> GetSearchResult(SearchQueryEditModel searchQuery)\r\n        {\r\n            return _searchManagementService.GetTaskListForSearchQuery(searchQuery);\r\n        }\r\n    }\r\n\r\n}
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
-diff --git a/Controller/TagController.cs b/Controller/TagController.cs
---- a/Controller/TagController.cs	(revision d16698ab18e72a1df2e913165e2647f321e26ad5)
-+++ b/Controller/TagController.cs	(date 1667396223237)
-@@ -43,9 +43,10 @@
-         [HttpGet("GetTagList")]
-         [Consumes("application/json")]
- 
--        public async Task<ActionResult<IEnumerable<Tag>>> GetTagList(ETagType tagType)
-+        public async Task<ActionResult<IEnumerable<Tag>>> GetTagList(ETagType tagType, int? pageSize = null,
-+            int? pageIndex = null)
-         {
--            var tagList= await _tagRepository.GetSearchTagList(tagType);
-+            var tagList= await _tagRepository.GetSearchTagList(tagType, pageIndex, pageSize);
-             return Ok(tagList);
-         }
-         
