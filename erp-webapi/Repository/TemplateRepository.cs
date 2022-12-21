@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using flexli_erp_webapi.BsonModels;
+using flexli_erp_webapi.DataLayer.Interface;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
 using m_sort_server;
+using MongoDB.Driver;
 
 namespace flexli_erp_webapi.Repository
 {
-   
-    
-    
-    
     public class TemplateRepository: ITemplateRepository
     {
-        
-
         ///<Summary>
         /// ToDo
         ///</Summary>
@@ -48,12 +47,11 @@ namespace flexli_erp_webapi.Repository
 
         }
 
-
-
+        
         ///<Summary>
         /// ToDo
         ///</Summary>
-        public  List<TemplateEditModel> GetAllTemplates()
+        public List<TemplateEditModel> GetAllTemplates()
         {
             List<TemplateEditModel> templates = new List<TemplateEditModel>();
             List<string> templateIds;
@@ -97,16 +95,17 @@ namespace flexli_erp_webapi.Repository
                 }
                 else
                 {
+                    var newTemplateId = GetNextAvailableIdForTemplate();
                     template = new Template()
                     {
-                        TemplateId = GetNextAvailableIdForTemplate(),
+                        TemplateId = newTemplateId,
                         Description = templateEditModel.Description,
                         Owner = templateEditModel.Owner,
                         CreatedAt = DateTime.Now,
                         Role = templateEditModel.Role
                     };
                     // If clone template not provided , template will act as first clone of itself
-                    template.CloneTemplateId = templateEditModel.CloneTemplateId.IfNull(cloneTemplateId => GetNextAvailableIdForTemplate());
+                    template.CloneTemplateId = templateEditModel.CloneTemplateId.IfNull(cloneTemplateId => newTemplateId);
                     db.Template.Add(template);
                     db.SaveChanges();
                 }
@@ -114,8 +113,7 @@ namespace flexli_erp_webapi.Repository
 
             return GetTemplateById(template.TemplateId);
         }
-        
-        
+
         ///<Summary>
         /// ToDo
         ///</Summary>

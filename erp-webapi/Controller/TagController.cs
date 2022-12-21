@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Tag = flexli_erp_webapi.BsonModels.Tag;
+using Tag = flexli_erp_webapi.BsonModels.TaskTag;
 
 namespace flexli_erp_webapi.Controller
 {

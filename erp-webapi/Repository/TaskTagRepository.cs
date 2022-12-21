@@ -8,7 +8,7 @@ using flexli_erp_webapi.Repository.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using Tag = flexli_erp_webapi.BsonModels.Tag;
+using Tag = flexli_erp_webapi.BsonModels.TaskTag;
 
 namespace flexli_erp_webapi.Repository
 {
@@ -29,9 +29,8 @@ namespace flexli_erp_webapi.Repository
         }
         public async Task<IEnumerable<Tag>> GetSearchTagList(ETagType tagType, int? pageIndex = null, int? pageSize = null)
         {
-
             var tagList = await _tagContext
-                .Tag
+                .TaskTag
                 .Find(x => x.Type == tagType)
                 .ToListAsync();
             
@@ -61,9 +60,8 @@ namespace flexli_erp_webapi.Repository
 
         }
 
-        public async Task<IEnumerable<Tag>>GetSearchTag(string searchTag, ESearchType searchType , ETagType tagType, int? pageIndex = null, int? pageSize = null)
+        public async Task<IEnumerable<Tag>>GetSearchTag(string searchTag, ESearchType searchType, ETagType tagType, int? pageIndex = null, int? pageSize = null)
         {
-
             try
             { 
                 // [Check]: Pagination Check
@@ -79,11 +77,11 @@ namespace flexli_erp_webapi.Repository
                     {
                         case ESearchType.weak:
                             tagList = await _tagContext
-                                .Tag
+                                .TaskTag
                                 .Find(x => x.Keyword.Contains(searchTag.ToLower())
                                            && x.Type == tagType)
                                 .ToListAsync();
-                            
+                                        
                             var filteredList = tagList
                                 .OrderByDescending(x => x.Id)
                                 .Skip(((int)pageIndex - 1) * (int)pageSize)
@@ -99,17 +97,17 @@ namespace flexli_erp_webapi.Repository
                     }
 
                     switch (searchType) { case ESearchType.strong: tagList = await _tagContext
-                        .Tag
-                        .Find(x => x.Keyword == searchTag.ToLower()
-                                   && x.Type == tagType)
-                        .ToListAsync(); 
-                        
+                            .TaskTag
+                            .Find(x => x.Keyword == searchTag.ToLower()
+                                       && x.Type == tagType)
+                            .ToListAsync(); 
+                                    
                         var filteredList = tagList
                             .OrderByDescending(x => x.Id)
                             .Skip(((int)pageIndex - 1) * (int)pageSize)
                             .Take((int)pageSize)
                             .ToList();
-                        
+                                    
                         if (filteredList.Count == 0)
                         {
                             throw new ArgumentException("Incorrect value for pageIndex or pageSize");
@@ -117,23 +115,23 @@ namespace flexli_erp_webapi.Repository
 
                         return filteredList;
                     }
-                    
+                                
                     throw new KeyNotFoundException("Cannot get result for tag " + searchTag);
                 }
                 
                 switch (searchType) { case ESearchType.weak: return await _tagContext
-                        .Tag
-                        .Find(x => x.Keyword.Contains(searchTag.ToLower()) 
-                                   && x.Type == tagType)
-                        .ToListAsync(); }
+                    .TaskTag
+                    .Find(x => x.Keyword.Contains(searchTag.ToLower()) 
+                               && x.Type == tagType)
+                    .ToListAsync(); }
                     
-                    switch (searchType) { case ESearchType.strong: return await _tagContext
-                        .Tag
-                        .Find(x => x.Keyword == searchTag.ToLower()
-                                   && x.Type == tagType)
-                        .ToListAsync(); }
+                switch (searchType) { case ESearchType.strong: return await _tagContext
+                    .TaskTag
+                    .Find(x => x.Keyword == searchTag.ToLower()
+                               && x.Type == tagType)
+                    .ToListAsync(); }
 
-                    throw new KeyNotFoundException("Cannot get result for tag " + searchTag);
+                throw new KeyNotFoundException("Cannot get result for tag " + searchTag);
 
             }
             catch (Exception e)
@@ -141,9 +139,7 @@ namespace flexli_erp_webapi.Repository
                 Console.WriteLine(e);
                 throw new KeyNotFoundException(e.Message);
             }
-           
         }
-
         
         public async Task<IEnumerable<Tag>> CreateSearchTag(string keyword, ETagType tagType)
         {
@@ -155,7 +151,7 @@ namespace flexli_erp_webapi.Repository
 
             // Creating Tag document
             // [dbCheck]: Unique constraint on keyword + tagType
-            await _tagContext.Tag.InsertOneAsync(newTag);
+            await _tagContext.TaskTag.InsertOneAsync(newTag);
 
             var createdTag = await GetSearchTag(keyword, ESearchType.strong, tagType);
 
@@ -187,7 +183,7 @@ namespace flexli_erp_webapi.Repository
             if (deleteTaskTagList)
             {
                 DeleteResult deleteTag = await _tagContext
-                    .Tag
+                    .TaskTag
                     .DeleteOneAsync(filterForTag);
                 return deleteTag.IsAcknowledged;
             }

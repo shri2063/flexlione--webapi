@@ -74,7 +74,7 @@ namespace flexli_erp_webapi.Controller
 
         public TemplateEditModel CreateOrUpdateTemplate(TemplateEditModel template)
         {
-            return _templateManagementService.CreateOrUpdateTemplate(template);
+            return _templateMainService.AddOrUpdateTemplate(template);
             
         }
         

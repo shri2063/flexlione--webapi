@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using flexli_erp_webapi.Controller;
+using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
 using m_sort_server;
@@ -14,13 +15,19 @@ namespace flexli_erp_webapi.Services
     {
 
         private readonly ITaskRepository _taskRepository;
+        private readonly AutoSearchByTagCompiler _autoSearchByTagCompiler;
         private readonly IDictionary<string, string> _taskTemplateMapping = new Dictionary<string, string>();
         private  IDictionary<string, string> _roleProfileMapping = new Dictionary<string, string>();
        
     
-        public TemplateMainService(ITemplateRepository templateRepository, ITemplateRelationRepository templateRelationRepository, ITaskRepository taskRepository) : base(templateRepository, templateRelationRepository)
+        public TemplateMainService(ITemplateRepository templateRepository,
+            ITemplateRelationRepository templateRelationRepository,
+            ITaskRepository taskRepository,
+            AutoSearchByTagCompiler autoSearchByTagCompiler) : base(templateRepository,
+            templateRelationRepository)
         {
             _taskRepository = taskRepository;
+            _autoSearchByTagCompiler = autoSearchByTagCompiler;
         }
        
 
@@ -183,6 +190,24 @@ namespace flexli_erp_webapi.Services
             return includeList;
         }
 
-       
+
+        public TemplateEditModel AddOrUpdateTemplate(TemplateEditModel template)
+        {
+            TemplateEditModel existingTemplate = GetTemplateById(template.TemplateId);
+
+            // [Check]: if template exist already then remove it from all tags
+            if (existingTemplate != null)
+            {
+                _autoSearchByTagCompiler.RemoveFromSearchResults(template.TemplateId);
+            }
+            
+            // Call CreateUpdate function of management service
+            var crudTemplate = CreateOrUpdateTemplate(template);
+            
+            // tagging of template description
+            _autoSearchByTagCompiler.AddToSearchResults(crudTemplate.Description, crudTemplate.TemplateId);
+            
+            return crudTemplate;
+        }
     }
 }
