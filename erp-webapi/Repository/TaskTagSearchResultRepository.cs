@@ -8,7 +8,7 @@ using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using MongoDB.Driver;
-using Tag = flexli_erp_webapi.BsonModels.Tag;
+using Tag = flexli_erp_webapi.BsonModels.TaskTag;
 
 namespace flexli_erp_webapi.Repository
 {
@@ -26,7 +26,7 @@ namespace flexli_erp_webapi.Repository
         {
 
             return  await  _tagContext
-                .TagTaskList
+                .TaskTagSearchResult
                 .Find(x => x.Keyword == keyword.ToLower() && x.Type == tagType)
                 .FirstOrDefaultAsync();
         }
@@ -43,7 +43,7 @@ namespace flexli_erp_webapi.Repository
                 Type = tagType
             };
             // [dbCheck]: Unique constraint on keyword + tagType
-            await _tagContext.TagTaskList.InsertOneAsync(newTagTaskList);
+            await _tagContext.TaskTagSearchResult.InsertOneAsync(newTagTaskList);
             return await GetTagTaskListForTag(keyword, tagType);
         }
 
@@ -80,7 +80,7 @@ namespace flexli_erp_webapi.Repository
             var filter = Builders<TagTaskList>.Filter.Eq(e => e.Keyword, keyword.ToLower()) 
                          & Builders<TagTaskList>.Filter.Eq(e => e.Type, tagType) ;
 
-            await _tagContext.TagTaskList.FindOneAndUpdateAsync(filter, update);
+            await _tagContext.TaskTagSearchResult.FindOneAndUpdateAsync(filter, update);
 
             return await GetTagTaskListForTag(keyword, tagType);
         }
@@ -98,7 +98,7 @@ namespace flexli_erp_webapi.Repository
             var update = Builders<TagTaskList>.Update
                 .PullFilter(e => e.Tasks, Builders<TaskSearchView>.Filter.Where(task => task.TaskId ==  taskId));
 
-            await _tagContext.TagTaskList.FindOneAndUpdateAsync(filter, update);
+            await _tagContext.TaskTagSearchResult.FindOneAndUpdateAsync(filter, update);
 
             return await GetTagTaskListForTag(keyword, tagType);
         }
@@ -109,7 +109,7 @@ namespace flexli_erp_webapi.Repository
                                                                  & Builders<TagTaskList>.Filter.Eq(e => e.Type, tagType) ;
 
             DeleteResult deleteTaskTagList = await _tagContext
-                .TagTaskList
+                .TaskTagSearchResult
                 .DeleteOneAsync(filterForTagTaskList);
 
             if (deleteTaskTagList.IsAcknowledged)
@@ -151,7 +151,7 @@ namespace flexli_erp_webapi.Repository
             
             var arrayUpdate = Builders<TagTaskList>.Update.Set("tasks", AddTaskListForSearchTag(keyword));
           
-            await _tagContext.TagTaskList.UpdateOneAsync(filter , arrayUpdate); 
+            await _tagContext.TaskTagSearchResult.UpdateOneAsync(filter , arrayUpdate); 
 
             return await GetTagTaskListForTag(keyword, ETagType.SearchTag);
         }
@@ -165,7 +165,7 @@ namespace flexli_erp_webapi.Repository
             
             var arrayUpdate = Builders<TagTaskList>.Update.Set("tasks", new List<TaskSearchView>());
           
-            await _tagContext.TagTaskList. UpdateOneAsync(filter , arrayUpdate); 
+            await _tagContext.TaskTagSearchResult. UpdateOneAsync(filter , arrayUpdate); 
 
             return await this.GetTagTaskListForTag(keyword, tagType);
         }

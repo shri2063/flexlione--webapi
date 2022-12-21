@@ -249,6 +249,53 @@ namespace flexli_erp_webapi.Services
             return includeList;
         }
 
+
+        // static method to get template for given templateId
+        public static TemplateEditModel GetTemplateByIdStatic(string templateId)
+        {
+            using (var db = new ErpContext())
+            {
         
+                Template existingTemplate =  db.Template
+                    .FirstOrDefault(x => x.TemplateId == templateId);
+        
+                if (existingTemplate == null)
+                    return null;
+        
+                // Case: In case you have to update data received from db
+        
+                TemplateEditModel templateEditModel = new TemplateEditModel()
+                {
+                    TemplateId = existingTemplate.TemplateId,
+                    Description = existingTemplate.Description,
+                    CreatedAt = existingTemplate.CreatedAt,
+                    Owner = existingTemplate.Owner,
+                    CloneTemplateId = existingTemplate.CloneTemplateId,
+                    Role = existingTemplate.Role,
+                };
+                
+        
+                return templateEditModel;
+            }
+        }
+
+        // Static method for getting all templateIds
+        public static List<TemplateEditModel> GetAllTemplateList()
+        {
+            using (var db = new ErpContext())
+            {
+                return db.Template
+                    .Select(t => new TemplateEditModel()
+                    {
+                        TemplateId = t.TemplateId,
+                        Description = t.Description,
+                        CreatedAt = t.CreatedAt,
+                        Owner = t.Owner,
+                        CloneTemplateId = t.CloneTemplateId,
+                        Role = t.Role
+                    })
+                    .ToList();
+            }
+        }
     }
 }

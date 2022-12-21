@@ -9,8 +9,8 @@ namespace flexli_erp_webapi.BsonModels
 {
     public  enum ETagType {SearchTag, HashTag}
     
-    [BsonDiscriminator("tags")]
-    public class Tag
+    [BsonDiscriminator("task-tags")]
+    public class TaskTag
     {
             
           // [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]

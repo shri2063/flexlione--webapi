@@ -4,10 +4,13 @@ using System.Linq;
 using System.Reflection;
 using flexli_erp_webapi.DataLayer;
 using flexli_erp_webapi.DataLayer.Interface;
+using flexli_erp_webapi.Policy.SearchPolicy.TemplateSearch;
+using flexli_erp_webapi.Policy.SearchPolicy.TemplateSearch.Interfaces;
 using flexli_erp_webapi.Repository;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.Services.Interfaces;
+using flexli_erp_webapi.Services.SearchPolicy;
 using flexli_erp_webapi.Utility;
 using m_sort_server;
 using Microsoft.AspNetCore.Builder;
@@ -41,8 +44,11 @@ namespace flexli_erp_webapi
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-             services.AddScoped<ITagContext, TagContext>();
+            services.AddScoped<IIgnoreSearchWordRepository, IgnoreSearchWordRepository>();
+            services.AddScoped<ISearchPriorityPolicy, SearchPriorityByCommonalityPolicy>();
+            services.AddScoped<ITemplateTagSearchResultRepository, TemplateTagSearchResultRepository>();
+            services.AddScoped<ITemplateTagContext, TemplateTagContext>();
+            services.AddScoped<ITagContext, TagContext>();
              services.AddScoped<ITagTaskListRepository, TagTaskListRepository>();
              services.AddScoped<ITagRepository, TagRepository>();
              services.AddScoped<ITaskRepository, TaskRepository>();
@@ -51,6 +57,8 @@ namespace flexli_erp_webapi
              services.AddScoped<SearchManagementService, SearchManagementService>();
              services.AddScoped<ITemplateManagementService, TemplateManagementService>();
              services.AddScoped<TemplateMainService, TemplateMainService>();
+             services.AddScoped<TagSearchManagementService, TagSearchManagementService>();
+             services.AddScoped<AutoSearchByTagCompiler, AutoSearchByTagCompiler>();
              services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",

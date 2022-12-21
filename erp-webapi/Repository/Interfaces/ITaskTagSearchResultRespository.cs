@@ -18,6 +18,6 @@ namespace flexli_erp_webapi.Repository.Interfaces
         
         Task<bool> DeleteTagTaskList(string keyword, ETagType tagType);
         
-        Task<bool> ParseTaskDescriptionForSearchTags(string description, string taskId, IEnumerable<Tag> tags);
+        Task<bool> ParseTaskDescriptionForSearchTags(string description, string taskId, IEnumerable<TaskTag> tags);
     }
 }
