@@ -27,13 +27,16 @@ namespace flexli_erp_webapi.Controller
         
         private readonly ITagRepository _tagRepository;
         private readonly ITagTaskListRepository _tagTaskListRepository;
+        private readonly TaskManagementService _taskManagementService;
        
-        public TaskController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository)
+        public TaskController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository,
+            TaskManagementService taskManagementService)
         {
             _tagRepository = tagRepository;
             _tagTaskListRepository = tagTaskListRepository;
+            _taskManagementService = taskManagementService;
         }
-        
+
         [HttpGet("GetTaskById")]
         [Consumes("application/json")]
 
@@ -113,6 +116,17 @@ namespace flexli_erp_webapi.Controller
         public TaskDetailEditModel RemoveTaskToSprint(string taskId)
         {
             return TaskManagementService.RemoveTaskFromSprint(taskId);
+        }
+        
+        /// <summary>
+        /// Enter taskId to label it, currently label = "sprint" only
+        /// </summary>
+        [HttpPut("AddLabelToTask")]
+        [Consumes("application/json")]
+
+        public async Task<SprintLabelTask> AddLabelToTask(string taskId, string label)
+        {
+            return await _taskManagementService.AddLabelToTask(taskId, label);
         }
 
        

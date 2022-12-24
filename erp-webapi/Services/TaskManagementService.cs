@@ -19,9 +19,12 @@ namespace flexli_erp_webapi.Services
     {
 
         private readonly ITagTaskListRepository _tagTaskListRepository;
-        public TaskManagementService(ITagTaskListRepository tagTaskListRepository)
+        private readonly ILabelRepository _labelRepository;
+        public TaskManagementService(ITagTaskListRepository tagTaskListRepository,
+            ILabelRepository labelRepository)
         {
             _tagTaskListRepository = tagTaskListRepository;
+            _labelRepository = labelRepository;
         }
         public static TaskDetailEditModel GetTaskById(string taskId, string include = null)
         {
@@ -821,6 +824,16 @@ namespace flexli_erp_webapi.Services
 
                 db.SaveChanges();
             }
+        }
+
+        public async Task<SprintLabelTask> AddLabelToTask(string taskId, string label)
+        {
+            if (label == "sprint")
+            {
+                return await _labelRepository.AddSprintLabelToTask(taskId);
+            }
+
+            throw new ArgumentException("include has invalid label");
         }
     }
 }

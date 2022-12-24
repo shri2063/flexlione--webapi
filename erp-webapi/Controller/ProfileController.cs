@@ -81,7 +81,7 @@ namespace flexli_erp_webapi.Controller
         }
 
         /// <summary>
-        /// [R] Add Manager. User can have multiple manager
+        /// Add Manager. User can have multiple manager
         /// </summary>
         /// <returns></returns>
         [HttpPost("AddManager")]

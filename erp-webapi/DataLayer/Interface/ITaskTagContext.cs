@@ -9,5 +9,7 @@ namespace flexli_erp_webapi.DataLayer.Interface
          IMongoCollection<TaskTag> TaskTag { get; }
         
          IMongoCollection<TagTaskList> TaskTagSearchResult { get; }
+         
+         IMongoCollection<SprintLabelTask> SprintTasks { get; }
     }
 }

@@ -33,7 +33,9 @@ namespace flexli_erp_webapi.Controller
        
        // [ToDo] We need to create a separate tagmanagement Service (Business layer) with which Controller interacts.
        // [ToDo] repository (DB layer) ideally should be directly injected into controller
-        public TagController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository, SearchManagementService searchManagementService)
+        public TagController(ITagRepository tagRepository,
+            ITagTaskListRepository tagTaskListRepository,
+            SearchManagementService searchManagementService)
         {
             _tagRepository = tagRepository;
             _tagTaskListRepository = tagTaskListRepository;
@@ -113,11 +115,7 @@ namespace flexli_erp_webapi.Controller
         {
             return _tagTaskListRepository.RemoveSearchTaskListFromTag(tag, tagType, taskId);
         }
-        
-        
-        
-        
-        
+
         [HttpPost("GetSearchResult")]
         [Consumes("application/json")]
 
