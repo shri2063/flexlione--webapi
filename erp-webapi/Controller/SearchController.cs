@@ -24,16 +24,19 @@ namespace flexli_erp_webapi.Controller
         private readonly ITemplateTagSearchResultRepository _templateTagSearchResultRepository;
         private readonly TagSearchManagementService _tagSearchManagementService;
         private readonly ISearchPriorityPolicy _searchPriorityByCommonalityPolicy;
+        private readonly SearchByLabelManagementService _searchByLabelManagementService;
         
         public SearchController(
             ITemplateTagSearchResultRepository templateTagSearchResultRepository,
             TagSearchManagementService tagSearchManagementService,
-            ISearchPriorityPolicy searchPriorityByCommonalityPolicy)
+            ISearchPriorityPolicy searchPriorityByCommonalityPolicy,
+            SearchByLabelManagementService searchByLabelManagementService)
         {
           
             _templateTagSearchResultRepository = templateTagSearchResultRepository;
            _tagSearchManagementService = tagSearchManagementService;
            _searchPriorityByCommonalityPolicy = searchPriorityByCommonalityPolicy;
+           _searchByLabelManagementService = searchByLabelManagementService;
         }
         
         
@@ -61,6 +64,17 @@ namespace flexli_erp_webapi.Controller
         public ActionResult<List<TemplateEditModel>> GetSearchResultForTemplates(string searchQuery)
         {
             return _tagSearchManagementService.GetTemplateListForSearchQuery(searchQuery);
+        }
+        
+        /// <summary>
+        /// include = list of label tags, currently, "sprint","notCompleted"
+        /// </summary>
+        [HttpGet("SearchByProfileId")]
+        [Consumes("application/json")]
+
+        public async Task<List<TaskSearchView>> SearchByProfileId(string profileId, List<string> include = null, int?pageIndex = null, int? pageSize = null)
+        {
+            return await _searchByLabelManagementService.SearchByProfileId(profileId, include, pageIndex, pageSize);
         }
     }
 }

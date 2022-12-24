@@ -45,6 +45,8 @@ namespace flexli_erp_webapi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IIgnoreSearchWordRepository, IgnoreSearchWordRepository>();
+            services.AddScoped<ILabelRepository, LabelRepository>();
+            services.AddScoped<TaskManagementService, TaskManagementService>();
             services.AddScoped<ISearchPriorityPolicy, SearchPriorityByCommonalityPolicy>();
             services.AddScoped<ITemplateTagSearchResultRepository, TemplateTagSearchResultRepository>();
             services.AddScoped<ITemplateTagContext, TemplateTagContext>();
@@ -59,6 +61,7 @@ namespace flexli_erp_webapi
              services.AddScoped<TemplateMainService, TemplateMainService>();
              services.AddScoped<TagSearchManagementService, TagSearchManagementService>();
              services.AddScoped<AutoSearchByTagCompiler, AutoSearchByTagCompiler>();
+             services.AddScoped<SearchByLabelManagementService, SearchByLabelManagementService>();
              services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",

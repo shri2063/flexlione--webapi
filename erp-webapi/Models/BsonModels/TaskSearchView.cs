@@ -29,6 +29,12 @@ namespace flexli_erp_webapi.BsonModels
             
             [BsonElement("is_removed")]
             public bool? IsRemoved{ get; set; }
+            
+            [BsonElement("created_at")]
+            public DateTime? CreatedAt{ get; set; }
+            
+            [BsonElement("edited_at")]
+            public DateTime? EditedAt{ get; set; }
         
     }
 }
