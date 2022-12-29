@@ -10,7 +10,8 @@
     <ItemGroup>
         <Folder Include="Models\ViewModels" />
         <Folder Include="Policy" />
-        <Folder Include="Policy\SearchPolicy\TaskSearch" />
+        <Folder Include="TemplateSearch\DataLayer\Interface" />
+        
         <Folder Include="wwwroot\" />
     </ItemGroup>
 

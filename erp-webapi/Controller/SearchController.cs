@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Policy.SearchPolicy.TemplateSearch.Interfaces;
 using flexli_erp_webapi.Repository;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.Services.Interfaces;
+using flexli_erp_webapi.Services.TaskSearch;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -23,19 +25,26 @@ namespace flexli_erp_webapi.Controller
         
         private readonly ITemplateTagSearchResultRepository _templateTagSearchResultRepository;
         private readonly TagSearchManagementService _tagSearchManagementService;
-        private readonly ISearchPriorityPolicy _searchPriorityByCommonalityPolicy;
         private readonly SearchByLabelManagementService _searchByLabelManagementService;
-        
+        private readonly ITaskTagSearchResultRepository _taskTagSearchResultRepository;
+        private readonly TaskSearchManagementService _taskSearchManagementService;
+        private readonly IIgnoreSearchWordRepository _ignoreSearchWordRepository;
+
         public SearchController(
             ITemplateTagSearchResultRepository templateTagSearchResultRepository,
             TagSearchManagementService tagSearchManagementService,
-            ISearchPriorityPolicy searchPriorityByCommonalityPolicy,
+            ITaskTagSearchResultRepository taskTagSearchResultRepository,
+            TaskSearchManagementService taskSearchManagementService,
+            IIgnoreSearchWordRepository ignoreSearchWordRepository,
             SearchByLabelManagementService searchByLabelManagementService)
         {
-          
+            _taskTagSearchResultRepository = taskTagSearchResultRepository;
+            _templateTagSearchResultRepository = templateTagSearchResultRepository;
+            _tagSearchManagementService = tagSearchManagementService;
+            _taskSearchManagementService = taskSearchManagementService;
+            _ignoreSearchWordRepository = ignoreSearchWordRepository;
             _templateTagSearchResultRepository = templateTagSearchResultRepository;
            _tagSearchManagementService = tagSearchManagementService;
-           _searchPriorityByCommonalityPolicy = searchPriorityByCommonalityPolicy;
            _searchByLabelManagementService = searchByLabelManagementService;
         }
         
@@ -43,14 +52,11 @@ namespace flexli_erp_webapi.Controller
         // all tags from template-tags
         [HttpGet("GetListForTemplateTags")]
         [Consumes("application/json")]
-
-        public async Task<ActionResult<IEnumerable<TemplateTag>>> GetTagListForTemplates(int? pageIndex = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<string>>> GetTagListForTemplates(int? pageIndex = null, int? pageSize = null)
         {
             var tagList= await _templateTagSearchResultRepository.GetListOfTemplateTags();
             return Ok(tagList);
         }
-
-
 
         // Implement search function
         /// <summary>
@@ -58,14 +64,63 @@ namespace flexli_erp_webapi.Controller
         /// </summary>
         [HttpPost("GetSearchResultForTemplates")]
         [Consumes("application/json")]
-        
+
         // Note: Here we are using TemplateEditModel Object
         // In case of Tag Search, we will will convert Search model into TaskDetail model
-        public ActionResult<List<TemplateEditModel>> GetSearchResultForTemplates(string searchQuery)
+        public ActionResult<List<TemplateEditModel>> GetSearchResultForTemplates(string searchQuery,
+            int? pageIndex = null, int? pageSize = null)
         {
-            return _tagSearchManagementService.GetTemplateListForSearchQuery(searchQuery);
+            return _tagSearchManagementService.GetTemplateListForSearchQuery(searchQuery, pageIndex, pageSize);
         }
         
+        [HttpGet("GetListForTaskTags")]
+        [Consumes("application/json")]
+        public async Task<ActionResult<IEnumerable<string>>> GetTagListForTasks(int? pageIndex = null, int? pageSize = null)
+        {
+            var tagList = await _taskTagSearchResultRepository.GetListOfTaskTags();
+            return Ok(tagList);
+        }
+
+        // Implement search function
+        /// <summary>
+        /// Enter space separated tags
+        /// </summary>
+        [HttpPost("GetSearchResultForTasks")]
+        [Consumes("application/json")]
+
+        // Note: Here we are using TemplateEditModel Object
+        // In case of Tag Search, we will will convert Search model into TaskDetail model
+        public ActionResult<List<TaskDetailEditModel>> GetSearchResultForTasks(string searchQuery,
+            int? pageIndex = null, int? pageSize = null)
+        {
+            return _taskSearchManagementService.GetTaskListForSearchQuery(searchQuery, pageIndex, pageSize);
+        }
+
+        [HttpGet("GetIgnoreSearchWordList")]
+        [Consumes("application/json")]
+
+        public async Task<ActionResult<IEnumerable<IgnoreSearchWord>>> GetIgnoreSearchWordList()
+        {
+            var wordList= await _ignoreSearchWordRepository.GetIgnoreSearchWordList();
+            return Ok(wordList);
+        }
+        
+        [HttpPut("AddIgnoreSearchWord")]
+        [Consumes("application/json")]
+
+        public async Task<IgnoreSearchWord> AddIgnoreSearchWord(string keyword)
+        {
+            return await _ignoreSearchWordRepository.AddIgnoreSearchWordToDb(keyword);
+        }
+
+        [HttpDelete("DeleteIgnoreSearchWord")]
+        [Consumes("application/json")]
+
+        public Task<bool> DeleteIgnoreSearchWord(string keyword)
+        {
+            return _ignoreSearchWordRepository.DeleteIgnoreSearchWordFromDb(keyword);
+        }
+
         /// <summary>
         /// include = list of label tags, currently, "sprint","notCompleted"
         /// </summary>

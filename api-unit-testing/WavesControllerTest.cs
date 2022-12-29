@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using flexli_erp_webapi;
 using flexli_erp_webapi.Controller;
 using flexli_erp_webapi.EditModels;
@@ -21,19 +22,18 @@ namespace api_unit_testing
 
         private readonly TaskDetailEditModel _taskDetailEditModel = new TaskDetailEditModel();
         
-        private readonly ITagRepository _tagRepository;
-        private readonly ITagTaskListRepository _tagTaskListRepository;
+     
+        
         private readonly TaskManagementService _taskManagementService;
        
         
 
-        public TaskControllerTest(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository,
+        public TaskControllerTest(
             TaskManagementService taskManagementService)
         {
-            _tagRepository = tagRepository;
-            _tagTaskListRepository = tagTaskListRepository;
+          
             _taskManagementService = taskManagementService;
-            _taskController = new TaskController(_tagRepository,_tagTaskListRepository, _taskManagementService);
+          //  _taskController = new TaskController( _taskManagementService);
             string connString = "Server=65.1.53.71;Port=5432;UserId=postgres;Password=3edc#EDC;Database=flexli-erp-alpha;";
             ErpContext.SetConnectionString(connString);
             

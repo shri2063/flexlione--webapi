@@ -19,7 +19,18 @@ namespace flexli_erp_webapi.Controller
 
     public class ProfileController : ControllerBase
     {
+        
+        
 
+        private readonly ProfileManagementService _profileManagementService;
+
+        public ProfileController(ProfileManagementService profileManagementService)
+        {
+            _profileManagementService = profileManagementService;
+           
+        }
+        
+        
         /// <summary>
         /// [R] Get Any profile by Id
         /// include - sprint
@@ -30,7 +41,7 @@ namespace flexli_erp_webapi.Controller
 
         public ProfileEditModel GetProfileById(string profileId, string include = null)
         {
-            return ProfileManagementService.GetProfileById(profileId,include);
+            return _profileManagementService.GetProfileById(profileId,include);
         }
         
         /// <summary>
@@ -42,7 +53,7 @@ namespace flexli_erp_webapi.Controller
 
         public ProfileEditModel AuthenticateProfile(string emailId, string password)
         {
-            return ProfileManagementService.AuthenticateProfile(emailId,password);
+            return _profileManagementService.AuthenticateProfile(emailId,password);
         }
         /// <summary>
         /// [R] Get All profiles
@@ -53,7 +64,7 @@ namespace flexli_erp_webapi.Controller
 
         public List<ProfileEditModel> GetAllProfiles()
         {
-            return ProfileManagementService.GetAllProfiles();
+            return _profileManagementService.GetAllProfiles();
         }
         
         /// <summary>
@@ -64,7 +75,7 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         public ProfileEditModel AddOrUpdateProfile(ProfileEditModel profile)
         {
-            return ProfileManagementService.AddOrUpdateProfile(profile);
+            return _profileManagementService.AddOrUpdateProfile(profile);
         }
         
         /// <summary>
@@ -76,7 +87,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteProfile(string profileId)
         {
-          ProfileManagementService.DeleteProfile(profileId);
+          _profileManagementService.DeleteProfile(profileId);
             return Ok();
         }
 
@@ -89,7 +100,7 @@ namespace flexli_erp_webapi.Controller
 
         public ProfileManagerEditModel AddManager(string userId, string managerId)
         {
-            return ProfileManagementService.AddManager(userId, managerId);
+            return _profileManagementService.AddManager(userId, managerId);
         }
         
         [HttpDelete("DeleteManager")]
@@ -97,7 +108,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteManager(string userId, string managerId)
         {
-            ProfileManagementService.DeleteManager(userId, managerId);
+            _profileManagementService.DeleteManager(userId, managerId);
             return Ok();
         }
     }

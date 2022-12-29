@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
+using flexli_erp_webapi.Services.Interfaces;
 
 namespace flexli_erp_webapi.Services
 {
     public class ProfileManagementService
+
     {
-        public static ProfileEditModel GetProfileById(string profileId, string include = null)
+        private readonly ISprintRelationRepository _sprintRelationRepository;
+        private readonly ISprintRepository _sprintRepository;
+        public ProfileManagementService(ISprintRelationRepository sprintRelationRepository, ISprintRepository sprintRepository)
+        {
+            _sprintRelationRepository = sprintRelationRepository;
+            _sprintRepository = sprintRepository;
+        }
+        public  ProfileEditModel GetProfileById(string profileId, string include = null)
         {
             ProfileEditModel profileEditModel = GetProfileByIdFromDb(profileId);
 
@@ -22,7 +32,7 @@ namespace flexli_erp_webapi.Services
 
             if (include == "sprint")
             {
-                profileEditModel.Sprints = SprintManagementService.GetSprintsByProfileId(profileId);
+                profileEditModel.Sprints = _sprintRelationRepository.GetSprintsForProfileId(profileId);
             }
 
             profileEditModel.Managers = GetAllManagersForUser(profileId);
@@ -30,7 +40,7 @@ namespace flexli_erp_webapi.Services
 
         }
 
-        private static List<ProfileManagerEditModel> GetAllManagersForUser(string profileId)
+        private  List<ProfileManagerEditModel> GetAllManagersForUser(string profileId)
         {
             List<ProfileManagerEditModel> managers = new List<ProfileManagerEditModel>();
             List<string> managerIds;
@@ -51,7 +61,7 @@ namespace flexli_erp_webapi.Services
             return managers;
         }
 
-        public static List<ProfileEditModel> GetAllProfiles()
+        public  List<ProfileEditModel> GetAllProfiles()
         {
             
 
@@ -65,7 +75,7 @@ namespace flexli_erp_webapi.Services
         }
 
 
-    public static List<string> GetAllProfileIds()
+    public  List<string> GetAllProfileIds()
         {
             using (var db = new ErpContext())
             {
@@ -75,13 +85,14 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static ProfileEditModel AddOrUpdateProfile(ProfileEditModel profileEditModel)
+        public  ProfileEditModel AddOrUpdateProfile(ProfileEditModel profileEditModel)
         {
             return AddOrUpdateProfileInDb(profileEditModel);
 
         }
         
-        public static ProfileEditModel GetProfileByIdFromDb(string profileId)
+        
+        public  ProfileEditModel GetProfileByIdFromDb(string profileId)
         {
             using (var db = new ErpContext())
             {
@@ -110,7 +121,7 @@ namespace flexli_erp_webapi.Services
         }
         
         
-        public static ProfileEditModel AuthenticateProfile(string emailId, string password)
+        public  ProfileEditModel AuthenticateProfile(string emailId, string password)
         {
             using (var db = new ErpContext())
             {
@@ -139,7 +150,7 @@ namespace flexli_erp_webapi.Services
 
         }
         
-        private static ProfileEditModel AddOrUpdateProfileInDb(ProfileEditModel profileEditModel)
+        private  ProfileEditModel AddOrUpdateProfileInDb(ProfileEditModel profileEditModel)
         {
             Profile profile;
             
@@ -201,7 +212,7 @@ namespace flexli_erp_webapi.Services
             }
         }
         
-        public static void DeleteProfile(string profileId)
+        public  void DeleteProfile(string profileId)
         {
             using (var db = new ErpContext())
             {
@@ -234,7 +245,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static ProfileManagerEditModel AddManager(string userId, string managerId)
+        public  ProfileManagerEditModel AddManager(string userId, string managerId)
         {
             // add manager
             ProfileManager profileManager;
@@ -258,7 +269,7 @@ namespace flexli_erp_webapi.Services
             return GetManagerForUser(userId, managerId);
         }
         
-        public static void DeleteManager(string userId, string managerId)
+        public  void DeleteManager(string userId, string managerId)
         {
             using (var db = new ErpContext())
             {
@@ -276,7 +287,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        private static ProfileManagerEditModel GetManagerForUser(string userId, string managerId)
+        private  ProfileManagerEditModel GetManagerForUser(string userId, string managerId)
         {
             ProfileManagerEditModel profileManagerEditModel = new ProfileManagerEditModel()
             {

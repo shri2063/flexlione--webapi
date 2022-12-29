@@ -3,39 +3,62 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository;
+using flexli_erp_webapi.Repository.Interfaces;
+using flexli_erp_webapi.Services.Interfaces;
+using m_sort_server.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace flexli_erp_webapi.Services
 {
     public class SprintManagementService
     {
-        
-        public static List<SprintEditModel> GetSprintsByProfileId(string profileId, List<string> include = null, int? pageIndex = null, int? pageSize = null)
+        private readonly ITaskRepository _taskRepository;
+        private readonly ISprintRepository _sprintRepository;
+        private readonly ITaskRelationRepository _taskRelationRepository;
+        private readonly ISprintRelationRepository _sprintRelationRepository;
+        private readonly ISprintReportRepository _sprintReportRepository;
+        private readonly ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
+        private readonly ITaskScheduleRelationRepository _taskScheduleRelationRepository;
+        public SprintManagementService(ITaskRepository taskRepository, ISprintRepository sprintRepository, 
+            ITaskRelationRepository taskRelationRepository, ISprintRelationRepository sprintRelationRepository, ISprintReportRepository sprintReportRepository,
+            ITaskHierarchyRelationRepository taskHierarchyRelationRepository, ITaskScheduleRelationRepository taskScheduleRelationRepository)
         {
-          
-            List<string> sprintIds = GetSprintIdsForProfileId(profileId, pageIndex, pageSize);
-            List<SprintEditModel> sprints = new List<SprintEditModel>();
-            
-            // [Check] At-least one Sprint exists
-            if (sprintIds == null)
-            {
-                return null;
-            }
-
-            sprintIds.ForEach(x =>
-            {
-
-                sprints.Add(GetSprintById(x,include != null?new List<string>(include):null)); 
-
-            });
-
-            return sprints;
-
+            _taskRepository = taskRepository;
+            _sprintRepository = sprintRepository;
+            _taskRelationRepository = taskRelationRepository;
+            _sprintRelationRepository = sprintRelationRepository;
+            _sprintReportRepository = sprintReportRepository;
+            _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
+            _taskScheduleRelationRepository = taskScheduleRelationRepository;
         }
 
-        public static SprintEditModel GetSprintById(string sprintId, List<string> include = null)
+
+
+        public List<SprintEditModel> GetSprintsByProfileId(string profileId, List<String> include,
+            int? pageIndex = null, int? pageSize = null)
+        {
+            var sprints = _sprintRelationRepository.GetSprintsForProfileId(profileId,  pageIndex, pageSize);
+            
+            sprints.ForEach(x =>
+            {
+                if (include.Contains("plannedTask"))
+                {
+                    x.PlannedTasks = GetPlannedTasksForSprint(x.SprintId);
+                }
+            
+                if (include.Contains("unPlannedTask"))
+                {
+                    x.UnPlannedTasks = GetUnPlannedTasksForSprint(x.SprintId);
+                }
+            });
+            return sprints;
+        }
+        
+        public  SprintEditModel GetSprintById(string sprintId, List<string> include = null)
         {
             SprintEditModel sprint =  GetSprintByIdFromDb(sprintId);
             if (sprint == null)
@@ -61,20 +84,20 @@ namespace flexli_erp_webapi.Services
             return sprint;
         }
 
-        private static List<TaskDetailEditModel> GetPlannedTasksForSprint(string sprintId)
+        private  List<TaskDetailEditModel> GetPlannedTasksForSprint(string sprintId)
         {
             List<TaskDetailEditModel> plannedTasks = new List<TaskDetailEditModel>();
-            List<string> taskDetailIds = TaskManagementService.GetTaskIdsForSprint(sprintId);
+            List<string> taskDetailIds = _taskRelationRepository.GetTaskIdsForSprint(sprintId);
             if(taskDetailIds != null){ taskDetailIds.ForEach(x =>
-                plannedTasks.Add(TaskManagementService.GetTaskById(x))) ;}
+                plannedTasks.Add(_taskRepository.GetTaskById(x))) ;}
 
             return plannedTasks;
         }
         
-        private static List<TaskDetailEditModel> GetUnPlannedTasksForSprint(string sprintId)
+        private  List<TaskDetailEditModel> GetUnPlannedTasksForSprint(string sprintId)
         {
             List<TaskDetailEditModel> unPlannedTasks = new List<TaskDetailEditModel>();
-            List<string> plannedTaskDetailIds = TaskManagementService.GetTaskIdsForSprint(sprintId);
+            List<string> plannedTaskDetailIds = _taskRelationRepository.GetTaskIdsForSprint(sprintId);
             var sprint = GetSprintById(sprintId);
             if (sprint == null)
             {
@@ -85,7 +108,7 @@ namespace flexli_erp_webapi.Services
             // WaterFall: get All Task Ids covered in Sprint Span
             var calenderTaskIds = (
                 from s in 
-                TaskScheduleManagementService.GetAllTaskScheduleByProfileIdAndDateRange(sprint.Owner, sprint.FromDate,
+                _taskScheduleRelationRepository.GetAllTaskScheduleByProfileIdAndDateRange(sprint.Owner, sprint.FromDate,
                 sprint.ToDate)
                 select s.TaskId)
                 .Distinct()
@@ -96,7 +119,7 @@ namespace flexli_erp_webapi.Services
             foreach (var taskId in calenderTaskIds)
             {
                 var upStreamTaskIds = (from s in
-                        TaskHierarchyManagementService.GetTaskHierarchyByIdFromDb(taskId).ChildrenTaskIdList
+                        _taskHierarchyRelationRepository.GetTaskHierarchyByTaskIdFromDb(taskId).ChildrenTaskIdList
                     select s).ToList();
                 
                 var commonTaskIds = upStreamTaskIds.Intersect(plannedTaskDetailIds).ToList();
@@ -113,7 +136,7 @@ namespace flexli_erp_webapi.Services
             foreach (var taskId in unPlannedTaskIds)
             {
                 var upStreamTaskIds = (from s in
-                        TaskHierarchyManagementService.GetTaskHierarchyByIdFromDb(taskId).ChildrenTaskIdList
+                        _taskHierarchyRelationRepository.GetTaskHierarchyByTaskIdFromDb(taskId).ChildrenTaskIdList
                     select s).ToList();
                 upStreamTaskIds.RemoveAt(0);
                 var commonTaskIds = upStreamTaskIds.Intersect(unPlannedTaskIds);
@@ -125,54 +148,19 @@ namespace flexli_erp_webapi.Services
             }
             
             
-            unPlannedTaskIds.ForEach(x => unPlannedTasks.Add(TaskManagementService.GetTaskById(x)));
+            unPlannedTaskIds.ForEach(x => unPlannedTasks.Add(_taskRepository.GetTaskById(x)));
             return unPlannedTasks;
         }
 
-        private static List<string> GetSprintIdsForProfileId(string profileId, int? pageIndex = null, int? pageSize = null, string include = null)
-        {
-            List<string> sprintIds = new List<string>();
-            using (var db = new ErpContext())
-            {
-                // [Check] : Pagination
-                if (pageIndex != null && pageSize != null)
-                {
-                    if (pageIndex <= 0 || pageSize <= 0)
-                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                
-                    // skip take logic
-                    sprintIds = db.Sprint
-                        .Where(x => x.Owner == profileId)
-                        .Select(x => x.SprintId).AsEnumerable()
-                        .OrderByDescending(Convert.ToInt32)
-                        .Skip(((int) pageIndex - 1) * (int) pageSize).Take((int) pageSize).ToList();
-
-                    if (sprintIds.Count == 0)
-                    {
-                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                    }
-                    return sprintIds;
-                }
-                             
-                sprintIds = db.Sprint
-                    .Where(x => x.Owner == profileId)
-                    .Select(x => x.SprintId).AsEnumerable()
-                    .OrderByDescending(Convert.ToInt32)
-                    .ToList();
-            }
-
-            return sprintIds;
-
-        }
+       
         
         
-        
-        public static SprintEditModel AddOrUpdateSprint(SprintEditModel sprintEditModel)
+        public  SprintEditModel AddOrUpdateSprint(SprintEditModel sprintEditModel)
         {
             // [Check]: Previous all sprints closed in case of new sprint
             if (GetSprintById(sprintEditModel.SprintId) == null)
             {
-                List<SprintEditModel> sprints = GetSprintsByProfileId(sprintEditModel.Owner);
+                List<SprintEditModel> sprints = _sprintRelationRepository.GetSprintsForProfileId(sprintEditModel.Owner);
 
                 if (sprints.Count > 0)
                 {
@@ -239,7 +227,7 @@ namespace flexli_erp_webapi.Services
 
         }
         
-        private static SprintEditModel AddOrUpdateSprintInDb(SprintEditModel sprintEditModel)
+        private  SprintEditModel AddOrUpdateSprintInDb(SprintEditModel sprintEditModel)
         {
             Sprint sprint;
             
@@ -280,7 +268,7 @@ namespace flexli_erp_webapi.Services
                 }
             }
 
-            return GetSprintById(sprint.SprintId);
+            return _sprintRepository.GetSprintById(sprint.SprintId);
         }
 
         private static decimal GetNewSprintNo(SprintEditModel sprintEditModel)
@@ -331,7 +319,7 @@ namespace flexli_erp_webapi.Services
           
         }
         
-        public static void DeleteSprint(string sprintId)
+        public  void DeleteSprint(string sprintId)
         {
             using (var db = new ErpContext())
             {
@@ -356,7 +344,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static SprintEditModel RequestForApproval(string sprintId, string userId)
+        public  SprintEditModel RequestForApproval(string sprintId, string userId)
         {
             Sprint sprint;
             using (var db = new ErpContext())
@@ -386,7 +374,7 @@ namespace flexli_erp_webapi.Services
                 db.SaveChanges();
             }
 
-            return GetSprintById(sprintId);
+            return _sprintRepository.GetSprintById(sprintId);
         }
 
         private static int TotalExpectedHours(string sprintId)
@@ -431,7 +419,7 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static SprintEditModel ApproveSprint(string sprintId, string approverId)
+        public  SprintEditModel ApproveSprint(string sprintId, string approverId)
         {
             Sprint sprint;
             using (var db = new ErpContext())
@@ -452,7 +440,7 @@ namespace flexli_erp_webapi.Services
                 }
                 
                 // Add entries in sprint report before changing status so that error is thrown before approved
-                SprintReportManagementService.AddSprintReportLineItem(sprint.SprintId);
+                _sprintReportRepository.AddSprintReportLineItem(sprint.SprintId);
                 
                 sprint.Status = SStatus.Approved.ToString();
                 sprint.Approved = true;
@@ -462,7 +450,7 @@ namespace flexli_erp_webapi.Services
             return GetSprintById(sprintId);
         }
         
-        public static SprintEditModel RequestForClosure(string sprintId, string userId)
+        public  SprintEditModel RequestForClosure(string sprintId, string userId)
         {
             Sprint sprint;
             using (var db = new ErpContext())
@@ -487,7 +475,7 @@ namespace flexli_erp_webapi.Services
             return GetSprintById(sprintId);
         }
         
-        public static SprintEditModel CloseSprint(string sprintId, string approverId)
+        public  SprintEditModel CloseSprint(string sprintId, string approverId)
         {
             Sprint sprint;
             using (var db = new ErpContext())
@@ -510,13 +498,13 @@ namespace flexli_erp_webapi.Services
                     throw new ConstraintException("Sprint not requested for closure hence can't be closed");
                 }
 
-                var taskIds = TaskManagementService.GetTaskIdsForSprint(sprintId);
+                var taskIds = _taskRelationRepository.GetTaskIdsForSprint(sprintId);
                 
                 
                 // [Action] - Update Provisional task Score
                 taskIds.ForEach(x =>
                 {
-                    sprint.Score = sprint.Score + TaskManagementService.CalculateTaskScore(x,sprintId);
+                    sprint.Score = sprint.Score + CalculateTaskScore(x,sprintId);
                 });
                 
                 sprint.Status = SStatus.Closed.ToString();
@@ -531,7 +519,7 @@ namespace flexli_erp_webapi.Services
                     
                     taskIds.ForEach(x =>
                     {
-                        TaskManagementService.RemoveTaskFromSprint(x);
+                        _taskRelationRepository.RemoveTaskFromSprint(x);
                         removedTask.Add(x);
                     });
                 }
@@ -540,7 +528,7 @@ namespace flexli_erp_webapi.Services
                     sprint.Status = SStatus.RequestForClosure.ToString();
                     sprint.Closed = false;
                     db.SaveChanges();
-                    removedTask.ForEach(x => TaskManagementService.LinkTaskToSprint(x,sprint.SprintId));
+                    removedTask.ForEach(x => _taskRelationRepository.LinkTaskToSprint(x,sprint.SprintId));
                     throw new ConstraintException(e.Message);
                 }
                 
@@ -554,7 +542,72 @@ namespace flexli_erp_webapi.Services
             return GetSprintById(sprintId);
         }
 
-        public static SprintEditModel ReviewCompleted(string sprintId, string approverId)
+         public  int CalculateTaskScore(string taskId, string sprintId)
+        {
+
+            TaskDetailEditModel task =  _taskRepository.GetTaskById(taskId);
+            List<SprintReportEditModel>
+                    sprintReportLineItems = _sprintReportRepository.GetSprintReportForSprint(sprintId)
+                        .FindAll(x => x.TaskId == taskId);
+                    
+                int complete = 0;
+                int completeEssential = 0;
+                int essential = 0;
+            
+                    
+                sprintReportLineItems.ForEach(sprintReportLineItem =>
+                {
+                    
+                    if (sprintReportLineItem.Essential)
+                        essential++;
+
+                    if (sprintReportLineItem.Essential && sprintReportLineItem.Status == CStatus.Completed && sprintReportLineItem.Approved != SApproved.False)
+                    {
+                        if(sprintReportLineItem.ResultType==CResultType.Numeric && Convert.ToInt32(sprintReportLineItem.Result)>=sprintReportLineItem.WorstCase && Convert.ToInt32(sprintReportLineItem.Result) <= sprintReportLineItem.BestCase)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+
+                        if (sprintReportLineItem.ResultType == CResultType.Boolean && sprintReportLineItem.Result == "true")
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+
+                        if (sprintReportLineItem.ResultType == CResultType.File && sprintReportLineItem.Result != null)
+                        {
+                            complete++;
+                            completeEssential++;
+                        }
+                    }
+                        
+                    else if (sprintReportLineItem.Status == CStatus.Completed && sprintReportLineItem.Approved != SApproved.False)
+                    {
+                        if(sprintReportLineItem.ResultType==CResultType.Numeric && Convert.ToInt32(sprintReportLineItem.Result)>=sprintReportLineItem.WorstCase && Convert.ToInt32(sprintReportLineItem.Result) <= sprintReportLineItem.BestCase)
+                        {
+                            complete++;
+                        }
+
+                        if (sprintReportLineItem.ResultType == CResultType.Boolean && sprintReportLineItem.Result == "true")
+                        {
+                            complete++;
+                        }
+
+                        if (sprintReportLineItem.ResultType == CResultType.File && sprintReportLineItem.Result != null)
+                        {
+                            complete++;
+                        }
+                    }
+
+                });
+                    
+                if (completeEssential < essential || complete < task.AcceptanceCriteria)
+                   return 0;
+
+                return Convert.ToInt32(task.ExpectedHours / 3);
+        }
+        public  SprintEditModel ReviewCompleted(string sprintId, string approverId)
         {
             Sprint sprint;
             using (var db = new ErpContext())
@@ -576,13 +629,13 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new ConstraintException("Sprint cannot be reviewed as status is not closed");
                 }
-                var taskIds = TaskManagementService.GetTaskIdsForSprint(sprintId);
+                var taskIds = _taskRelationRepository.GetTaskIdsForSprint(sprintId);
                 
                 
                 // [Action] - Update Actual task Score
                 taskIds.ForEach(x =>
                 {
-                    sprint.Score = sprint.Score + TaskManagementService.CalculateTaskScore(x,sprintId);
+                    sprint.Score = sprint.Score + CalculateTaskScore(x,sprintId);
                 });
 
                 sprint.Status = SStatus.Reviewed.ToString();
@@ -595,46 +648,14 @@ namespace flexli_erp_webapi.Services
             return GetSprintById(sprintId);
         }
         
-        public static SStatus CheckStatus(string sprintId)
+        public  SStatus CheckStatus(string sprintId)
         {
-            SprintEditModel sprintEditModel = GetSprintById(sprintId);
+            SprintEditModel sprintEditModel = _sprintRepository.GetSprintById(sprintId);
             return sprintEditModel.Status;
         }
 
-        public static bool CheckApproved(string sprintId)
-        {
-            using (var db = new ErpContext())
-            {
-                var status = db.Sprint
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.Approved)
-                    .ToString();
-
-                if (status=="true")
-                {
-                    return true;
-                }
-
-                return false;
-            }
-        }
         
-        public static bool CheckClosed(string sprintId)
-        {
-            using (var db = new ErpContext())
-            {
-                var status = db.Sprint
-                    .Where(x => x.SprintId == sprintId)
-                    .Select(x => x.Closed)
-                    .Single();
-
-                if (status)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-        }
+        
+        
     }
 }

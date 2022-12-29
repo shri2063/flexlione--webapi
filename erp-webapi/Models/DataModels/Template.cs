@@ -23,6 +23,9 @@ namespace flexli_erp_webapi.DataModels
         [Column("created_at")] 
         public DateTime CreatedAt { get; set; }
         
+        [Column("edited_at")] 
+        public DateTime? EditedAt { get; set; }
+        
         [Column("role")] 
         public string Role { get; set; }
         

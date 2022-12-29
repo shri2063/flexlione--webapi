@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.Services;
+using flexli_erp_webapi.Services.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +22,15 @@ namespace flexli_erp_webapi.Controller
     public class SprintController:ControllerBase
     {
        
-        
+       
+        private readonly SprintManagementService _sprintManagementService;
+
+        public SprintController( SprintManagementService sprintManagementService)
+        {
+            
+            _sprintManagementService = sprintManagementService;
+           
+        }
         /// <summary>
         ///  [R]Include - plannedTask,unPlannedTask
         /// </summary>
@@ -30,7 +40,7 @@ namespace flexli_erp_webapi.Controller
 
         public SprintEditModel GetSprintById(string sprintId, List<string> include = null)
         {
-            return SprintManagementService.GetSprintById(sprintId, include);
+            return _sprintManagementService.GetSprintById(sprintId, include);
         }
         
         /// <summary>
@@ -41,9 +51,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetSprintByProfileId")]
         [Consumes("application/json")]
 
-        public List<SprintEditModel> GetSprintsByProfileId(string profileId, List<string> include, int? pageIndex = null, int? pageSize = null)
+        public List<SprintEditModel> GetSprintsByProfileId(string profileId, List<String> include, int? pageIndex = null, int? pageSize = null)
         {
-            return SprintManagementService.GetSprintsByProfileId(profileId, include, pageIndex, pageSize);
+            return _sprintManagementService.GetSprintsByProfileId(profileId, include, pageIndex, pageSize);
         }
         
         /// <summary>
@@ -55,7 +65,7 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         public SprintEditModel AddOrUpdateSprint(SprintEditModel sprint)
         {
-            return SprintManagementService.AddOrUpdateSprint(sprint);
+            return _sprintManagementService.AddOrUpdateSprint(sprint);
         }
         
         /// <summary>
@@ -67,7 +77,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteSprint(string sprintId)
         {
-            SprintManagementService.DeleteSprint(sprintId);
+            _sprintManagementService.DeleteSprint(sprintId);
             return Ok();
         }
         
@@ -82,7 +92,7 @@ namespace flexli_erp_webapi.Controller
 
         public SprintEditModel RequestForApproval(string sprintId, string userId)
         {
-            return SprintManagementService.RequestForApproval(sprintId, userId);
+            return _sprintManagementService.RequestForApproval(sprintId, userId);
         }
         
         /// <summary>
@@ -95,7 +105,7 @@ namespace flexli_erp_webapi.Controller
 
         public SprintEditModel ApproveSprint(string sprintId, string approverId)
         {
-            return SprintManagementService.ApproveSprint(sprintId, approverId);
+            return _sprintManagementService.ApproveSprint(sprintId, approverId);
         }
         /// <summary>
         /// [R][Check]: Sprint is in Approved state
@@ -108,7 +118,7 @@ namespace flexli_erp_webapi.Controller
        
         public SprintEditModel RequestForClosure(string sprintId, string userId)
         {
-            return SprintManagementService.RequestForClosure(sprintId, userId);
+            return _sprintManagementService.RequestForClosure(sprintId, userId);
         }
         
         /// <summary>
@@ -122,7 +132,7 @@ namespace flexli_erp_webapi.Controller
 
         public SprintEditModel CloseSprint(string sprintId, string approverId)
         {
-            return SprintManagementService.CloseSprint(sprintId, approverId);
+            return _sprintManagementService.CloseSprint(sprintId, approverId);
         }
         
         /// <summary>
@@ -136,7 +146,7 @@ namespace flexli_erp_webapi.Controller
         
         public SprintEditModel ReviewCompleted(string sprintId, string approverId)
         {
-            return SprintManagementService.ReviewCompleted(sprintId, approverId);
+            return _sprintManagementService.ReviewCompleted(sprintId, approverId);
         }
     }
 }

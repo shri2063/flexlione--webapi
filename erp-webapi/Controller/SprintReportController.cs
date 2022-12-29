@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,18 @@ namespace flexli_erp_webapi.Controller
     
     public class SprintReportController : ControllerBase
     {
+        
+        private readonly ISprintReportRepository _sprintReportRepository;
+        private readonly SprintReportManagementService _sprintReportManagementService;
+
+        public SprintReportController(ISprintReportRepository sprintReportRepository,
+            SprintReportManagementService sprintReportManagementService)
+        {
+            _sprintReportRepository = sprintReportRepository;
+            _sprintReportManagementService = sprintReportManagementService;
+            
+        }
+
         /// <summary>
         /// [R]Use to fetch Sprint report for a sprint
         /// [Note]: Sprint No value is not  correct
@@ -27,7 +40,7 @@ namespace flexli_erp_webapi.Controller
        
         public List<SprintReportEditModel> GetSprintReportForSprint(string sprintId, int? pageIndex = null, int? pageSize = null)
         {
-            return SprintReportManagementService.GetSprintReportForSprint(sprintId, pageIndex, pageSize);
+            return _sprintReportRepository.GetSprintReportForSprint(sprintId, pageIndex, pageSize);
         }
 
 
@@ -46,7 +59,7 @@ namespace flexli_erp_webapi.Controller
         public ActionResult<CheckListItemEditModel> ReviewCheckList(SprintReportEditModel sprintReportEditModel, string approverId)
         {
            
-            return Ok( SprintReportManagementService.ReviewCheckList(sprintReportEditModel, approverId));
+            return Ok( _sprintReportManagementService.ReviewCheckList(sprintReportEditModel, approverId));
         }
     }
 }

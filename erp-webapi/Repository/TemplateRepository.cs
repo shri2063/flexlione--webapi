@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using flexli_erp_webapi.BsonModels;
-using flexli_erp_webapi.DataLayer.Interface;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
@@ -39,6 +38,7 @@ namespace flexli_erp_webapi.Repository
                     Owner = existingTemplate.Owner,
                     CloneTemplateId = existingTemplate.CloneTemplateId,
                     Role = existingTemplate.Role,
+                    EditedAt = existingTemplate.EditedAt
                 };
                 
 
@@ -91,6 +91,7 @@ namespace flexli_erp_webapi.Repository
                     template.Description = templateEditModel.Description.IfNull(description => template.Description);
                     template.Owner = templateEditModel.Owner.IfNull(owner => template.Owner);
                     template.Role = templateEditModel.Role.IfNull(owner => template.Role);
+                    template.EditedAt = DateTime.Now;
                     db.SaveChanges();
                 }
                 else
@@ -102,7 +103,8 @@ namespace flexli_erp_webapi.Repository
                         Description = templateEditModel.Description,
                         Owner = templateEditModel.Owner,
                         CreatedAt = DateTime.Now,
-                        Role = templateEditModel.Role
+                        Role = templateEditModel.Role,
+                        EditedAt = DateTime.Now
                     };
                     // If clone template not provided , template will act as first clone of itself
                     template.CloneTemplateId = templateEditModel.CloneTemplateId.IfNull(cloneTemplateId => newTemplateId);

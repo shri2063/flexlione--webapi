@@ -10,13 +10,13 @@ namespace flexli_erp_webapi.Services
 {
     public class SearchByLabelManagementService
     {
-        private readonly ILabelRepository _labelRepository;
-        private readonly ITagTaskListRepository _tagTaskListRepository;
+        private readonly ILabelRelationRepository _labelRelationRepository;
+      
 
-        public SearchByLabelManagementService(ILabelRepository labelRepository, ITagTaskListRepository tagtaskListRepository)
+        public SearchByLabelManagementService(ILabelRelationRepository labelRelationRepository)
         {
-            _labelRepository = labelRepository;
-            _tagTaskListRepository = tagtaskListRepository;
+            _labelRelationRepository = labelRelationRepository;
+           
         }
 
         public async Task<List<TaskSearchView>> SearchByProfileId(string profileId, List<string> include = null, int? pageIndex = null,
@@ -27,7 +27,7 @@ namespace flexli_erp_webapi.Services
                 if (include.Contains("sprint"))
                 {
                     // all sprint tasks for profileId
-                    var sprintTask = await _labelRepository.SprintLabelTaskForProfileId(profileId);
+                    var sprintTask = await _labelRelationRepository.GetSprintLabelTaskForProfileId(profileId);
                     
                     // if notCompleted also present then filter those who aren't complete
                     if (include.Contains("notCompleted"))
@@ -56,10 +56,10 @@ namespace flexli_erp_webapi.Services
                     // Pagination
                     if (pageSize != null && pageIndex != null)
                     {
-                        return PageOfTask(await _labelRepository.notCompleteLabelTaskForProfileId(profileId), pageIndex, pageSize);
+                        return PageOfTask(await _labelRelationRepository.GetNotCompleteLabelTaskForProfileId(profileId), pageIndex, pageSize);
                     }
                     
-                    return await _labelRepository.notCompleteLabelTaskForProfileId(profileId);
+                    return await _labelRelationRepository.GetNotCompleteLabelTaskForProfileId(profileId);
                 }
             }
             

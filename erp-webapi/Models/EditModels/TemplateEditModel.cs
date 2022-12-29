@@ -20,6 +20,8 @@ namespace flexli_erp_webapi.EditModels
         
         public DateTime CreatedAt { get; set; }
         
+        public DateTime? EditedAt { get; set; }
+        
         public string Role { get; set; }
     }
 }
