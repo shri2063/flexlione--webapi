@@ -2,6 +2,7 @@
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.LinkedListModel;
+using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,12 +16,23 @@ namespace flexli_erp_webapi.Controller
     
     public class DependencyController: ControllerBase
     {
+        
+        
+        private readonly IDependencyRepository _dependencyRepository;
+        private readonly DependencyManagementService _dependencyManagementService;
+
+        public DependencyController(IDependencyRepository dependencyRepository, DependencyManagementService dependencyManagementService)
+        {
+            _dependencyRepository = dependencyRepository;
+            _dependencyManagementService = dependencyManagementService;
+        }
+        
         [HttpGet("GetUpstreamDependenciesByTaskId")]
         [Consumes("application/json")]
         
-        public List<DependencyEditModel> GetUpstreamDependenciesByTaskId(string taskId,string include = null, int? pageIndex = null, int? pageSize = null)
+        public List<DependencyEditModel> GetUpstreamDependenciesByTaskId(string taskId, int? pageIndex = null, int? pageSize = null)
         {
-            return DependencyManagementService.GetUpstreamDependenciesByTaskId(taskId,include, pageIndex, pageSize);
+            return _dependencyManagementService.GetUpstreamDependenciesByTaskId(taskId, pageIndex, pageSize);
         }
         
         [HttpGet("GetDownstreamDependenciesByTaskId")]
@@ -28,7 +40,7 @@ namespace flexli_erp_webapi.Controller
         
         public List<DependencyEditModel> GetDownstreamDependenciesByTaskId(string taskId,string include = null, int? pageIndex = null, int? pageSize = null)
         {
-            return DependencyManagementService.GetDownstreamDependenciesByTaskId(taskId,include, pageIndex, pageSize);
+            return _dependencyManagementService.GetDownstreamDependenciesByTaskId(taskId, pageIndex, pageSize);
         }
         
         
@@ -43,7 +55,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<DependencyEditModel> CreateOrUpdateDependency(DependencyEditModel dependency)
         {
-            return DependencyManagementService.CreateOrUpdateDependency(dependency);
+            return _dependencyManagementService.CreateOrUpdateDependency(dependency);
         }
 
 
@@ -52,7 +64,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteDependency(string dependencyId)
         {
-            DependencyManagementService.DeleteDependency(dependencyId);
+            _dependencyManagementService.DeleteDependency(dependencyId);
             return Ok();
         }
     }  

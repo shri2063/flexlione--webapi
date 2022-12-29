@@ -5,6 +5,7 @@ using flexli_erp_webapi.Services;
 using flexli_erp_webapi.DataModels;
 using Microsoft.AspNetCore.Mvc;
 using flexli_erp_webapi.Models;
+using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Cors;
 
 
@@ -18,6 +19,17 @@ namespace flexli_erp_webapi.Controller
     
     public class CheckListController : ControllerBase
     {
+
+
+        private readonly ICheckListRepository _checkListRepository;
+        private readonly CheckListManagementService _checkListManagementService;
+
+        public CheckListController(ICheckListRepository checkListRepository, CheckListManagementService checkListManagementService)
+        {
+            _checkListRepository = checkListRepository;
+            _checkListManagementService = checkListManagementService;
+        }
+        
         /// <summary>
         /// [R]Get Check List for a Task or Template.checkListType = ["Task,"Template"]
         /// </summary>
@@ -25,9 +37,11 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetCheckList")]
         [Consumes("application/json")]
         
+       
+        
         public List<CheckListItemEditModel> GetCheckListByTypeId(string typeId, ECheckListType checkListType, int? pageIndex = null, int? pageSize = null)
         {
-            return CheckListManagementService.GetCheckList(typeId, checkListType, pageIndex, pageSize);
+            return _checkListRepository.GetCheckList(typeId, checkListType, pageIndex, pageSize);
         }
         /// <summary>
         /// [R]Checklist can added only if sprint is in planning stage
@@ -41,7 +55,7 @@ namespace flexli_erp_webapi.Controller
         
         public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemItem)
         {
-            return CheckListManagementService.CreateOrUpdateCheckListItem(checkListItemItem);
+            return _checkListManagementService.CreateOrUpdateCheckListItem(checkListItemItem);
         }
         /// <summary>
         /// [R]Checklist can be deleted only if sprint is in planning stage/not linked to sprint
@@ -53,7 +67,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteCheckListItem(string checkListItemId)
         {
-            CheckListManagementService.DeleteCheckListItem(checkListItemId);
+            _checkListManagementService.DeleteCheckListItem(checkListItemId);
             return Ok();
         }
     }

@@ -7,26 +7,45 @@ using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.LinkedListModel;
-using flexli_erp_webapi.Repository;
 using flexli_erp_webapi.Repository.Interfaces;
+using flexli_erp_webapi.Services.Interfaces;
+using flexli_erp_webapi.Shared;
+using m_sort_server.Repository.Interfaces;
+using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
+
 
 
 namespace flexli_erp_webapi.Services
 {
-    public class TaskManagementService
+    public class TaskManagementService: ITaskRankingManagementService
     {
+        
+        private readonly AutoSearchByTagCompiler _autoSearchByTagCompiler;
+        private readonly ILabelRelationRepository _labelRelationRepository;
+        private readonly ITaskRankingRepository _taskRankingRepository;
+        private readonly ITaskRepository _taskRepository;
+        private readonly IDependencyRepository _dependencyRepository;
+        private readonly ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
 
-        private readonly ITagTaskListRepository _tagTaskListRepository;
-        private readonly ILabelRepository _labelRepository;
-        public TaskManagementService(ITagTaskListRepository tagTaskListRepository,
-            ILabelRepository labelRepository)
+        public TaskManagementService(
+            ILabelRelationRepository labelRelationRepository, AutoSearchByTagCompiler autoSearchByTagCompiler,
+            ITaskRankingRepository taskRankingRepository, ITaskRepository taskRepository, IDependencyRepository dependencyRepository,
+            ITaskHierarchyRelationRepository taskHierarchyRelationRepository)
         {
-            _tagTaskListRepository = tagTaskListRepository;
-            _labelRepository = labelRepository;
+        
+            _labelRelationRepository = labelRelationRepository;
+            _autoSearchByTagCompiler = autoSearchByTagCompiler;
+            _taskRankingRepository = taskRankingRepository;
+            _taskRepository = taskRepository;
+            _dependencyRepository = dependencyRepository;
+            _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
+
         }
-        public static TaskDetailEditModel GetTaskById(string taskId, string include = null)
+
+       
+
+        public   TaskDetailEditModel GetTaskById(string taskId, string include = null)
         {
             TaskDetailEditModel taskDetail = GetTaskByIdFromDb(taskId);
 
@@ -41,221 +60,55 @@ namespace flexli_erp_webapi.Services
             }
             
             if (include.Contains("children"))
-            { 
-                taskDetail.Children =  GetRankedChildTaskList(taskId);
+            {
+                taskDetail.Children =  GetChildTaskRankingForTask(taskDetail.TaskId).Result;
             }
             if (include.Contains("siblings"))
             { 
-                taskDetail.Siblings =  GetRankedChildTaskList(taskDetail.ParentTaskId);
+                taskDetail.Siblings =    GetChildTaskRankingForTask(taskDetail.ParentTaskId).Result;
             }
             
             if (include.Contains("dependency"))
             {
-                taskDetail.UpStreamDependencies = DependencyManagementService
-                    .GetUpstreamDependenciesByTaskId(taskId,"taskDetail");
-                taskDetail.DownStreamDependencies = DependencyManagementService
-                    .GetDownstreamDependenciesByTaskId(taskId,"taskDetail");
+                taskDetail.UpStreamDependencies = _dependencyRepository
+                    .GetUpstreamDependenciesByTaskId(taskId);
+                taskDetail.UpStreamDependencies.ForEach(x =>
+                    x.TaskDetailEditModel =  _taskRepository.GetTaskById(x.DependentTaskId));
+                taskDetail.DownStreamDependencies = _dependencyRepository
+                    .GetDownstreamDependenciesByTaskId(taskId);
+                taskDetail.DownStreamDependencies.ForEach(x =>
+                    x.TaskDetailEditModel =  _taskRepository.GetTaskById(x.DependentTaskId));
             }
 
             return taskDetail;
 
         }
 
-        public static List<string> GetTaskIdsForSprint(string sprintId)
+    
+        
+       
+        public TaskDetailEditModel CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel)
         {
-            List<string> taskIds = new List<string>();
+
+            // All fields updated except rank
+            TaskDetailEditModel updatedTaskDetail =  CreateOrUpdateTaskInDb(taskDetailEditModel);
             
-            var sprint = SprintManagementService.GetSprintById(sprintId);
-            if (sprint == null)
-            {
-                return taskIds;
-            }
-            
-            var planningStage = new List<SStatus> { SStatus.Planning, SStatus.RequestForApproval };
-            if (planningStage.Contains(sprint.Status))
-            {
-                
-                    using (var db = new ErpContext())
-                    {
+            _autoSearchByTagCompiler.AddToSearchResults(updatedTaskDetail.Description, updatedTaskDetail.TaskId, ECheckListType.Task);
 
-                        taskIds = db.TaskDetail
-                            .Where(x => x.SprintId == sprintId)
-                            .Select(y => y.TaskId)
-                            .ToList();
-                    }
-
-                    return taskIds;
-                
-            }
-
-            using (var db = new ErpContext())
-           {
-
-               taskIds = db.SprintReport
-                   .Where(x => x.SprintId == sprintId)
-                   .Select(y => y.TaskId)
-                   .Distinct()
-                   .ToList();
-           }
-           
-           return taskIds;
-           
+            return  GetTaskById(updatedTaskDetail.TaskId);
         }
         
        
-        public  static TaskDetailEditModel CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel)
-        {
-            bool newTask ; 
-            // Validation 1: Check if Position after is valid
 
-                // 1.1 -  Position After taskDetail Id exist 
-            if (!GetChildTaskIdList(taskDetailEditModel.ParentTaskId).Contains(taskDetailEditModel.PositionAfter))
-            {
-                if (!string.IsNullOrEmpty(taskDetailEditModel.PositionAfter))
-                {
-                    throw new KeyNotFoundException("Position after is invalid");
-                }
-              
-            }
-            // taskDetail is not positioned after itself
-            if (taskDetailEditModel.TaskId == taskDetailEditModel.PositionAfter)
-            {
-                throw new KeyNotFoundException("TaskDetail cannot be positioned after itself");
-            }
-            // Check if its a new task
-
-            var result = from s in GetTaskIdList()
-                select s.TaskId;
-            var temp = result.ToList();
-            
-            if (result.ToList().Contains(taskDetailEditModel.TaskId))
-            {
-                newTask = false;
-            }
-            else
-            {
-                newTask = true;
-            }
-            
-            
-            // ToDo: Validation 2: Check if parent taskDetail id is valid
-            
-            
-          
-            // All fields updated except rank
-            TaskDetailEditModel updatedTaskDetail = CreateOrUpdateTaskInDb(taskDetailEditModel);
-            
-           // Check if Ordering of position has been changed
-           // If No: Ignore
-           // If Yes: Change ranking of the taskDetail
-            // Update Ranks in db
-
-           if (CheckIfPositionHasChanged(taskDetailEditModel,newTask))
-           {
-               // dummy rank updated
-               UpdateRankInDb(updatedTaskDetail.TaskId,Int32.MaxValue);
-               List<TaskDetailEditModel> reorderedList = ReorderTaskList(taskDetailEditModel);
-
-               List<TaskDetailEditModel> rankedTask = UpdateRankOfReorderedList(reorderedList);
-
-               List<TaskDetailEditModel> positionedTask = UpdatePositionOfRankedTask(rankedTask);
-               
-               positionedTask.ForEach(x => UpdateRankInDb(x.TaskId,x.Rank));
-               positionedTask.ForEach(x => UpdatePositionInDb(x.TaskId,x.PositionAfter));
-           }
-
-           
-          
-           return GetTaskById(updatedTaskDetail.TaskId);
-        }
         
-        public static List<TaskShortDetailEditModel> GetTaskIdList(string parentTaskId = null, int? pageIndex = null, int? pageSize = null)
-        {
-            if (pageIndex != null && pageSize != null)
-            {
-                return GetTaskIdListPageForParentTaskId(parentTaskId, (int) pageIndex, (int) pageSize);
-            }
-            
-            using (var db = new ErpContext())
-            {
-                if (parentTaskId == null)
-                {
-                    return db.TaskDetail
-                        .Select(t => new TaskShortDetailEditModel()
-                        {
-                            TaskId = t.TaskId,
-                            Description = t.Description,
-                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true)
-                        })
-                        .ToList();
-                }
-                return db.TaskDetail
-                    .Where(t => t.ParentTaskId == parentTaskId)
-                    .Select(t => new TaskShortDetailEditModel()
-                    {
-                        TaskId = t.TaskId,
-                        Description = t.Description
-                    })
-                    .ToList();
-                
-            }
-        }
 
-        private static List<TaskShortDetailEditModel> GetTaskIdListPageForParentTaskId(string parentTaskId, int pageIndex, int pageSize)
+
+        public   void DeleteTask(string taskId)
         {
             using (var db = new ErpContext())
             {
-                if (pageIndex <= 0 || pageSize <= 0)
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                
-                // skip take logic
-                List<TaskShortDetailEditModel> taskShortDetailEditModels;
-                    
-                if (parentTaskId == null)
-                {
-                    taskShortDetailEditModels = db.TaskDetail
-                        .Select(t => new TaskShortDetailEditModel()
-                        {
-                            TaskId = t.TaskId,
-                            Description = t.Description,
-                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true)
-                        })
-                        .OrderByDescending(x=>Convert.ToInt32(x.TaskId))
-                        .Skip((pageIndex - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToList();
-                }
-                else
-                {
-                    taskShortDetailEditModels = db.TaskDetail
-                        .Where(t => t.ParentTaskId == parentTaskId)
-                        .Select(t => new TaskShortDetailEditModel()
-                        {
-                            TaskId = t.TaskId,
-                            Description = t.Description
-                        })
-                        .OrderByDescending(t=>Convert.ToInt32(t.TaskId))
-                        .Skip((pageIndex - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToList();
-                }
-
-                if (taskShortDetailEditModels.Count == 0)
-                {
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                }
-
-                return taskShortDetailEditModels;
-
-            }
-        }
-
-
-        public static void DeleteTask(string taskId)
-        {
-            using (var db = new ErpContext())
-            {
-                if ((GetTaskById(taskId, "children").Children.Count > 0))
+                var task =  GetTaskById(taskId, "children");
+                if (( task.Children.Count > 0))
                 {
                     throw new KeyNotFoundException("TaskDetail cannot be deleted. Contains one or more child taskDetail");
                 }
@@ -285,12 +138,13 @@ namespace flexli_erp_webapi.Services
         }
         
         // Removed task will not be shown in Web App until forced
-        public static void RemoveTask(string taskId)
+        public  void RemoveTask(string taskId)
         {
             using (var db = new ErpContext())
             {
-                if ((GetTaskById(taskId, "children").Children.FindAll(
-                    x => x.IsRemoved == false).Count > 0))
+                var task =  GetTaskById(taskId, "children");
+                if (task.Children.FindAll(
+                    x => x.IsRemoved == false).Count > 0)
                 {
                     throw new KeyNotFoundException("Task cannot be removed. Contains one or more child taskDetail");
                 }
@@ -309,179 +163,15 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
-        {
-            using (var db = new ErpContext())
-            {
-                TaskDetail existingTask = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskId);
-                
-                //[Check]: Task does not exist
-                if (existingTask == null)
-                    throw new KeyNotFoundException("TaskDetail does not exist");
-                
-                // [Check]: Task is not linked to some other sprint
-                if (existingTask.SprintId != null)
-                {
-                    throw new ConstraintException("task already link to sprint" +  existingTask.SprintId);
-                }
-
-                Sprint sprint = db.Sprint
-                    .FirstOrDefault(x => x.SprintId == sprintId);
-                //[Check]: Sprint does not exist
-                if (sprint == null)
-                    throw new KeyNotFoundException("Sprint does not exist");
-
-                // [Check]: Sprint is in planning stage
-                if (sprint.Status != SStatus.Planning.ToString())
-                {
-                    throw new ConstraintException("cannot link task to sprint as sprint is not in planning stage");
-                }
-
-                existingTask.SprintId = sprintId;
-                db.SaveChanges();
-
-                return GetTaskById(existingTask.TaskId);
-            }
-            
-        }
-        
-        public static TaskDetailEditModel RemoveTaskFromSprint(string taskId)
-        {
-            using (var db = new ErpContext())
-            {
-                TaskDetail existingTask = db.TaskDetail
-                    .Include(x => x.TaskSchedules)
-                    .FirstOrDefault(x => x.TaskId == taskId);
-                
-                // Case: TaskDetail does not exist
-                if (existingTask == null)
-                    throw new KeyNotFoundException("TaskDetail does not exist");
-                
-                
-
-                Sprint sprint = db.Sprint
-                    .FirstOrDefault(x => x.SprintId == existingTask.SprintId);
-
-               // Case : Task Not link to any sprint
-                if (sprint == null)
-                {
-                    return GetTaskById(existingTask.TaskId);
-                }
-                // Case: Sprint is already approved
-                if (sprint.Approved && !sprint.Closed)
-                {
-                    throw new ConstraintException("cannot delete the task as sprint is already approved");
-                }
-                
-                existingTask.SprintId = null;
-                db.SaveChanges();
-
-                return GetTaskById(existingTask.TaskId);
-            }
-            
-        }
+       
        
 
-        private static List<TaskDetailEditModel> ReorderTaskList(TaskDetailEditModel newTaskDetailItemEditModel)
-        {
-            LinkedChildTaskHead head = LinkedListService.CreateLinkedList(
-                    GetTaskById(newTaskDetailItemEditModel.ParentTaskId, "children").Children);
-            List<TaskDetailEditModel> reorderedList = new List<TaskDetailEditModel>();
-
-            
-
-            while (head.Pointer.TaskDetail.TaskId != null)
-            {
-                LinkedChildTask pointerNext = head.Pointer.Next;
-                if (head.Pointer.TaskDetail.TaskId == newTaskDetailItemEditModel.PositionAfter)
-                {
-                    head.Pointer.Next = new LinkedChildTask()
-                    {
-                        TaskDetail = newTaskDetailItemEditModel,
-                        Next = pointerNext
-                    };
-
-                }
-               
-                reorderedList.Add(head.Pointer.TaskDetail);
-                head.Pointer = head.Pointer.Next;
-                
-            }
-            // Remove Null list created at end
-            //reorderedList.RemoveAt(reorderedList.Count - 1);
-            // New taskDetail will be created (again) at last
-            // Why? Since we atr assigning int.max value as it rank
-            // If position_after  = null -> do nothing
-            // Else remove it
-            if (newTaskDetailItemEditModel.PositionAfter != null)
-            {
-                reorderedList.RemoveAt(reorderedList.Count - 1);
-            }
-          
-            return reorderedList;
-        }
+        
 
         
-        private static List<TaskDetailEditModel> UpdateRankOfReorderedList(List<TaskDetailEditModel> task)
-        {
-           List<TaskDetailEditModel> rankedTask = new List<TaskDetailEditModel>();
-
-           int i = 1;
-           while (task.Count > 0)
-           {
-               TaskDetailEditModel currentTaskDetail = task.First();
-               currentTaskDetail.Rank = i;
-               rankedTask.Add(currentTaskDetail);
-               
-               task.RemoveAt(0);
-               i = i + 1;
-           }
-
-           return rankedTask;
-        }
-
-
-        
-        private static void UpdateRankInDb(string taskId, int? rank)
-        {
-           
-            using (var db = new ErpContext())
-            {
-                TaskDetail task = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskId);
-                if (task == null)
-                {
-                    return;
-                }
-
-                task.Rank = rank;
-                db.SaveChanges();
-   
-            }
-            
-        }
-        
-        private static void UpdatePositionInDb(string taskId, string position)
-        {
-           
-            using (var db = new ErpContext())
-            {
-                TaskDetail task = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskId);
-                if (task == null)
-                {
-                    return;
-                }
-
-                task.PositionAfter = position;
-                db.SaveChanges();
-   
-            }
-            
-        }
-
-        private static TaskDetailEditModel CreateOrUpdateTaskInDb(TaskDetailEditModel taskDetailEditModel)
+       
+     
+        private  TaskDetailEditModel CreateOrUpdateTaskInDb(TaskDetailEditModel taskDetailEditModel)
         {
            TaskDetail task;
            if (taskDetailEditModel.Deadline == null)
@@ -489,62 +179,67 @@ namespace flexli_erp_webapi.Services
                taskDetailEditModel.Deadline = DateTime.MaxValue;
            }
            using (var db = new ErpContext())
-            {
-                task = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskDetailEditModel.TaskId);
+           {
+               task = db.TaskDetail
+                   .FirstOrDefault(x => x.TaskId == taskDetailEditModel.TaskId);
 
-                if (task != null) // update
-                {
-
-                    if (task.AssignedTo != taskDetailEditModel.AssignedTo 
-                    && task.SprintId != null)
-                    {
-                        throw new Exception("Assignee cannot be changed. Already allocated in sprint");
-                    }
-                    task.ParentTaskId = taskDetailEditModel.ParentTaskId;
-                    task.CreatedBy = taskDetailEditModel.CreatedBy.ToLower();
-                    task.Status = taskDetailEditModel.Status.ToString().ToLower();
-                    task.Description = taskDetailEditModel.Description;
-                    task.AssignedTo = taskDetailEditModel.AssignedTo.ToLower();
-                    task.Deadline = taskDetailEditModel.Deadline;
-                    task.ExpectedHours = taskDetailEditModel.ExpectedHours;
-                    task.EditedAt = DateTime.Now;
-                    task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0;
+               if (task != null) // update
+               {
+                   _autoSearchByTagCompiler.RemoveFromSearchResults(task.TaskId, ECheckListType.Task);
+                    
+                   if (task.AssignedTo != taskDetailEditModel.AssignedTo 
+                       && task.SprintId != null)
+                   {
+                       throw new Exception("Assignee cannot be changed. Already allocated in sprint");
+                   }
+                   task.ParentTaskId = taskDetailEditModel.ParentTaskId;
+                   task.CreatedBy = taskDetailEditModel.CreatedBy.ToLower();
+                   task.Status = taskDetailEditModel.Status.ToString().ToLower();
+                   task.Description = taskDetailEditModel.Description;
+                   task.AssignedTo = taskDetailEditModel.AssignedTo.ToLower();
+                   task.Deadline = taskDetailEditModel.Deadline;
+                   task.ExpectedHours = taskDetailEditModel.ExpectedHours;
+                   task.EditedAt = DateTime.Now;
+                   task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0;
 
                    //[Action] If Sprint status = planning or Sprint not allocated then you can change acceptance criteria
-                    if (task.SprintId != null? task.Status == SStatus.Planning.ToString(): true  )
-                    {
-                        task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
-                    }
+                   if (task.SprintId != null? task.Status == SStatus.Planning.ToString(): true  )
+                   {
+                       task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria;
+                   }
 
-                    db.SaveChanges();
-                }
-                else
-                {
-                    var dateTime = DateTime.Now;
-                    task = new TaskDetail
-                    {
-                        TaskId = GetNextAvailableId(),
-                        ParentTaskId = taskDetailEditModel.ParentTaskId,
-                        CreatedAt = dateTime,
-                        CreatedBy = taskDetailEditModel.CreatedBy,
-                        Status = taskDetailEditModel.Status.ToString().ToLower(),
-                        Description = taskDetailEditModel.Description,
-                        AssignedTo = taskDetailEditModel.AssignedTo,
-                        Deadline = taskDetailEditModel.Deadline,
-                        EditedAt = dateTime,
-                        ExpectedHours = taskDetailEditModel.ExpectedHours,
-                        IsRemoved = false,
-                        AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0,
+                   db.SaveChanges();
+               }
+               else
+               {
+                   var dateTime = DateTime.Now;
+                   task = new TaskDetail
+                   {
+                       TaskId = GetNextAvailableId(),
+                       ParentTaskId = taskDetailEditModel.ParentTaskId,
+                       CreatedAt = dateTime,
+                       CreatedBy = taskDetailEditModel.CreatedBy,
+                       Status = taskDetailEditModel.Status.ToString().ToLower(),
+                       Description = taskDetailEditModel.Description,
+                       AssignedTo = taskDetailEditModel.AssignedTo,
+                       Deadline = taskDetailEditModel.Deadline,
+                       EditedAt = dateTime,
+                       ExpectedHours = taskDetailEditModel.ExpectedHours,
+                       IsRemoved = false,
+                       AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0,
                         
-                    };
-                    db.TaskDetail.Add(task);
-                    db.SaveChanges();
-                }
-            }
-            // Update Task Hierarchy
-            TaskHierarchyManagementService.UpdateTaskHierarchy(task.TaskId);
-            return GetTaskById(task.TaskId);
+                   };
+                   db.TaskDetail.Add(task);
+                   db.SaveChanges();
+               }
+           }
+           // Update Task Hierarchy
+           _taskHierarchyRelationRepository.UpdateTaskHierarchy(task.TaskId);
+           
+
+           var createdTask =  GetTaskById(task.TaskId);
+
+           return createdTask;
         }
         
         
@@ -573,24 +268,6 @@ namespace flexli_erp_webapi.Services
         }
         
        
-        private static List<TaskDetailEditModel> GetRankedChildTaskList(string  taskId)
-        {
-
-            List<TaskDetailEditModel> taskListEditModels = new List<TaskDetailEditModel>();
-
-            List<string> taskIdList = GetChildTaskIdList(taskId);
-
-                taskIdList.ForEach(
-                    x => taskListEditModels.Add(
-                        GetTaskById(x)));
-
-                taskListEditModels = taskListEditModels
-                    .OrderBy(x => x.Rank)
-                    .ToList();
-                return taskListEditModels;
-                
-            
-        }
         
         
         
@@ -639,103 +316,8 @@ namespace flexli_erp_webapi.Services
 
         }
 
-        private static bool CheckIfPositionHasChanged(TaskDetailEditModel taskDetail,bool newTask)
-        {
-            if (newTask)
-            {
-                return true;
-            }
-            
-            if (taskDetail.PositionAfter != GetTaskById(taskDetail.TaskId).PositionAfter)
-            {
-                return true;
-            }
-
-            return false;
-         }
-
-        private static List<TaskDetailEditModel> UpdatePositionOfRankedTask(List<TaskDetailEditModel> rankedTask)
-        {
-            string previousTaskId = null;
-            List<TaskDetailEditModel> positionedTask = new List<TaskDetailEditModel>();
-            while (rankedTask.Count > 0)
-            {
-                TaskDetailEditModel taskDetail = rankedTask.First();
-                taskDetail.PositionAfter = previousTaskId;
-                positionedTask.Add(taskDetail);
-                
-                previousTaskId = taskDetail.TaskId;
-                rankedTask.RemoveAt(0);
-            }
-
-            return positionedTask;
-        }
-
-        public static int CalculateTaskScore(string taskId, string sprintId)
-        {
-
-            TaskDetailEditModel task = GetTaskById(taskId);
-            List<SprintReportEditModel>
-                    sprintReportLineItems = SprintReportManagementService.GetSprintReportForSprint(sprintId)
-                        .FindAll(x => x.TaskId == taskId);
-                    
-                int complete = 0;
-                int completeEssential = 0;
-                int essential = 0;
-            
-                    
-                sprintReportLineItems.ForEach(sprintReportLineItem =>
-                {
-                    
-                    if (sprintReportLineItem.Essential)
-                        essential++;
-
-                    if (sprintReportLineItem.Essential && sprintReportLineItem.Status == CStatus.Completed && sprintReportLineItem.Approved != SApproved.False)
-                    {
-                        if(sprintReportLineItem.ResultType==CResultType.Numeric && Convert.ToInt32(sprintReportLineItem.Result)>=sprintReportLineItem.WorstCase && Convert.ToInt32(sprintReportLineItem.Result) <= sprintReportLineItem.BestCase)
-                        {
-                            complete++;
-                            completeEssential++;
-                        }
-
-                        if (sprintReportLineItem.ResultType == CResultType.Boolean && sprintReportLineItem.Result == "true")
-                        {
-                            complete++;
-                            completeEssential++;
-                        }
-
-                        if (sprintReportLineItem.ResultType == CResultType.File && sprintReportLineItem.Result != null)
-                        {
-                            complete++;
-                            completeEssential++;
-                        }
-                    }
-                        
-                    else if (sprintReportLineItem.Status == CStatus.Completed && sprintReportLineItem.Approved != SApproved.False)
-                    {
-                        if(sprintReportLineItem.ResultType==CResultType.Numeric && Convert.ToInt32(sprintReportLineItem.Result)>=sprintReportLineItem.WorstCase && Convert.ToInt32(sprintReportLineItem.Result) <= sprintReportLineItem.BestCase)
-                        {
-                            complete++;
-                        }
-
-                        if (sprintReportLineItem.ResultType == CResultType.Boolean && sprintReportLineItem.Result == "true")
-                        {
-                            complete++;
-                        }
-
-                        if (sprintReportLineItem.ResultType == CResultType.File && sprintReportLineItem.Result != null)
-                        {
-                            complete++;
-                        }
-                    }
-
-                });
-                    
-                if (completeEssential < essential || complete < task.AcceptanceCriteria)
-                   return 0;
-
-                return Convert.ToInt32(task.ExpectedHours / 3);
-        }
+     
+       
         
 
         public static void UpdateEditedAt(string taskId)
@@ -750,90 +332,28 @@ namespace flexli_erp_webapi.Services
             }
         }
 
-        public static void PublishActualScoresForTask(string taskId, string sprintId)
-        {
-            TaskDetail task;
-            using (var db = new ErpContext())
-            {
-                task = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskId);
-                
-                List<CheckListItemEditModel>
-                    checkListItems = CheckListManagementService.GetCheckList(task.TaskId, ECheckListType.Task);
-                    
-                int complete = 0;
-                int completeEssential = 0;
-                int essential = 0;
-                    
-                checkListItems.ForEach(checkListItem =>
-                {
-                    SprintReport sprintReport = db.SprintReport
-                        .FirstOrDefault(x =>
-                            x.SprintId == sprintId && x.TaskId == taskId &&
-                            x.CheckListItemId == checkListItem.CheckListItemId);
-                    
-                    if (checkListItem.Essential)
-                        essential++;
-
-                    if (checkListItem.Essential && checkListItem.Status == CStatus.Completed && sprintReport.Approved==SApproved.True.ToString())
-                    {
-                        if(checkListItem.ResultType==CResultType.Numeric && Convert.ToInt32(checkListItem.Result)>=checkListItem.WorstCase && Convert.ToInt32(checkListItem.Result) <= checkListItem.BestCase)
-                        {
-                            complete++;
-                            completeEssential++;
-                        }
-
-                        if (checkListItem.ResultType == CResultType.Boolean && checkListItem.Result == "true")
-                        {
-                            complete++;
-                            completeEssential++;
-                        }
-
-                        if (checkListItem.ResultType == CResultType.File && checkListItem.Result != null)
-                        {
-                            complete++;
-                            completeEssential++;
-                        }
-                    }
-                        
-                    else if (!checkListItem.Essential && checkListItem.Status == CStatus.Completed && sprintReport.Approved==SApproved.True.ToString())
-                    {
-                        if(checkListItem.ResultType==CResultType.Numeric && Convert.ToInt32(checkListItem.Result)>=checkListItem.WorstCase && Convert.ToInt32(checkListItem.Result) <= checkListItem.BestCase)
-                        {
-                            complete++;
-                        }
-
-                        if (checkListItem.ResultType == CResultType.Boolean && checkListItem.Result == "true")
-                        {
-                            complete++;
-                        }
-
-                        if (checkListItem.ResultType == CResultType.File && checkListItem.Result != null)
-                        {
-                            complete++;
-                        }
-                    }
-
-                });
-                    
-                if (completeEssential < essential || complete < task.AcceptanceCriteria)
-                    task.Score = 0;
-
-                else if (complete >= task.AcceptanceCriteria && completeEssential == essential)
-                    task.Score = Convert.ToInt32(task.ExpectedHours / 3);
-
-                db.SaveChanges();
-            }
-        }
+       
 
         public async Task<SprintLabelTask> AddLabelToTask(string taskId, string label)
         {
             if (label == "sprint")
             {
-                return await _labelRepository.AddSprintLabelToTask(taskId);
+                return await _labelRelationRepository.AddSprintLabelToTask(taskId);
             }
 
             throw new ArgumentException("include has invalid label");
+        }
+
+        public Task<List<TaskDetailEditModel>> GetChildTaskRankingForTask(string parentTaskId)
+        {
+            return new TaskRankingManagementService(_taskRankingRepository, _taskRepository)
+                .GetChildTaskRankingForTask(parentTaskId);
+        }
+
+        public Task<List<string>> UpdateRankingOfTask(TaskDetailEditModel task)
+        {
+            return new TaskRankingManagementService(_taskRankingRepository, _taskRepository)
+                .UpdateRankingOfTask(task.Clone());
         }
     }
 }

@@ -1,158 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository.Interfaces;
+using mflexli_erp_webapi.Repository.Interfaces;
 
 namespace flexli_erp_webapi.Services
 {
     public class DependencyManagementService
+
     {
-        public static List<DependencyEditModel> GetUpstreamDependenciesByTaskId(string taskId,string include = null, int? pageIndex = null, int? pageSize = null)
+        private readonly ITaskRepository _taskRepository;
+        private readonly IDependencyRepository _dependencyRepository;
+        public DependencyManagementService(ITaskRepository taskRepository, IDependencyRepository dependencyRepository)
         {
-            List<DependencyEditModel> upStreamDependencies;
-           
-            using (var db = new ErpContext())
-            {
-
-                if (pageIndex != null && pageSize != null)
-                {
-                    upStreamDependencies = GetUpstreamDependenciesPageForTaskId(taskId, (int) pageIndex, (int) pageSize);
-                }
-
-                else
-                {
-                    upStreamDependencies = db.Dependency
-                        .Where(x => x.DependentTaskId == taskId)
-                        .Select(s => new DependencyEditModel()
-                        {
-                            DependencyId = s.DependencyId,
-                            DependentTaskId = s.DependentTaskId,
-                            Description = s.Description,
-                            TaskId = s.TaskId
-                        }).ToList();
-                }
-            }
-
-            if (include == null)
-            {
-                return upStreamDependencies;
-            }
-
-            if (include.Contains( "task"))
-            {
-               
-                upStreamDependencies.ForEach(x =>
-                    x.TaskDetailEditModel = TaskManagementService.GetTaskById(x.DependentTaskId));
-            }
-            
-            return upStreamDependencies;
+            _taskRepository = taskRepository;
+            _dependencyRepository = dependencyRepository;
         }
 
-        private static List<DependencyEditModel> GetUpstreamDependenciesPageForTaskId(string taskId, int pageIndex, int pageSize)
+
+        public List<DependencyEditModel> GetUpstreamDependenciesByTaskId(string taskId, int? pageIndex = null,
+            int? pageSize = null)
         {
-            using (var db = new ErpContext())
-            {
-                if (pageIndex <= 0 || pageSize <= 0)
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                
-                // skip take logic
-                var upStreamDependencies = db.Dependency
-                    .Where(x => x.DependentTaskId == taskId)
-                    .Select(s => new DependencyEditModel()
-                    {
-                        DependencyId = s.DependencyId,
-                        DependentTaskId = s.DependentTaskId,
-                        Description = s.Description,
-                        TaskId = s.TaskId
-                    })
-                    .OrderByDescending(x=>Convert.ToInt32(x.DependencyId))
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-
-                if (upStreamDependencies.Count == 0)
-                {
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                }
-
-                return upStreamDependencies;
-
-            }
+            var dependencies = _dependencyRepository.GetUpstreamDependenciesByTaskId(taskId, pageIndex, pageSize);
+            dependencies.ForEach(x => x.TaskDetailEditModel = _taskRepository.GetTaskById(x.TaskId));
+            return dependencies;
         }
-
-        public static List<DependencyEditModel> GetDownstreamDependenciesByTaskId(string taskId,string include = null, int? pageIndex = null, int? pageSize = null)
+        
+        public List<DependencyEditModel> GetDownstreamDependenciesByTaskId(string taskId, int? pageIndex = null,
+            int? pageSize = null)
         {
-            List<DependencyEditModel> downStreamDependencies;
-            using (var db = new ErpContext())
-            {
-                if (pageIndex != null && pageSize != null)
-                {
-                    downStreamDependencies = GetDownstreamDependenciesPageForTaskId(taskId, (int) pageIndex, (int) pageSize);
-                }
-
-                else
-                {
-                    downStreamDependencies = db.Dependency
-                        .Where(x => x.TaskId == taskId)
-                        .Select(s => new DependencyEditModel()
-                        {
-                            DependencyId = s.DependencyId,
-                            DependentTaskId = s.DependentTaskId,
-                            Description = s.Description,
-                            TaskId = s.TaskId
-                        }).ToList();
-                }
-                
-            }
-            if (include == null)
-            {
-                return downStreamDependencies;
-            }
-
-            if (include.Contains( "task"))
-            {
-                downStreamDependencies.ForEach(x =>
-                    x.TaskDetailEditModel = TaskManagementService.GetTaskById(x.DependentTaskId));
-            }
-
-            
-            return downStreamDependencies;
+            var dependencies = _dependencyRepository.GetDownstreamDependenciesByTaskId(taskId, pageIndex, pageSize);
+            dependencies.ForEach(x => x.TaskDetailEditModel = _taskRepository.GetTaskById(x.TaskId));
+            return dependencies;
         }
-
-        private static List<DependencyEditModel> GetDownstreamDependenciesPageForTaskId(string taskId, int pageIndex, int pageSize)
-        {
-            using (var db = new ErpContext())
-            {
-                if (pageIndex <= 0 || pageSize <= 0)
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                
-                // skip take logic
-                var downStreamDependencies = db.Dependency
-                    .Where(x => x.TaskId == taskId)
-                    .Select(s => new DependencyEditModel()
-                    {
-                        DependencyId = s.DependencyId,
-                        DependentTaskId = s.DependentTaskId,
-                        Description = s.Description,
-                        TaskId = s.TaskId
-                    })
-                    .OrderByDescending(x=>Convert.ToInt32(x.DependencyId))
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
-
-                if (downStreamDependencies.Count == 0)
-                {
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                }
-                    
-                return downStreamDependencies;
-
-            }
-        }
-
-        private static DependencyEditModel GetDependencyById(string dependencyId)
+        
+        private  DependencyEditModel GetDependencyById(string dependencyId)
         {
 
             DependencyEditModel dependencyEditModel;
@@ -173,7 +58,7 @@ namespace flexli_erp_webapi.Services
             return dependencyEditModel;
         }
         
-        public static DependencyEditModel CreateOrUpdateDependency(DependencyEditModel dependencyEditModel)
+        public  DependencyEditModel CreateOrUpdateDependency(DependencyEditModel dependencyEditModel)
         {
             Dependency dependency;
             
@@ -208,7 +93,7 @@ namespace flexli_erp_webapi.Services
             return GetDependencyById(dependency.DependencyId);
         }
         
-        private static string GetNextAvailableDependencyId()
+        private  string GetNextAvailableDependencyId()
         {
             using (var db = new ErpContext())
             {
@@ -221,7 +106,7 @@ namespace flexli_erp_webapi.Services
           
         }
         
-        public static void DeleteDependency(string dependencyId)
+        public  void DeleteDependency(string dependencyId)
         {
             using (var db = new ErpContext())
             {

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository.Interfaces;
+using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
@@ -13,65 +15,41 @@ namespace flexli_erp_webapi.Services
 {
     public class CheckListManagementService
     {
-        public static List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type, int? pageIndex = null, int? pageSize = null)
+        private readonly ITaskRepository _taskRepository;
+        private readonly ISprintRepository _sprintRepository;
+        private readonly ICheckListRepository _checkListRepository;
+        private readonly ISprintReportRepository _sprintReportRepository;
+        public CheckListManagementService(ITaskRepository taskRepository, ISprintRepository sprintRepository
+            , ICheckListRepository checkListRepository, ISprintReportRepository sprintReportRepository)
         {
-            if (pageIndex != null && pageSize != null)
-            {
-                return GetCheckListPageForTaskId(taskId, type, (int) pageIndex, (int) pageSize);
-            }
-            return GetCheckListForTypeId(taskId,type);
+            _taskRepository = taskRepository;
+            _sprintRepository = sprintRepository;
+            _checkListRepository = checkListRepository;
+            _sprintReportRepository = sprintReportRepository;
         }
         
-        private static List<CheckListItemEditModel> GetCheckListPageForTaskId(string taskId, ECheckListType type, int pageIndex, int pageSize)
-        {
-            List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
-            using (var db = new ErpContext())
-            {
-                if (pageIndex <= 0 || pageSize <= 0)
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                
-                // skip take logic
-                List<string> checkList = db.CheckList
-                    .Where(x => x.TypeId == taskId && x.CheckListType == type.ToString())
-                    .Select(t => t.CheckListItemId)
-                    .OrderByDescending(t=>Convert.ToInt32(t))
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
+       
 
-                if (checkList.Count == 0)
-                {
-                    throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                }
-                checkList.ForEach(
-                    x => checkListEditModels.Add(
-                        GetCheckListById(x)));
-
-                return checkListEditModels;
-
-            }
-        }
-
-        public static CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
+        public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 
             if (checkListItemEditModel.CheckListType == ECheckListType.Template)
             {
-                return CreateOrUpdateCheckListInDb(checkListItemEditModel);
+                return _checkListRepository.CreateOrUpdateCheckListInDb(checkListItemEditModel);
             }
             // If checklist exist - get Sprint Status from DB
-            var checkList = GetCheckListById(checkListItemEditModel.CheckListItemId);
-            var task = (checkList != null)?TaskManagementService.GetTaskById(checkList.TypeId): null;
-            var sprint = (task != null) ?SprintManagementService.GetSprintById(
+            var checkList = _checkListRepository.GetCheckListById(checkListItemEditModel.CheckListItemId);
+            var task =  (checkList != null)?  _taskRepository.GetTaskById(checkList.TypeId): null;
+            var sprint = (task != null) ?_sprintRepository.GetSprintById(
                 task.SprintId): null;
             
             // [check] Checklist can added only if sprint is in planning stage
             // If checklist does not exist - get Sprint Status from checklist param in function
             if (checkList == null)
             {
-                task = (checkListItemEditModel.TypeId != null)?TaskManagementService.GetTaskById(checkListItemEditModel.TypeId)
+                task = (checkListItemEditModel.TypeId != null)?_taskRepository.GetTaskById(checkListItemEditModel.TypeId)
                     : throw new KeyNotFoundException("Task Id not mentioned");
-                sprint = (task != null) ?SprintManagementService.GetSprintById(
+                sprint = (task != null) ?_sprintRepository.GetSprintById(
                     task.SprintId): throw new KeyNotFoundException("Task does not exist");
                 
                 if (sprint != null)
@@ -102,21 +80,21 @@ namespace flexli_erp_webapi.Services
            
         
             
-            updatedCheckList = CreateOrUpdateCheckListInDb(updatedCheckList);
+            updatedCheckList = _checkListRepository.CreateOrUpdateCheckListInDb(updatedCheckList);
              
              //[Action]: Update in Sprint report if Status Approved
              if (sprint != null ? sprint.Approved: false)
              {
-                 SprintReportManagementService.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(updatedCheckList));
+                 _sprintReportRepository.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(updatedCheckList));
              }
 
              return updatedCheckList;
         }
 
-        private static CheckListItemEditModel ApplySprintStatusBasedCheck(CheckListItemEditModel checkListItemEditModel, SStatus sprintStatus)
+        private  CheckListItemEditModel ApplySprintStatusBasedCheck(CheckListItemEditModel checkListItemEditModel, SStatus sprintStatus)
         {
             var closureStatus = new List<string> { SStatus.Closed.ToString(), SStatus.RequestForClosure.ToString() };
-            CheckListItemEditModel editCheckList = GetCheckListById(checkListItemEditModel.CheckListItemId);
+            CheckListItemEditModel editCheckList = _checkListRepository.GetCheckListById(checkListItemEditModel.CheckListItemId);
             if (editCheckList == null)
             {
                 editCheckList = new CheckListItemEditModel();
@@ -142,7 +120,7 @@ namespace flexli_erp_webapi.Services
 
        
 
-        public static void DeleteCheckListItem(string checkListItemId)
+        public  void DeleteCheckListItem(string checkListItemId)
         {
             using (var db = new ErpContext())
             {
@@ -165,7 +143,7 @@ namespace flexli_erp_webapi.Services
                     // [Check]: Sprint should be in Planning Stage
                     if (sprintId != null)
                     {
-                        if (SprintManagementService.CheckStatus(sprintId) != SStatus.Planning)
+                        if (_sprintRepository.GetSprintById(sprintId).Status != SStatus.Planning)
                         {
                             throw new ConstraintException("Checklist cannot be deleted, sprint is already approved");
                         }  
@@ -186,65 +164,19 @@ namespace flexli_erp_webapi.Services
       
 
         
-        private static CheckListItemEditModel CreateOrUpdateCheckListInDb(CheckListItemEditModel checkListItemEditModel)
-        {
-            CheckList checkList;
-            using (var db = new ErpContext())
-            {
-
-                Boolean newCheckList = false;
-                
-                 checkList = db.CheckList
-                    .FirstOrDefault(x => x.CheckListItemId == checkListItemEditModel.CheckListItemId);
-
-                if (checkList == null)
-                {
-                    // [case] creating new checklist
-                    checkList = new CheckList();
-                    checkList.CheckListItemId = GetNextAvailableId();
-                    newCheckList = true;
-                }
-
-                checkList.Description = checkListItemEditModel.Description; 
-                checkList.TypeId = checkListItemEditModel.TypeId;
-                checkList.WorstCase = checkListItemEditModel.WorstCase; 
-                checkList.BestCase = checkListItemEditModel.BestCase;
-                checkList.ResultType = checkListItemEditModel.ResultType.ToString();
-                checkList.Essential = checkListItemEditModel.Essential; 
-                checkList.UserComment = checkListItemEditModel.UserComment; 
-                checkList.Status = checkListItemEditModel.Status.ToString(); 
-                checkList.Result = checkListItemEditModel.Result; 
-                checkList.ManagerComment = checkListItemEditModel.ManagerComment;
-                checkList.CheckListType = checkListItemEditModel.CheckListType.ToString();
-                
-               
-                
-                if (newCheckList)
-                {
-                    db.CheckList.Add(checkList);
-                    db.SaveChanges();
-                   
-                }
-                else
-                {
-                    db.SaveChanges();
-                }
-            }
-
-            return GetCheckListById(checkList.CheckListItemId);
-        }
+       
 
         
-        public static SprintReportEditModel GetSprintReportLineItemForCheckListitem(CheckListItemEditModel checkListItem)
+        public  SprintReportEditModel GetSprintReportLineItemForCheckListitem(CheckListItemEditModel checkListItem)
         {
             string sprintReportLineItemId =
-                SprintReportManagementService.GetSprintreportLineItemIdForCheckListId(checkListItem.CheckListItemId);
+                _sprintReportRepository.GetSprintreportLineItemIdForCheckListId(checkListItem.CheckListItemId);
             if (sprintReportLineItemId == null)
             {
                 throw new KeyNotFoundException("Sprint report lineitem does not exist for checklist item: " +
                                                checkListItem.CheckListItemId);
             }
-            SprintReportEditModel sprintReportEditModel = SprintReportManagementService
+            SprintReportEditModel sprintReportEditModel = _sprintReportRepository
                 .GetSprintReportItemById(sprintReportLineItemId);
             sprintReportEditModel.ManagerComment = checkListItem.ManagerComment;
             sprintReportEditModel.Result = checkListItem.Result;
@@ -256,97 +188,14 @@ namespace flexli_erp_webapi.Services
         
 
 
-        private static string GetNextAvailableId()
-        {
-            using (var db = new ErpContext())
-            {
-                var a = db.CheckList
-                    .Select(x => Convert.ToInt32(x.CheckListItemId))
-                    .DefaultIfEmpty(0)
-                    .Max();
-                return Convert.ToString(a + 1);
-            }
-          
-        }
+      
+       
         
-        private static List<CheckListItemEditModel> GetCheckListForTypeId(string  typeId, ECheckListType type)
-        {
-
-            List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
-            using (var db = new ErpContext())
-            {
-                List<string> checkList = db.CheckList
-                    .Where(x => x.TypeId == typeId && x.CheckListType == type.ToString())
-                    .Select(t => t.CheckListItemId)
-                    .ToList();
-
-                checkList.ForEach(
-                    x => checkListEditModels.Add(
-                        GetCheckListById(x)));
-
-                return checkListEditModels;
-                
-            }
-        }
         
-        private static CheckListItemEditModel GetCheckListById(string checkListItemId)
-        {
-            using (var db = new ErpContext())
-            {
-                
-                CheckList existingCheckList = db.CheckList
-                    .FirstOrDefault(x => x.CheckListItemId == checkListItemId);
-                if (existingCheckList == null)
-                    return null;
-                CheckListItemEditModel checkListItemEditModel = new CheckListItemEditModel()
-                {
-                    CheckListItemId = existingCheckList.CheckListItemId,
-                    TypeId = existingCheckList.TypeId,
-                    Description = existingCheckList.Description,
-                    Status = (CStatus) Enum.Parse(typeof(CStatus), existingCheckList.Status, true),
-                    WorstCase = existingCheckList.WorstCase,
-                    BestCase = existingCheckList.BestCase,
-                    ResultType = existingCheckList.ResultType != null?
-                        (CResultType) Enum.Parse(typeof(CResultType), existingCheckList.ResultType, true): CResultType.File,
-                    Result = existingCheckList.Result,
-                    Essential = existingCheckList.Essential,
-                    UserComment = existingCheckList.UserComment,
-                    ManagerComment = existingCheckList.ManagerComment,
-                    CheckListType = (ECheckListType) Enum.Parse(typeof(ECheckListType), existingCheckList.CheckListType, true),
-                    
-                    
-                };
 
-                return checkListItemEditModel;
-            }
-
-        }
+        
 
         // Create dummy new checklist item for task with no checklist items
-        public static CheckListItemEditModel AddNewChecklistItemForTaskWithNoChecklist(string taskId)
-        {
-            var checkListId = "newChecklist";
-            using (var db = new ErpContext())
-            {
-                TaskDetail task = db.TaskDetail
-                    .FirstOrDefault(x => x.TaskId == taskId);
-
-                // new checklist item with description same as task, result type boolean and essential = true
-                CheckListItemEditModel dummyNewChecklistItem = new CheckListItemEditModel()
-                {
-                    CheckListItemId = checkListId,
-                    Description = task.Description,
-                    TypeId = task.TaskId,
-                    Status = CStatus.NotCompleted,
-                    WorstCase = 0,
-                    BestCase = 0,
-                    ResultType = CResultType.Boolean,
-                    Essential = true,
-                    CheckListType = ECheckListType.Task
-                };
-
-                return CreateOrUpdateCheckListInDb(dummyNewChecklistItem);
-            }
-        }
+       
     }
 }

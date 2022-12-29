@@ -3,7 +3,7 @@ using flexli_erp_webapi.DataLayer.Interface;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using Tag = flexli_erp_webapi.BsonModels.TaskTag;
+
 
 
 namespace flexli_erp_webapi.DataLayer
@@ -15,15 +15,17 @@ namespace flexli_erp_webapi.DataLayer
         {
             var client = new MongoClient(configuration.GetValue<string>("MongoDbSetting:ConnectionString"));
             var database = client.GetDatabase(configuration.GetValue<string>("MongoDbSetting:DatabaseName"));
-            TaskTag = database.GetCollection<TaskTag>("task-tags");
-            TaskTagSearchResult = database.GetCollection<TagTaskList>("task-tag-search-result");
+            TaskTagSearchResult = database.GetCollection<TaskTag>("task-tag-search-result");
             SprintTasks = database.GetCollection<SprintLabelTask>("sprint-tasks");
+            TaskHierarchy = database.GetCollection<TaskHierarchy>("task-hierarchy");
         }
 
-        public  IMongoCollection<TaskTag> TaskTag { get; set; }
+      
         
-        public IMongoCollection<TagTaskList> TaskTagSearchResult { get; set; }
+        public IMongoCollection<TaskTag> TaskTagSearchResult { get; set; }
         
         public IMongoCollection<SprintLabelTask> SprintTasks { get; set; }
+        
+        public IMongoCollection<TaskHierarchy> TaskHierarchy { get; set; }
     }
 }

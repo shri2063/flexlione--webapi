@@ -24,17 +24,18 @@ namespace flexli_erp_webapi.Controller
     public class TaskController : ControllerBase
     {
        
-        
-        private readonly ITagRepository _tagRepository;
-        private readonly ITagTaskListRepository _tagTaskListRepository;
         private readonly TaskManagementService _taskManagementService;
+        private readonly ITaskRepository _taskRepository;
+        private readonly ITaskRelationRepository _taskRelationRepository;
+        
+        
        
-        public TaskController(ITagRepository tagRepository, ITagTaskListRepository tagTaskListRepository,
-            TaskManagementService taskManagementService)
+        public TaskController(TaskManagementService taskManagementService, ITaskRepository taskRepository, ITaskRelationRepository taskRelationRepository)
         {
-            _tagRepository = tagRepository;
-            _tagTaskListRepository = tagTaskListRepository;
+           
             _taskManagementService = taskManagementService;
+            _taskRepository = taskRepository;
+            _taskRelationRepository = taskRelationRepository;
         }
 
         [HttpGet("GetTaskById")]
@@ -42,7 +43,7 @@ namespace flexli_erp_webapi.Controller
 
         public ActionResult<TaskDetailEditModel> GetTaskById([FromQuery] string taskId,string include = null)
         {
-            return TaskManagementService.GetTaskById(taskId,include);
+            return _taskManagementService.GetTaskById(taskId,include);
         }
         
         [HttpGet("GetTaskIdList")]
@@ -50,7 +51,7 @@ namespace flexli_erp_webapi.Controller
         
         public List<TaskShortDetailEditModel> GetTaskIdList(string taskId = null, int? pageIndex = null, int? pageSize = null)
         {
-            return TaskManagementService.GetTaskIdList(taskId, pageIndex, pageSize);
+            return _taskRepository.GetTaskIdList(taskId, pageIndex, pageSize);
         }
         
         /// <summary>
@@ -66,7 +67,7 @@ namespace flexli_erp_webapi.Controller
         public async Task<ActionResult<TaskDetailEditModel>> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
 
         {
-             TaskDetailEditModel createdTask = TaskManagementService.CreateOrUpdateTask(taskDetail);
+             var createdTask = _taskManagementService.CreateOrUpdateTask(taskDetail);
             // [Action] : Add created task in search tags with common keywords. 
            /*
             IEnumerable<Tag> tagList = await _tagRepository.GetSearchTagList(ETagType.SearchTag);
@@ -76,8 +77,7 @@ namespace flexli_erp_webapi.Controller
                 _tagTaskListRepository.ParseTaskDescriptionForSearchTags(taskDetail.Description, createdTask.TaskId, tagList);
             });
             */
-            
-            return createdTask; }
+           return createdTask; }
         /// <summary>
         /// Create or update tasks
         /// [Check] Task not linked to another sprint
@@ -87,7 +87,7 @@ namespace flexli_erp_webapi.Controller
         
         public TaskDetailEditModel LinkTaskToSprint(string taskId, string sprintId)
         {
-            return TaskManagementService.LinkTaskToSprint(taskId, sprintId);
+            return _taskRelationRepository.LinkTaskToSprint(taskId, sprintId);
         }
         
         
@@ -96,7 +96,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteTask(string taskId)
         {
-            TaskManagementService.DeleteTask(taskId);
+            _taskManagementService.DeleteTask(taskId);
             return Ok();
         }
         
@@ -106,7 +106,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> RemoveTask(string taskId)
         {
-            TaskManagementService.RemoveTask(taskId);
+            _taskManagementService.RemoveTask(taskId);
             return Ok();
         }
 
@@ -115,7 +115,7 @@ namespace flexli_erp_webapi.Controller
         
         public TaskDetailEditModel RemoveTaskToSprint(string taskId)
         {
-            return TaskManagementService.RemoveTaskFromSprint(taskId);
+            return _taskRelationRepository.RemoveTaskFromSprint(taskId);
         }
         
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Services;
+using m_sort_server.Repository.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,14 +18,29 @@ namespace flexli_erp_webapi.Controller
     public class TaskHierarchyController:ControllerBase
     
     {
+        private readonly ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
+        private readonly TaskHierarchyManagementService _taskHierarchyManagementService;
         
         
+       
+        public TaskHierarchyController(ITaskHierarchyRelationRepository taskHierarchyRelationRepository, TaskHierarchyManagementService taskHierarchyManagementService){
+            
+           
+            _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
+            _taskHierarchyManagementService = taskHierarchyManagementService;
+
+
+        }
+        
+        /// <summary>
+        /// Include: children (to get task hierarchies of each children)
+        /// </summary>
         [HttpGet("GetTaskHierarchyByTaskId")]
         [Consumes("application/json")]
 
         public ActionResult<TaskHierarchyEditModel> GetTaskHierarchyByTaskId(string taskId,string include = null)
         {
-            return TaskHierarchyManagementService.GetTaskHierarchyByTaskId(taskId,include);
+            return _taskHierarchyManagementService.GetTaskHierarchyByTaskId(taskId,include);
         }
         
         // Updates Upstream hierarchy till Head Task for all tasks
@@ -35,7 +51,7 @@ namespace flexli_erp_webapi.Controller
 
         public ActionResult<List<TaskHierarchyEditModel>> UpdateTaskHierarchy(string taskId =  null)
         {
-            return TaskHierarchyManagementService.UpdateTaskHierarchy(taskId);
+            return _taskHierarchyRelationRepository.UpdateTaskHierarchy(taskId);
         }
         
         [HttpDelete("DeleteTaskHierarchy")]
@@ -43,7 +59,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteTaskHierarchy(string taskId)
         {
-            TaskHierarchyManagementService.DeleteTaskHierarchy(taskId);
+            _taskHierarchyRelationRepository.DeleteTaskHierarchy(taskId);
             return Ok();
         } 
         

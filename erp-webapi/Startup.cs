@@ -11,8 +11,12 @@ using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.Services.Interfaces;
 using flexli_erp_webapi.Services.SearchPolicy;
+using flexli_erp_webapi.Services.TaskSearch;
 using flexli_erp_webapi.Utility;
 using m_sort_server;
+using m_sort_server.Repository;
+using m_sort_server.Repository.Interfaces;
+using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +29,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
+using TaskHierarchyManagementService = flexli_erp_webapi.Services.TaskHierarchyManagementService;
 
 namespace flexli_erp_webapi
 {
@@ -44,24 +49,49 @@ namespace flexli_erp_webapi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IIgnoreSearchWordRepository, IgnoreSearchWordRepository>();
-            services.AddScoped<ILabelRepository, LabelRepository>();
+            services.AddScoped<ITaskTagSearchResultRepository, TaskTagSearchResultRepository>();
             services.AddScoped<TaskManagementService, TaskManagementService>();
+            services.AddScoped<CheckListManagementService, CheckListManagementService>();
+            services.AddScoped<DependencyManagementService, DependencyManagementService>();
+            services.AddScoped<ProfileManagementService, ProfileManagementService>();
+            services.AddScoped<SprintManagementService, SprintManagementService>();
+            services.AddScoped<TaskScheduleManagementService, TaskScheduleManagementService>();
+            services.AddScoped<TaskSummaryManagementService, TaskSummaryManagementService>();
+            services.AddScoped<TaskHierarchyManagementService, TaskHierarchyManagementService>();
+          
+            
+            services.AddScoped<SprintReportManagementService, SprintReportManagementService>();
             services.AddScoped<ISearchPriorityPolicy, SearchPriorityByCommonalityPolicy>();
             services.AddScoped<ITemplateTagSearchResultRepository, TemplateTagSearchResultRepository>();
             services.AddScoped<ITemplateTagContext, TemplateTagContext>();
             services.AddScoped<ITagContext, TagContext>();
-             services.AddScoped<ITagTaskListRepository, TagTaskListRepository>();
-             services.AddScoped<ITagRepository, TagRepository>();
+   
              services.AddScoped<ITaskRepository, TaskRepository>();
+             services.AddScoped<ITaskHierarchyRelationRepository, TaskHierarchyRelationRepository>();
+             services.AddScoped<ITaskSummaryRepository, TaskSummaryRepository>();
+             services.AddScoped<ITaskRankingRepository, TaskRankingRepository>();
+             services.AddScoped<ITaskRelationRepository, TaskRelationRepository>();
+             services.AddScoped<ITaskScheduleRepository, TaskScheduleRepository>();
+             services.AddScoped<ITaskScheduleRelationRepository, TaskScheduleRelationRepository>();
+             services.AddScoped<ISprintRepository, SprintRepository>();
+             services.AddScoped<ISprintReportRepository, SprintReportRepository>();
+             services.AddScoped<ISprintRelationRepository, SprintRelationRepository>();
+             services.AddScoped<ILabelRelationRepository, LabelRelationRepository>();
+             services.AddScoped<ICheckListRepository, CheckListRepository>(); 
+             services.AddScoped<IDependencyRepository, DependencyRepository>();
+             services.AddScoped<ITaskHourCalculatorHandler, TaskSummaryManagementService>();
+             
+             
              services.AddScoped<ITemplateRepository, TemplateRepository>();
              services.AddScoped<ITemplateRelationRepository, TemplateRelationRepository>();
-             services.AddScoped<SearchManagementService, SearchManagementService>();
+             services.AddScoped<TaskSearchManagementService, TaskSearchManagementService>();
              services.AddScoped<ITemplateManagementService, TemplateManagementService>();
              services.AddScoped<TemplateMainService, TemplateMainService>();
              services.AddScoped<TagSearchManagementService, TagSearchManagementService>();
-             services.AddScoped<AutoSearchByTagCompiler, AutoSearchByTagCompiler>();
              services.AddScoped<SearchByLabelManagementService, SearchByLabelManagementService>();
+             services.AddScoped<AutoSearchByTagCompiler, AutoSearchByTagCompiler>();
+             services.AddScoped<IIgnoreSearchWordRepository, IgnoreSearchWordRepository>();
+             
              services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",

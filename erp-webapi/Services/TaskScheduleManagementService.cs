@@ -3,15 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
+using flexli_erp_webapi.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace flexli_erp_webapi.Services
 {
     public class TaskScheduleManagementService
     {
-        public static TaskScheduleEditModel GetTaskScheduleById(string taskScheduleId, string include = null)
+
+        private readonly ITaskSummaryRepository _taskSummaryRepository;
+        private readonly ITaskScheduleRepository _taskScheduleRepository;
+        public TaskScheduleManagementService(ITaskSummaryRepository taskSummaryRepository, ITaskScheduleRepository taskScheduleRepository)
         {
-            TaskScheduleEditModel taskScheduleEditModel = GetTaskScheduleByIdFromDb(taskScheduleId);
+            _taskSummaryRepository = taskSummaryRepository;
+            _taskScheduleRepository = taskScheduleRepository;
+        }
+        public  TaskScheduleEditModel GetTaskScheduleById(string taskScheduleId, string include = null)
+        {
+            TaskScheduleEditModel taskScheduleEditModel = _taskScheduleRepository.GetTaskScheduleByIdFromDb(taskScheduleId);
             if (include == null)
             {
                 return taskScheduleEditModel;
@@ -19,7 +28,7 @@ namespace flexli_erp_webapi.Services
 
             if (include.Contains("taskSummary"))
             {
-                TaskSummaryEditModel taskSummary = TaskSummaryManagementService.GetTaskSummaryById(
+                TaskSummaryEditModel taskSummary = _taskSummaryRepository.GetTaskSummaryById(
                     taskScheduleEditModel.TaskSummaryId);
                 if (taskSummary != null)
                 {
@@ -39,141 +48,16 @@ namespace flexli_erp_webapi.Services
         }
 
 
-        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndMonth(string profileId, int month,int year, string include = null, int? pageIndex = null, int? pageSize = null)
-        {
-            List<string> taskScheduleIds;
-            
-            taskScheduleIds = GetTaskScheduleIdsForProfileId(profileId,month,year, pageIndex, pageSize);
-            
-            List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
-            taskScheduleIds.ForEach(x =>
-            {
-                taskScheduleList.Add(GetTaskScheduleById(x));
-            });
-            
-            taskScheduleList.ForEach(x =>
-            {
-                
-                {
-                    TaskSummaryEditModel taskSummary =  TaskSummaryManagementService.GetTaskSummaryById(x.TaskSummaryId);
-                    if (taskSummary != null)
-                    {
-                        x.TaskSummary = new TaskShortSummaryEditModel()
-                        {
-                            TaskSummaryId = taskSummary.TaskSummaryId,
-                            TaskId = taskSummary.TaskId,
-                            ActualOutput = taskSummary.ActualOutput
-                        }; 
-                    }
-                }
-            });
-            
-            return taskScheduleList;
+       
 
-        }
-
-        public static List<TaskScheduleEditModel> GetAllTaskScheduleByProfileIdAndDateRange(string profileId,DateTime fromDate, DateTime toDate )
-        {
-            List<TaskScheduleEditModel> taskScheduleList = new List<TaskScheduleEditModel>();
-            using (var db = new ErpContext())
-            {
-               List<TaskSchedule> taskSchedules = db.TaskSchedule
-                    .Where(x => x.Owner == profileId && 
-                                x.Date >= fromDate && x.Date <= toDate)
-                    .ToList();
-               
-               taskSchedules.ForEach(x => taskScheduleList
-                   .Add(GetTaskScheduleById(x.TaskScheduleId)));
-            }
-
-            return taskScheduleList;
-        }
-        
-        private static List<string> GetTaskScheduleIdsForProfileId(string profileId, int month, int year, int? pageIndex = null, int? pageSize = null)
-        {
-            List<string> taskScheduleIds;
-            using (var db = new ErpContext())
-            {
-                // [Check] : Pagination
-                if (pageIndex != null && pageSize != null)
-                {
-                    if (pageIndex <= 0 || pageSize <= 0)
-                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                
-                    // skip take logic
-                    taskScheduleIds = db.TaskSchedule
-                        .Where(x => x.Owner == profileId && 
-                                    x.Date.Month == month && x.Date.Year == year)
-                        .Select(x => x.TaskScheduleId).AsEnumerable()
-                        .OrderByDescending(Convert.ToInt32)
-                        .Skip(((int) pageIndex - 1) * (int) pageSize)
-                        .Take((int) pageSize)
-                        .ToList();
-
-                    if (taskScheduleIds.Count == 0)
-                    {
-                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
-                    }
-
-                    return taskScheduleIds;
-                }
-                
-                taskScheduleIds = db.TaskSchedule
-                    .Where(x => x.Owner == profileId && 
-                                x.Date.Month == month && x.Date.Year == year)
-                    .Select(x => x.TaskScheduleId)
-                    .ToList();
-            }
-
-            return taskScheduleIds;
-
-        }
-        
-        private static TaskScheduleEditModel GetTaskScheduleByIdFromDb (string taskScheduleId)
-        {
-            using (var db = new ErpContext())
-            {
-                
-                TaskSchedule existingTaskSchedule = db.TaskSchedule
-                    .Include(x => x.TaskDetail)
-                    .Include(x => x.TaskSummary)
-                    .FirstOrDefault(x => x.TaskScheduleId == taskScheduleId);
-                
-                // Case: Task Schedule does not exist
-                if (existingTaskSchedule == null)
-                {
-                    return null;
-                }
-                    
-                
-                // Case: In case you have to update data received from db
-
-                TaskScheduleEditModel taskScheduleEditModel = new TaskScheduleEditModel()
-                {
-                    TaskScheduleId = existingTaskSchedule.TaskScheduleId,
-                    Description = existingTaskSchedule.TaskDetail.Description,
-                    Owner = existingTaskSchedule.Owner,
-                    TaskId = existingTaskSchedule.TaskId,
-                    Date = existingTaskSchedule.Date,
-                    StartHour = existingTaskSchedule.StartHour,
-                    StopHour = existingTaskSchedule.StopHour,
-                    StartMinute = existingTaskSchedule.StartMinute,
-                    StopMinute = existingTaskSchedule.StopMinute,
-                    IsPlanned = existingTaskSchedule.IsPlanned,
-                    TaskSummaryId = existingTaskSchedule.TaskSummary == null ? "" :existingTaskSchedule.TaskSummary.TaskSummaryId
-                };
-
-                return taskScheduleEditModel;
-            }
-        }
-        
-        public static TaskScheduleEditModel AddOrUpdateTaskSchedule(TaskScheduleEditModel taskScheduleEditModel)
+       
+        public  TaskScheduleEditModel AddOrUpdateTaskSchedule(TaskScheduleEditModel taskScheduleEditModel)
         {
             return AddOrUpdateTaskSummaryInDb(taskScheduleEditModel);
 
         }
         
-        private static TaskScheduleEditModel AddOrUpdateTaskSummaryInDb(TaskScheduleEditModel taskScheduleEditModel)
+        private  TaskScheduleEditModel AddOrUpdateTaskSummaryInDb(TaskScheduleEditModel taskScheduleEditModel)
         {
             TaskSchedule taskSchedule;
             
@@ -232,7 +116,7 @@ namespace flexli_erp_webapi.Services
           
         }
         
-        public static void DeleteTaskSchedule(string taskScheduleId)
+        public  void DeleteTaskSchedule(string taskScheduleId)
         {
             using (var db = new ErpContext())
             {
