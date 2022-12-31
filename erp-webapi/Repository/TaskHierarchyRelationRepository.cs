@@ -24,31 +24,11 @@ namespace m_sort_server.Repository
         }
         
         
-        public  List<TaskHierarchyEditModel>  UpdateTaskHierarchy(string taskId = null)
+        public  void  UpdateTaskHierarchy(string taskId)
         {
-            List<string> taskIdList;
-            List<TaskHierarchyEditModel> updatedTaskHierarchy = new List<TaskHierarchyEditModel>();
-            if (taskId == null) // Updating for all ChildrenTaskIdList
-            {
-                taskIdList = (from s in _taskRepository.GetTaskIdList()
-                    select s.TaskId).ToList();
-            }
-            else
-            {
-                taskIdList = GetDownStreamTaskIdsForTaskId(taskId); // Updating for old task Id
+            var upStreamTaskIds = GetUpStreamTaskIdsForTaskId(taskId);
+            UpdateTaskHierarchyInDb(taskId, upStreamTaskIds);
 
-                if (taskIdList.Count == 0)
-                {
-                    taskIdList.Add(taskId); // updating for new task Id
-                }
-            }
-            
-            taskIdList.ForEach(x =>
-            {
-                updatedTaskHierarchy.Add(UpdateTaskHierarchyInDb(x, GetUpStreamTaskIdsForTaskId(x)));
-            });
-
-            return updatedTaskHierarchy;
         }
 
   
@@ -106,7 +86,7 @@ namespace m_sort_server.Repository
             string currentTaskId = taskId;
             while (currentTaskId != "0")
             {
-                currentTaskId = _taskRepository.GetTaskById(taskId).ParentTaskId;
+                currentTaskId = _taskRepository.GetTaskById(currentTaskId).ParentTaskId;
                 taskIds.Add(currentTaskId);
             }
             return taskIds;

@@ -7,7 +7,6 @@ namespace flexli_erp_webapi.EditModels
     
     
     {
-        public string Tag { get; set; }
         public DateTime?  Deadline { get; set; }
         
         public List<string> CreatedBy { get; set; }

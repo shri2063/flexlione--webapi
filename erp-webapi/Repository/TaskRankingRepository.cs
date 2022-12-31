@@ -33,12 +33,35 @@ namespace flexli_erp_webapi.Repository
 
         public async Task<List<String>> ReviseChildTaskRanking(string taskId, List<String> revisedList)
         {
+            var childTaskRankings = await GetChildTaskRanking(taskId);
+
+            if (childTaskRankings.Count() == 0)
+            {
+                return await CreateTaskRanking(taskId, revisedList);
+            }
+            
             var filter = Builders<TaskHierarchy>.Filter.Eq(e => e.TaskId, taskId) ;
 
             var update = Builders<TaskHierarchy>.Update
                 .Set(x => x.ChildTaskOrder, revisedList);
 
             await _tagContext.TaskHierarchy.FindOneAndUpdateAsync(filter, update);
+
+            return await GetChildTaskRanking(taskId);
+        }
+        
+        public async  Task<List<String>> CreateTaskRanking(string taskId, List<String> list)
+        {
+            TaskHierarchy newTaskHierarchy = new TaskHierarchy()
+            {
+                
+                TaskId = taskId,
+                // In Case of Search Tag: populate all tasks containing search word
+                ChildTaskOrder = list
+            };
+            
+            // [dbCheck]: Unique constraint on keyword + tagType
+            await _tagContext.TaskHierarchy.InsertOneAsync(newTaskHierarchy);
 
             return await GetChildTaskRanking(taskId);
         }

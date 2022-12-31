@@ -38,6 +38,11 @@ namespace flexli_erp_webapi.Services
 
         public async Task<List<String>> UpdateRankingOfTask(TaskDetailEditModel task)
         {
+            // Validate: Task cannot be positioned after itself
+            if (task.TaskId == task.PositionAfter)
+            {
+                throw new KeyNotFoundException("Task cannot be positioned after itself");
+            }
             List<String> curentRanking = await _taskRankingRepository
                 .GetChildTaskRanking(task.ParentTaskId);
             if (curentRanking.Count() == 0)

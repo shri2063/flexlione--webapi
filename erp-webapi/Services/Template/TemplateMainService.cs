@@ -16,13 +16,13 @@ namespace flexli_erp_webapi.Services
         private readonly ITaskRepository _taskRepository;
         private readonly IDictionary<string, string> _taskTemplateMapping = new Dictionary<string, string>();
         private  IDictionary<string, string> _roleProfileMapping = new Dictionary<string, string>();
-        private readonly AutoSearchByTagCompiler _autoSearchByTagCompiler;
+        private readonly AutoSearchByTagCompilerService _autoSearchByTagCompilerService;
 
 
-        public TemplateMainService(ITemplateRepository templateRepository, ITemplateRelationRepository templateRelationRepository, ITaskRepository taskRepository, AutoSearchByTagCompiler autoSearchByTagCompiler) : base(templateRepository, templateRelationRepository)
+        public TemplateMainService(ITemplateRepository templateRepository, ITemplateRelationRepository templateRelationRepository, ITaskRepository taskRepository, AutoSearchByTagCompilerService autoSearchByTagCompilerService) : base(templateRepository, templateRelationRepository)
         {
             _taskRepository = taskRepository;
-            _autoSearchByTagCompiler = autoSearchByTagCompiler;
+            _autoSearchByTagCompilerService = autoSearchByTagCompilerService;
         }
        
 
@@ -193,14 +193,14 @@ namespace flexli_erp_webapi.Services
             // [Check]: if template exist already then remove it from all tags
             if (existingTemplate != null)
             {
-                _autoSearchByTagCompiler.RemoveFromSearchResults(template.TemplateId, ECheckListType.Template);
+                _autoSearchByTagCompilerService.RemoveFromSearchResults(template.TemplateId, EAssignmentType.Template);
             }
             
             // Call CreateUpdate function of management service
             var crudTemplate = CreateOrUpdateTemplate(template);
             
             // tagging of template description
-            _autoSearchByTagCompiler.AddToSearchResults(crudTemplate.Description, crudTemplate.TemplateId, ECheckListType.Template);
+            _autoSearchByTagCompilerService.AddToSearchResults(crudTemplate.Description, crudTemplate.TemplateId, EAssignmentType.Template);
             
             return crudTemplate;
         }

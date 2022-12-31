@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using flexli_erp_webapi.BsonModels;
 using flexli_erp_webapi.EditModels;
@@ -29,6 +30,7 @@ namespace flexli_erp_webapi.Controller
         private readonly ITaskTagSearchResultRepository _taskTagSearchResultRepository;
         private readonly TaskSearchManagementService _taskSearchManagementService;
         private readonly IIgnoreSearchWordRepository _ignoreSearchWordRepository;
+        private readonly AutoSearchByTagCompilerService _autoSearchByTagCompilerService;
 
         public SearchController(
             ITemplateTagSearchResultRepository templateTagSearchResultRepository,
@@ -36,7 +38,8 @@ namespace flexli_erp_webapi.Controller
             ITaskTagSearchResultRepository taskTagSearchResultRepository,
             TaskSearchManagementService taskSearchManagementService,
             IIgnoreSearchWordRepository ignoreSearchWordRepository,
-            SearchByLabelManagementService searchByLabelManagementService)
+            SearchByLabelManagementService searchByLabelManagementService,
+            AutoSearchByTagCompilerService autoSearchByTagCompilerService)
         {
             _taskTagSearchResultRepository = taskTagSearchResultRepository;
             _templateTagSearchResultRepository = templateTagSearchResultRepository;
@@ -46,8 +49,19 @@ namespace flexli_erp_webapi.Controller
             _templateTagSearchResultRepository = templateTagSearchResultRepository;
            _tagSearchManagementService = tagSearchManagementService;
            _searchByLabelManagementService = searchByLabelManagementService;
+           _autoSearchByTagCompilerService = autoSearchByTagCompilerService;
         }
         
+        
+        // all tags from template-tags
+        [HttpGet("PopulatePastSearchresult")]
+        [Consumes("application/json")]
+        public  string PopulatePreviousSearchResult(EAssignmentType type)
+        {
+           _autoSearchByTagCompilerService.PopulatePreviousSearchResult(type);
+           return "ok";
+
+        }
         
         // all tags from template-tags
         [HttpGet("GetListForTemplateTags")]
@@ -94,6 +108,16 @@ namespace flexli_erp_webapi.Controller
             int? pageIndex = null, int? pageSize = null)
         {
             return _taskSearchManagementService.GetTaskListForSearchQuery(searchQuery, pageIndex, pageSize);
+        }
+        
+        /// <summary>
+        /// </summary>
+        [HttpPut("SearchByQuery")]
+        [Consumes("application/json")]
+
+        public  List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery)
+        {
+            return  _taskSearchManagementService.GetTaskListForSearchQuery(searchQuery);
         }
 
         [HttpGet("GetIgnoreSearchWordList")]

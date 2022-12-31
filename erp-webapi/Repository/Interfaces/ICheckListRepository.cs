@@ -5,7 +5,7 @@ namespace mflexli_erp_webapi.Repository.Interfaces
 {
     public interface ICheckListRepository
     {
-        List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type, int? pageIndex = null,
+        List<CheckListItemEditModel> GetCheckList(string taskId, EAssignmentType type, int? pageIndex = null,
             int? pageSize = null);
 
         CheckListItemEditModel CreateOrUpdateCheckListInDb(CheckListItemEditModel checkListItemEditModel);

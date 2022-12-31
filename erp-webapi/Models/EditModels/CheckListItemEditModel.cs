@@ -5,7 +5,7 @@ namespace flexli_erp_webapi.EditModels
     public enum CStatus { NotCompleted, Completed };
     public enum CResultType { File, Boolean, Numeric };
     
-    public enum ECheckListType { Task,Template };
+    public enum EAssignmentType { Task,Template };
     public class CheckListItemEditModel
     {
         public string CheckListItemId { get; set; }
@@ -30,7 +30,7 @@ namespace flexli_erp_webapi.EditModels
         
         public bool Essential { get; set; }
         
-        public ECheckListType CheckListType { get; set; }
+        public EAssignmentType AssignmentType { get; set; }
         
     }
 }

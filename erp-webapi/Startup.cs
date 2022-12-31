@@ -89,7 +89,7 @@ namespace flexli_erp_webapi
              services.AddScoped<TemplateMainService, TemplateMainService>();
              services.AddScoped<TagSearchManagementService, TagSearchManagementService>();
              services.AddScoped<SearchByLabelManagementService, SearchByLabelManagementService>();
-             services.AddScoped<AutoSearchByTagCompiler, AutoSearchByTagCompiler>();
+             services.AddScoped<AutoSearchByTagCompilerService, AutoSearchByTagCompilerService>();
              services.AddScoped<IIgnoreSearchWordRepository, IgnoreSearchWordRepository>();
              
              services.AddCors(options =>
@@ -154,7 +154,7 @@ namespace flexli_erp_webapi
                 {
                     Title = "ERP Server",
                     Description = "API for ERP server",
-                    Version = "v1.3"
+                    Version = "v1.5"
                 });
 
                 // Set the comments path for the Swagger JSON and UI.

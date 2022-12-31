@@ -17,7 +17,7 @@ namespace flexli_erp_webapi.Repository.Interfaces
         
         public List<SprintEditModel> GetSprintsForProfileId(string profileId, int? pageIndex = null, int? pageSize = null)
         {
-            List<string> sprintIds = GetSprintIdsForProfileId(profileId);
+            List<string> sprintIds = GetSprintIdsForProfileId(profileId, pageIndex, pageSize);
             List<SprintEditModel> sprints = new List<SprintEditModel>();
             
             // [Check] At-least one Sprint exists

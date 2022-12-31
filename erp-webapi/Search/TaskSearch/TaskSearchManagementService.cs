@@ -24,6 +24,9 @@ namespace flexli_erp_webapi.Services
             _taskRepository = taskRepository;
         }
 
+
+       
+        
         public List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery)
         {
 

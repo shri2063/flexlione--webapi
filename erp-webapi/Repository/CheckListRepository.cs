@@ -9,7 +9,7 @@ namespace mflexli_erp_webapi.Repository.Interfaces
 {
     public class CheckListRepository: ICheckListRepository
     {
-        public List<CheckListItemEditModel> GetCheckList(string taskId, ECheckListType type, int? pageIndex = null, int? pageSize = null)
+        public List<CheckListItemEditModel> GetCheckList(string taskId, EAssignmentType type, int? pageIndex = null, int? pageSize = null)
         {
             if (pageIndex != null && pageSize != null)
             {
@@ -46,7 +46,7 @@ namespace mflexli_erp_webapi.Repository.Interfaces
                 checkList.Status = checkListItemEditModel.Status.ToString(); 
                 checkList.Result = checkListItemEditModel.Result; 
                 checkList.ManagerComment = checkListItemEditModel.ManagerComment;
-                checkList.CheckListType = checkListItemEditModel.CheckListType.ToString();
+                checkList.CheckListType = checkListItemEditModel.AssignmentType.ToString();
                 
                
                 
@@ -78,7 +78,7 @@ namespace mflexli_erp_webapi.Repository.Interfaces
           
         }
 
-        private  List<CheckListItemEditModel> GetCheckListPageForTaskId(string taskId, ECheckListType type, int pageIndex, int pageSize)
+        private  List<CheckListItemEditModel> GetCheckListPageForTaskId(string taskId, EAssignmentType type, int pageIndex, int pageSize)
         {
             List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
             using (var db = new ErpContext())
@@ -108,7 +108,7 @@ namespace mflexli_erp_webapi.Repository.Interfaces
             }
         }
         
-        private  List<CheckListItemEditModel> GetCheckListForTypeId(string  typeId, ECheckListType type)
+        private  List<CheckListItemEditModel> GetCheckListForTypeId(string  typeId, EAssignmentType type)
         {
 
             List<CheckListItemEditModel> checkListEditModels = new List<CheckListItemEditModel>();
@@ -152,8 +152,8 @@ namespace mflexli_erp_webapi.Repository.Interfaces
                     Essential = existingCheckList.Essential,
                     UserComment = existingCheckList.UserComment,
                     ManagerComment = existingCheckList.ManagerComment,
-                    CheckListType =
-                        (ECheckListType)Enum.Parse(typeof(ECheckListType), existingCheckList.CheckListType, true),
+                    AssignmentType =
+                        (EAssignmentType)Enum.Parse(typeof(EAssignmentType), existingCheckList.CheckListType, true),
 
 
                 };

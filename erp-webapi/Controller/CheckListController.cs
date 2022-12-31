@@ -39,9 +39,9 @@ namespace flexli_erp_webapi.Controller
         
        
         
-        public List<CheckListItemEditModel> GetCheckListByTypeId(string typeId, ECheckListType checkListType, int? pageIndex = null, int? pageSize = null)
+        public List<CheckListItemEditModel> GetCheckListByTypeId(string typeId, EAssignmentType assignmentType, int? pageIndex = null, int? pageSize = null)
         {
-            return _checkListRepository.GetCheckList(typeId, checkListType, pageIndex, pageSize);
+            return _checkListRepository.GetCheckList(typeId, assignmentType, pageIndex, pageSize);
         }
         /// <summary>
         /// [R]Checklist can added only if sprint is in planning stage

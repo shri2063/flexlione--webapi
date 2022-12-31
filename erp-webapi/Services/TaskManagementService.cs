@@ -21,7 +21,7 @@ namespace flexli_erp_webapi.Services
     public class TaskManagementService: ITaskRankingManagementService
     {
         
-        private readonly AutoSearchByTagCompiler _autoSearchByTagCompiler;
+        private readonly AutoSearchByTagCompilerService _autoSearchByTagCompilerService;
         private readonly ILabelRelationRepository _labelRelationRepository;
         private readonly ITaskRankingRepository _taskRankingRepository;
         private readonly ITaskRepository _taskRepository;
@@ -29,13 +29,13 @@ namespace flexli_erp_webapi.Services
         private readonly ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
 
         public TaskManagementService(
-            ILabelRelationRepository labelRelationRepository, AutoSearchByTagCompiler autoSearchByTagCompiler,
+            ILabelRelationRepository labelRelationRepository, AutoSearchByTagCompilerService autoSearchByTagCompilerService,
             ITaskRankingRepository taskRankingRepository, ITaskRepository taskRepository, IDependencyRepository dependencyRepository,
             ITaskHierarchyRelationRepository taskHierarchyRelationRepository)
         {
         
             _labelRelationRepository = labelRelationRepository;
-            _autoSearchByTagCompiler = autoSearchByTagCompiler;
+            _autoSearchByTagCompilerService = autoSearchByTagCompilerService;
             _taskRankingRepository = taskRankingRepository;
             _taskRepository = taskRepository;
             _dependencyRepository = dependencyRepository;
@@ -92,8 +92,10 @@ namespace flexli_erp_webapi.Services
 
             // All fields updated except rank
             TaskDetailEditModel updatedTaskDetail =  CreateOrUpdateTaskInDb(taskDetailEditModel);
+
+            UpdateRankingOfTask(taskDetailEditModel);
             
-            _autoSearchByTagCompiler.AddToSearchResults(updatedTaskDetail.Description, updatedTaskDetail.TaskId, ECheckListType.Task);
+            _autoSearchByTagCompilerService.AddToSearchResults(updatedTaskDetail.Description, updatedTaskDetail.TaskId, EAssignmentType.Task);
 
             return  GetTaskById(updatedTaskDetail.TaskId);
         }
@@ -185,7 +187,7 @@ namespace flexli_erp_webapi.Services
 
                if (task != null) // update
                {
-                   _autoSearchByTagCompiler.RemoveFromSearchResults(task.TaskId, ECheckListType.Task);
+                   _autoSearchByTagCompilerService.RemoveFromSearchResults(task.TaskId, EAssignmentType.Task);
                     
                    if (task.AssignedTo != taskDetailEditModel.AssignedTo 
                        && task.SprintId != null)
@@ -201,6 +203,7 @@ namespace flexli_erp_webapi.Services
                    task.ExpectedHours = taskDetailEditModel.ExpectedHours;
                    task.EditedAt = DateTime.Now;
                    task.AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0;
+                   task.PositionAfter = taskDetailEditModel.PositionAfter ?? task.PositionAfter;
 
                    //[Action] If Sprint status = planning or Sprint not allocated then you can change acceptance criteria
                    if (task.SprintId != null? task.Status == SStatus.Planning.ToString(): true  )
@@ -213,9 +216,10 @@ namespace flexli_erp_webapi.Services
                else
                {
                    var dateTime = DateTime.Now;
+                   var newTaskId = GetNextAvailableId();
                    task = new TaskDetail
                    {
-                       TaskId = GetNextAvailableId(),
+                       TaskId = newTaskId,
                        ParentTaskId = taskDetailEditModel.ParentTaskId,
                        CreatedAt = dateTime,
                        CreatedBy = taskDetailEditModel.CreatedBy,
@@ -227,14 +231,16 @@ namespace flexli_erp_webapi.Services
                        ExpectedHours = taskDetailEditModel.ExpectedHours,
                        IsRemoved = false,
                        AcceptanceCriteria = taskDetailEditModel.AcceptanceCriteria ?? 0,
+                       PositionAfter = taskDetailEditModel.PositionAfter
                         
                    };
                    db.TaskDetail.Add(task);
                    db.SaveChanges();
+                   _taskHierarchyRelationRepository.UpdateTaskHierarchy(newTaskId);
                }
            }
            // Update Task Hierarchy
-           _taskHierarchyRelationRepository.UpdateTaskHierarchy(task.TaskId);
+           //_taskHierarchyRelationRepository.UpdateTaskHierarchy(task.TaskId);
            
 
            var createdTask =  GetTaskById(task.TaskId);

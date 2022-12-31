@@ -5,7 +5,7 @@ namespace m_sort_server.Repository.Interfaces
 {
     public interface ITaskHierarchyRelationRepository
     {
-        List<TaskHierarchyEditModel> UpdateTaskHierarchy(string taskId = null);
+      void UpdateTaskHierarchy(string taskId = null);
 
         TaskHierarchyEditModel GetTaskHierarchyByTaskIdFromDb(string taskId);
 

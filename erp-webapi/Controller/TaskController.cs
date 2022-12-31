@@ -27,17 +27,25 @@ namespace flexli_erp_webapi.Controller
         private readonly TaskManagementService _taskManagementService;
         private readonly ITaskRepository _taskRepository;
         private readonly ITaskRelationRepository _taskRelationRepository;
+        private readonly TaskHierarchyManagementService _taskHierarchyManagementService;
         
         
        
-        public TaskController(TaskManagementService taskManagementService, ITaskRepository taskRepository, ITaskRelationRepository taskRelationRepository)
+        public TaskController(TaskManagementService taskManagementService, ITaskRepository taskRepository, 
+            ITaskRelationRepository taskRelationRepository, TaskHierarchyManagementService taskHierarchyManagementService)
         {
            
             _taskManagementService = taskManagementService;
             _taskRepository = taskRepository;
             _taskRelationRepository = taskRelationRepository;
+            _taskHierarchyManagementService = taskHierarchyManagementService;
         }
 
+       
+      
+        /// <summary>
+        /// Include: children, siblings, dependency
+        /// </summary>
         [HttpGet("GetTaskById")]
         [Consumes("application/json")]
 
@@ -67,17 +75,9 @@ namespace flexli_erp_webapi.Controller
         public async Task<ActionResult<TaskDetailEditModel>> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
 
         {
-             var createdTask = _taskManagementService.CreateOrUpdateTask(taskDetail);
-            // [Action] : Add created task in search tags with common keywords. 
-           /*
-            IEnumerable<Tag> tagList = await _tagRepository.GetSearchTagList(ETagType.SearchTag);
-            // running on separate thread
-            await Task.Run(() =>
-            {
-                _tagTaskListRepository.ParseTaskDescriptionForSearchTags(taskDetail.Description, createdTask.TaskId, tagList);
-            });
-            */
-           return createdTask; }
+             return _taskManagementService.CreateOrUpdateTask(taskDetail);
+        
+        }
         /// <summary>
         /// Create or update tasks
         /// [Check] Task not linked to another sprint
@@ -127,6 +127,17 @@ namespace flexli_erp_webapi.Controller
         public async Task<SprintLabelTask> AddLabelToTask(string taskId, string label)
         {
             return await _taskManagementService.AddLabelToTask(taskId, label);
+        }
+        
+        /// <summary>
+        /// Include: children (to get task hierarchies of each children)
+        /// </summary>
+        [HttpGet("GetTaskHierarchyByTaskId")]
+        [Consumes("application/json")]
+
+        public ActionResult<TaskHierarchyEditModel> GetTaskHierarchyByTaskId(string taskId,string include = null)
+        {
+            return _taskHierarchyManagementService.GetTaskHierarchyByTaskId(taskId,include);
         }
 
        

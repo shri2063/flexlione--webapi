@@ -33,7 +33,7 @@ namespace flexli_erp_webapi.Services
         public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
         {
 
-            if (checkListItemEditModel.CheckListType == ECheckListType.Template)
+            if (checkListItemEditModel.AssignmentType == EAssignmentType.Template)
             {
                 return _checkListRepository.CreateOrUpdateCheckListInDb(checkListItemEditModel);
             }
@@ -133,7 +133,7 @@ namespace flexli_erp_webapi.Services
 
 
 
-                if (existingCheckList != null && existingCheckList.CheckListType  == ECheckListType.Task.ToString())
+                if (existingCheckList != null && existingCheckList.CheckListType  == EAssignmentType.Task.ToString())
                 {
                     var sprintId = db.TaskDetail
                         .FirstOrDefault(x => x.TaskId == existingCheckList.TypeId)

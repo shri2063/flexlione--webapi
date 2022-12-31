@@ -125,7 +125,7 @@ namespace flexli_erp_webapi.Repository
                         .SingleOrDefault();
 
                     List<CheckListItemEditModel> checkListItems =
-                        _checkListRepository.GetCheckList(task, ECheckListType.Task);
+                        _checkListRepository.GetCheckList(task, EAssignmentType.Task);
 
                     // It is necessary to have atleast one checklist for each task
                     // in order to make sprint - task - checklist pair entry
@@ -246,7 +246,7 @@ namespace flexli_erp_webapi.Repository
                     BestCase = 0,
                     ResultType = CResultType.Boolean,
                     Essential = true,
-                    CheckListType = ECheckListType.Task
+                    AssignmentType = EAssignmentType.Task
                 };
 
                 return _checkListRepository.CreateOrUpdateCheckListInDb(dummyNewChecklistItem);
