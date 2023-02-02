@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
+using flexli_erp_webapi.Services.Interfaces;
+using m_sort_server.Repository.Interfaces;
 using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -19,13 +21,16 @@ namespace flexli_erp_webapi.Services
         private readonly ISprintRepository _sprintRepository;
         private readonly ICheckListRepository _checkListRepository;
         private readonly ISprintReportRepository _sprintReportRepository;
+        private readonly ISprintReportRelationRepository _sprintReportRelationRepository;
         public CheckListManagementService(ITaskRepository taskRepository, ISprintRepository sprintRepository
-            , ICheckListRepository checkListRepository, ISprintReportRepository sprintReportRepository)
+            , ICheckListRepository checkListRepository, ISprintReportRepository sprintReportRepository, 
+            ISprintReportRelationRepository sprintReportRelationRepository)
         {
             _taskRepository = taskRepository;
             _sprintRepository = sprintRepository;
             _checkListRepository = checkListRepository;
             _sprintReportRepository = sprintReportRepository;
+            _sprintReportRelationRepository = sprintReportRelationRepository;
         }
         
        
@@ -81,11 +86,13 @@ namespace flexli_erp_webapi.Services
         
             
             updatedCheckList = _checkListRepository.CreateOrUpdateCheckListInDb(updatedCheckList);
+            _taskRepository.UpdateEditedAtTimeStamp(updatedCheckList.TypeId);
+            
              
              //[Action]: Update in Sprint report if Status Approved
              if (sprint != null ? sprint.Approved: false)
              {
-                 _sprintReportRepository.UpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(updatedCheckList));
+                 _sprintReportRepository.AddOrUpdateSprintReportLineItem(GetSprintReportLineItemForCheckListitem(updatedCheckList));
              }
 
              return updatedCheckList;
@@ -170,7 +177,7 @@ namespace flexli_erp_webapi.Services
         public  SprintReportEditModel GetSprintReportLineItemForCheckListitem(CheckListItemEditModel checkListItem)
         {
             string sprintReportLineItemId =
-                _sprintReportRepository.GetSprintreportLineItemIdForCheckListId(checkListItem.CheckListItemId);
+                _sprintReportRelationRepository.GetSprintReportLineItemIdForCheckListId(checkListItem.CheckListItemId);
             if (sprintReportLineItemId == null)
             {
                 throw new KeyNotFoundException("Sprint report lineitem does not exist for checklist item: " +

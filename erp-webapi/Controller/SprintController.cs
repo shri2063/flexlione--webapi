@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
@@ -21,16 +22,19 @@ namespace flexli_erp_webapi.Controller
    
     public class SprintController:ControllerBase
     {
-       
+
        
         private readonly SprintManagementService _sprintManagementService;
+        private readonly ISprintRepository _sprintRepository;
 
-        public SprintController( SprintManagementService sprintManagementService)
+        public SprintController( SprintManagementService sprintManagementService, ISprintRepository sprintRepository)
         {
             
             _sprintManagementService = sprintManagementService;
-           
+            _sprintRepository = sprintRepository;
+
         }
+
         /// <summary>
         ///  [R]Include - plannedTask,unPlannedTask
         /// </summary>
@@ -51,7 +55,9 @@ namespace flexli_erp_webapi.Controller
         [HttpGet("GetSprintByProfileId")]
         [Consumes("application/json")]
 
+
         public List<SprintEditModel> GetSprintsByProfileId(string profileId, List<String> include, int? pageIndex = null, int? pageSize = null)
+
         {
             return _sprintManagementService.GetSprintsByProfileId(profileId, include, pageIndex, pageSize);
         }
@@ -77,7 +83,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteSprint(string sprintId)
         {
-            _sprintManagementService.DeleteSprint(sprintId);
+            _sprintRepository.DeleteSprint(sprintId);
             return Ok();
         }
         
@@ -148,5 +154,22 @@ namespace flexli_erp_webapi.Controller
         {
             return _sprintManagementService.ReviewCompleted(sprintId, approverId);
         }
+        
+        
+         
+        /// <summary>
+        /// [R][Check]: Sprint is not Closed state , approver Id is valid
+        /// [Action] Only approved Hrs will be used to calculate the score.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("UpdateScore")]
+        [Consumes("application/json")]
+
+        public SprintUnplannedTaskScoreEditModel RequestScoreForUnplannedTask(string sprintId, string taskId, string hours, string profileId, string include )
+        {
+            return _sprintManagementService.UpdateUnplannedTaskHoursScore(sprintId, taskId, Convert.ToInt32(hours), profileId, include);
+           
+        }
+        
     }
 }

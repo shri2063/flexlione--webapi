@@ -5,6 +5,7 @@ namespace flexli_erp_webapi.EditModels
 {
 
     public enum SStatus { Planning, RequestForApproval, Approved, RequestForClosure, Closed, Reviewed };
+    public enum EScorePolicyType { IncrementalScoreAllocationPolicy, BinaryScoreAllocationPolicy };
 
     public class SprintEditModel
     {
@@ -18,7 +19,7 @@ namespace flexli_erp_webapi.EditModels
         
         public DateTime ToDate { get; set; }
         
-        public int? Score { get; set; }
+        public decimal? Score { get; set; }
         
         public SStatus Status { get; set; }
         
@@ -32,6 +33,6 @@ namespace flexli_erp_webapi.EditModels
         
         public List<TaskDetailEditModel> UnPlannedTasks { get; set; }
         
-        
+        public EScorePolicyType ScorePolicy { get; set; } 
     }
 }

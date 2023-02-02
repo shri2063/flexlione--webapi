@@ -1,3 +1,19 @@
+```
+Version Update
+
+V 1.8
+
+1- Restructuring hierarchy
+2- Unplanned task hours request & approve feature
+3- Sprint score policy 
+4- Sprint score calculation according to policy
+
+
+
+```
+
+
+
 # M Sort Server Dev
 
 

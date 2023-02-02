@@ -48,14 +48,17 @@ namespace flexli_erp_webapi.DataModels
         [Column("expected_hours")]
         public decimal? ExpectedHours { get; set; }
         
+        [Column("actual_hours")]
+        public decimal? ActualHours { get; set; }
+        
         [Column("score")]
-        public int? Score { get; set; }
+        public decimal? Score { get; set; }
         
         [Column("acceptance_criteria")]
         public int? AcceptanceCriteria { get; set; }
 
         [Column("edited_at")]
-        public DateTime? EditedAt { get; set; }
+        public DateTime EditedAt { get; set; }
         
         public List<TaskSchedule> TaskSchedules { get; set; }
 
