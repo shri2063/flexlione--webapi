@@ -24,31 +24,34 @@ namespace flexli_erp_webapi.Controller
     public class SearchController : ControllerBase
     {
         
-        private readonly ITemplateTagSearchResultRepository _templateTagSearchResultRepository;
+        private readonly ITemplateSearchResultRepository _templateSearchResultRepository;
         private readonly TagSearchManagementService _tagSearchManagementService;
         private readonly SearchByLabelManagementService _searchByLabelManagementService;
-        private readonly ITaskTagSearchResultRepository _taskTagSearchResultRepository;
+        private readonly ITaskSearchResultRepository _taskSearchResultRepository;
         private readonly TaskSearchManagementService _taskSearchManagementService;
         private readonly IIgnoreSearchWordRepository _ignoreSearchWordRepository;
+        private readonly TaskSearchResultRelationRepository _taskSearchResultRelationRepository;
      
 
         public SearchController(
-            ITemplateTagSearchResultRepository templateTagSearchResultRepository,
+            ITemplateSearchResultRepository templateSearchResultRepository,
             TagSearchManagementService tagSearchManagementService,
-            ITaskTagSearchResultRepository taskTagSearchResultRepository,
+            ITaskSearchResultRepository taskSearchResultRepository,
             TaskSearchManagementService taskSearchManagementService,
             IIgnoreSearchWordRepository ignoreSearchWordRepository,
-            SearchByLabelManagementService searchByLabelManagementService)
+            SearchByLabelManagementService searchByLabelManagementService,
+            TaskSearchResultRelationRepository taskSearchResultRelationRepository)
         {
-            _taskTagSearchResultRepository = taskTagSearchResultRepository;
-            _templateTagSearchResultRepository = templateTagSearchResultRepository;
+            _taskSearchResultRepository = taskSearchResultRepository;
+            _templateSearchResultRepository = templateSearchResultRepository;
             _tagSearchManagementService = tagSearchManagementService;
             _taskSearchManagementService = taskSearchManagementService;
             _ignoreSearchWordRepository = ignoreSearchWordRepository;
-            _templateTagSearchResultRepository = templateTagSearchResultRepository;
+            _templateSearchResultRepository = templateSearchResultRepository;
            _tagSearchManagementService = tagSearchManagementService;
            _searchByLabelManagementService = searchByLabelManagementService;
-          
+           _taskSearchResultRelationRepository = taskSearchResultRelationRepository;
+
         }
         
         
@@ -59,7 +62,7 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         public async Task<ActionResult<IEnumerable<string>>> GetTagListForTemplates(int? pageIndex = null, int? pageSize = null)
         {
-            var tagList= await _templateTagSearchResultRepository.GetListOfTemplateTags();
+            var tagList= await _templateSearchResultRepository.GetListOfTemplateTags();
             return Ok(tagList);
         }
 
@@ -82,7 +85,7 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         public async Task<ActionResult<IEnumerable<string>>> GetTagListForTasks(int? pageIndex = null, int? pageSize = null)
         {
-            var tagList = await _taskTagSearchResultRepository.GetListOfTaskTags();
+            var tagList = await _taskSearchResultRepository.GetListOfTaskSearch();
             return Ok(tagList);
         }
 
@@ -145,6 +148,18 @@ namespace flexli_erp_webapi.Controller
         public async Task<List<TaskSearchView>> SearchByProfileId(string profileId, List<string> include = null, int?pageIndex = null, int? pageSize = null)
         {
             return await _searchByLabelManagementService.SearchByProfileId(profileId, include, pageIndex, pageSize);
+        }
+        
+        /// <summary>
+        /// include = list of label tags, currently, "sprint","notCompleted"
+        /// </summary>
+        [HttpGet("populate")]
+        [Consumes("application/json")]
+
+        public bool populate()
+        {
+              _taskSearchResultRelationRepository.PopulatePreviousSearchResult(EAssignmentType.Task);
+              return true;
         }
     }
 }

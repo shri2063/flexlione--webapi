@@ -20,7 +20,7 @@ namespace flexli_erp_webapi
 
         public DbSet<Sprint> Sprint { get; set; }
         
-        public DbSet<SprintReport> SprintReport { get; set; }
+        public DbSet<SprintReportLineItem> SprintReport { get; set; }
 
         public DbSet<TaskSchedule> TaskSchedule { get; set; }
         
@@ -32,7 +32,7 @@ namespace flexli_erp_webapi
         
         public DbSet<Template> Template { get; set; }
         
-        
+        public DbSet<SprintUnplannedTaskScore> SprintUnplannedTaskScore { get; set; }
         
         public DbSet<TemplateRelation> TemplateRelation { get; set; }
         

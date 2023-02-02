@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,16 +12,17 @@ using flexli_erp_webapi.Repository;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services;
 using flexli_erp_webapi.Services.Interfaces;
+using flexli_erp_webapi.Services.Scoring;
 using flexli_erp_webapi.Services.SearchPolicy;
 using flexli_erp_webapi.Services.TaskSearch;
 using flexli_erp_webapi.Utility;
+using m;
 using m_sort_server;
 using m_sort_server.Repository;
 using m_sort_server.Repository.Interfaces;
 using mflexli_erp_webapi.Repository.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -28,8 +31,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
-using Swashbuckle.AspNetCore.Swagger;
-using TaskHierarchyManagementService = flexli_erp_webapi.Services.TaskHierarchyManagementService;
 
 namespace flexli_erp_webapi
 {
@@ -49,7 +50,8 @@ namespace flexli_erp_webapi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ITaskTagSearchResultRepository, TaskTagSearchResultRepository>();
+
+            services.AddScoped<ITaskSearchResultRepository, TaskSearchResultRepository>();
             services.AddScoped<TaskManagementService, TaskManagementService>();
             services.AddScoped<CheckListManagementService, CheckListManagementService>();
             services.AddScoped<DependencyManagementService, DependencyManagementService>();
@@ -62,26 +64,43 @@ namespace flexli_erp_webapi
             
             services.AddScoped<SprintReportManagementService, SprintReportManagementService>();
             services.AddScoped<ISearchPriorityPolicy, SearchPriorityByCommonalityPolicy>();
-            services.AddScoped<ITemplateTagSearchResultRepository, TemplateTagSearchResultRepository>();
+            services.AddScoped<ITemplateSearchResultRepository, TemplateSearchResultRepository>();
             services.AddScoped<ITemplateTagContext, TemplateTagContext>();
             services.AddScoped<ITagContext, TagContext>();
    
-             services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddScoped<IScoreAllocationPolicy, BinaryScoreAllocationPolicy>();
+            services.AddScoped<IScoreAllocationPolicy, IncrementalScoreAllocationPolicy>();
+
+           // services.AddSingleton<ICalculateScoreForTaskPolicyService, BinaryScoreAllocationPolicy>();
+           // services.AddSingleton<ICalculateScoreForTaskPolicyService, IncrementalScoreAllocationPolicy>();
+
+            services.AddScoped<ScoreAllocationPolicySelectorPolicy, ScoreAllocationPolicySelectorPolicy>();
+            services.AddScoped<ISprintUnplannedTaskManagementService, SprintUnplannedTaskManagementService>();
+            services.AddScoped<ISprintUnplannedTaskRepository, SprintUnplannedTaskRepository>();
+            services.AddScoped<ScoreAllocationPolicySelectorPolicy, ScoreAllocationPolicySelectorPolicy>();
+            services.AddScoped<SprintManagementService, SprintManagementService>();
+            services.AddScoped<ITagContext, TagContext>();
+            // services.AddScoped<ITagTaskListRepository, TagTaskListRepository>();
+            // services.AddScoped<ITagRepository, TagRepository>();
+
+            services.AddScoped<ITaskRepository, TaskRepository>();
              services.AddScoped<ITaskHierarchyRelationRepository, TaskHierarchyRelationRepository>();
              services.AddScoped<ITaskSummaryRepository, TaskSummaryRepository>();
-             services.AddScoped<ITaskRankingRepository, TaskRankingRepository>();
+             services.AddScoped<ITaskAnchorRepository, TaskAnchorRepository>();
              services.AddScoped<ITaskRelationRepository, TaskRelationRepository>();
              services.AddScoped<ITaskScheduleRepository, TaskScheduleRepository>();
              services.AddScoped<ITaskScheduleRelationRepository, TaskScheduleRelationRepository>();
              services.AddScoped<ISprintRepository, SprintRepository>();
              services.AddScoped<ISprintReportRepository, SprintReportRepository>();
+             services.AddScoped<ISprintReportRelationRepository, SprintReportRelationRepository>();
              services.AddScoped<ISprintRelationRepository, SprintRelationRepository>();
              services.AddScoped<ILabelRelationRepository, LabelRelationRepository>();
              services.AddScoped<ICheckListRepository, CheckListRepository>(); 
              services.AddScoped<IDependencyRepository, DependencyRepository>();
              services.AddScoped<ITaskHourCalculatorHandler, TaskSummaryManagementService>();
              
-             
+            
+             services.AddScoped<ISprintUnplannedTaskRepository, SprintUnplannedTaskRepository>();
              services.AddScoped<ITemplateRepository, TemplateRepository>();
              services.AddScoped<ITemplateRelationRepository, TemplateRelationRepository>();
              services.AddScoped<TaskSearchManagementService, TaskSearchManagementService>();
@@ -89,8 +108,13 @@ namespace flexli_erp_webapi
              services.AddScoped<TemplateMainService, TemplateMainService>();
              services.AddScoped<TagSearchManagementService, TagSearchManagementService>();
              services.AddScoped<SearchByLabelManagementService, SearchByLabelManagementService>();
-             services.AddScoped<AutoSearchByTagCompilerService, AutoSearchByTagCompilerService>();
+             services.AddScoped<TaskSearchResultRelationRepository, TaskSearchResultRelationRepository>();
              services.AddScoped<IIgnoreSearchWordRepository, IgnoreSearchWordRepository>();
+             services.AddScoped<ITaskSummaryRelationRepository, TaskSummaryRelationRepository>();
+             services.AddScoped<ISprintLifeCycleManagementService, SprintLifeCycleManagementService>();
+             services.AddScoped<ICheckListRelationRepository, CheckListRelationRepository>();
+             services.AddScoped<ITaskRankingManagementService, TaskRankingManagementService>();
+           
              
              services.AddCors(options =>
             {
@@ -154,7 +178,7 @@ namespace flexli_erp_webapi
                 {
                     Title = "ERP Server",
                     Description = "API for ERP server",
-                    Version = "v1.5"
+                    Version = "v1.8"
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
@@ -213,15 +237,19 @@ namespace flexli_erp_webapi
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
+
                 FileProvider = new PhysicalFileProvider("C:\\inetpub\\wwwroot"),
+
                 // RequestPath = new PathString("/Resources")
+               // FileProvider = new PhysicalFileProvider("/Users/rahulbahuguna/Data/Flexli/OM/inetpub/wwwroot"),
+                
             });
             app.UseMvc();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("../swagger/v1.0/swagger.json", "Versioned Api v1.3");
+                c.SwaggerEndpoint("../swagger/v1.0/swagger.json", "Versioned Api v1.8");
                 c.DocExpansion(DocExpansion.None);
                 c.DefaultModelExpandDepth(0);
                 c.DefaultModelsExpandDepth(-1);

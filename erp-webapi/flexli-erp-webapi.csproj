@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <Folder Include="Models\ViewModels" />
+        <Folder Include="Policy" />
         
         <Folder Include="wwwroot\" />
     </ItemGroup>

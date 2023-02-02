@@ -16,13 +16,11 @@ namespace flexli_erp_webapi.Services
         private readonly ITaskRepository _taskRepository;
         private readonly IDictionary<string, string> _taskTemplateMapping = new Dictionary<string, string>();
         private  IDictionary<string, string> _roleProfileMapping = new Dictionary<string, string>();
-        private readonly AutoSearchByTagCompilerService _autoSearchByTagCompilerService;
 
 
-        public TemplateMainService(ITemplateRepository templateRepository, ITemplateRelationRepository templateRelationRepository, ITaskRepository taskRepository, AutoSearchByTagCompilerService autoSearchByTagCompilerService) : base(templateRepository, templateRelationRepository)
+        public TemplateMainService(ITemplateRepository templateRepository, ITemplateRelationRepository templateRelationRepository, ITaskRepository taskRepository, TaskSearchResultRelationRepository taskSearchResultRelationRepository) : base(templateRepository, templateRelationRepository)
         {
             _taskRepository = taskRepository;
-            _autoSearchByTagCompilerService = autoSearchByTagCompilerService;
         }
        
 
@@ -193,14 +191,16 @@ namespace flexli_erp_webapi.Services
             // [Check]: if template exist already then remove it from all tags
             if (existingTemplate != null)
             {
-                _autoSearchByTagCompilerService.RemoveFromSearchResults(template.TemplateId, EAssignmentType.Template);
+                // Todo Make Template Search responsive to Add or update template
+                //_searchResultRelationRepository.RemoveFromSearchResults(template.TemplateId, EAssignmentType.Template);
             }
             
             // Call CreateUpdate function of management service
             var crudTemplate = CreateOrUpdateTemplate(template);
             
+            // Todo Make Template Search responsive to Add or update template
             // tagging of template description
-            _autoSearchByTagCompilerService.AddToSearchResults(crudTemplate.Description, crudTemplate.TemplateId, EAssignmentType.Template);
+           // _searchResultRelationRepository.AddToSearchResults(crudTemplate.Description, crudTemplate.TemplateId, EAssignmentType.Template);
             
             return crudTemplate;
         }

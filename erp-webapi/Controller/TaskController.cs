@@ -72,10 +72,10 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         
 
-        public async Task<ActionResult<TaskDetailEditModel>> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
+        public  async Task<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
 
         {
-             return _taskManagementService.CreateOrUpdateTask(taskDetail);
+             return  await _taskManagementService.CreateOrUpdateTask(taskDetail);
         
         }
         /// <summary>
@@ -96,7 +96,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> DeleteTask(string taskId)
         {
-            _taskManagementService.DeleteTask(taskId);
+            _taskManagementService.DeleteTaskById(taskId);
             return Ok();
         }
         
@@ -106,7 +106,7 @@ namespace flexli_erp_webapi.Controller
         
         public ActionResult<string> RemoveTask(string taskId)
         {
-            _taskManagementService.RemoveTask(taskId);
+            _taskManagementService.RemoveTaskById(taskId);
             return Ok();
         }
 

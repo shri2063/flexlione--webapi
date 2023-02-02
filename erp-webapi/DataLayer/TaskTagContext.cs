@@ -15,17 +15,17 @@ namespace flexli_erp_webapi.DataLayer
         {
             var client = new MongoClient(configuration.GetValue<string>("MongoDbSetting:ConnectionString"));
             var database = client.GetDatabase(configuration.GetValue<string>("MongoDbSetting:DatabaseName"));
-            TaskTagSearchResult = database.GetCollection<TaskTag>("task-tag-search-result");
+            TaskSearchResult = database.GetCollection<TaskSearch>("task-search-result");
             SprintTasks = database.GetCollection<SprintLabelTask>("sprint-tasks");
-            TaskHierarchy = database.GetCollection<TaskHierarchy>("task-hierarchy");
+            TaskAnchor = database.GetCollection<TaskAnchor>("task-hierarchy");
         }
 
       
         
-        public IMongoCollection<TaskTag> TaskTagSearchResult { get; set; }
+        public IMongoCollection<TaskSearch> TaskSearchResult { get; set; }
         
         public IMongoCollection<SprintLabelTask> SprintTasks { get; set; }
         
-        public IMongoCollection<TaskHierarchy> TaskHierarchy { get; set; }
+        public IMongoCollection<TaskAnchor> TaskAnchor { get; set; }
     }
 }

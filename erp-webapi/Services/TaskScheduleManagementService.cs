@@ -13,10 +13,13 @@ namespace flexli_erp_webapi.Services
 
         private readonly ITaskSummaryRepository _taskSummaryRepository;
         private readonly ITaskScheduleRepository _taskScheduleRepository;
-        public TaskScheduleManagementService(ITaskSummaryRepository taskSummaryRepository, ITaskScheduleRepository taskScheduleRepository)
+        private readonly ITaskRepository _taskRepository;
+        public TaskScheduleManagementService(ITaskSummaryRepository taskSummaryRepository, ITaskScheduleRepository taskScheduleRepository,
+            ITaskRepository taskRepository)
         {
             _taskSummaryRepository = taskSummaryRepository;
             _taskScheduleRepository = taskScheduleRepository;
+            _taskRepository = taskRepository;
         }
         public  TaskScheduleEditModel GetTaskScheduleById(string taskScheduleId, string include = null)
         {
@@ -96,7 +99,7 @@ namespace flexli_erp_webapi.Services
                     db.TaskSchedule.Add(taskSchedule);
                     db.SaveChanges();
                     // [Action]: Updated edited time of Task Module
-                    TaskManagementService.UpdateEditedAt(taskSchedule.TaskId);
+                    _taskRepository.UpdateEditedAtTimeStamp(taskSchedule.TaskId);
                 }
             }
 

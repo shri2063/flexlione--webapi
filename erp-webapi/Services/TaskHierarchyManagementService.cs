@@ -25,7 +25,7 @@ namespace flexli_erp_webapi.Services
             TaskHierarchyEditModel taskHierarchy = _taskHierarchyRelationRepository.GetTaskHierarchyByTaskIdFromDb(taskId);
             taskHierarchy.TotalHoursSpent = _taskHourCalculatorHandler.GetTotalActualHoursForTask(taskId);
             taskHierarchy.TotalEstimatedHours = _taskHourCalculatorHandler.GetTotalEstimatedHoursForTask(taskId);
-
+            
             if (include == null)
             {
                 return taskHierarchy;

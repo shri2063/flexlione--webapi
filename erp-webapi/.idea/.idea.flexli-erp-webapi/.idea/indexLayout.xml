@@ -2,6 +2,7 @@
 <project version="4">
   <component name="UserContentModel">
     <attachedFolders>
+      <Path>../../FlexliOneWebAPI</Path>
       <Path>../../erp-webapi</Path>
     </attachedFolders>
     <explicitIncludes />

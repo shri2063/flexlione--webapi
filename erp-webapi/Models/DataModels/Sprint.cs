@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace flexli_erp_webapi.DataModels
 {
     [Table("sprint")]
+    
     public class Sprint
     {
         [Key] [Column("sprint_id")] 
@@ -23,7 +24,7 @@ namespace flexli_erp_webapi.DataModels
         public DateTime ToDate { get; set; }
         
         [Column("score")]
-        public int? Score { get; set; }
+        public decimal? Score { get; set; }
 
         [Column("status")]
         public string Status { get; set; }
@@ -36,6 +37,9 @@ namespace flexli_erp_webapi.DataModels
         
         [Column("sprint_no")]
         public decimal? SprintNo { get; set; }
+        
+        [Column("score_policy")]
+        public string ScorePolicy { get; set; }
        
         
     }
