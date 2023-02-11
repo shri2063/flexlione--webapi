@@ -81,11 +81,6 @@ namespace flexli_erp_webapi.Services.TaskSearch
 
             return await GetTaskSearch(keyword);
         }
-
-       
-       
-
-       
         
         public async Task<List<TaskSearchView>> RemoveTask(string keyword, string taskId)
         {

@@ -72,10 +72,10 @@ namespace flexli_erp_webapi.Controller
         [Consumes("application/json")]
         
 
-        public  async Task<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail)
+        public  async Task<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetail, string loggedInId)
 
         {
-             return  await _taskManagementService.CreateOrUpdateTask(taskDetail);
+             return  await _taskManagementService.CreateOrUpdateTask(taskDetail, loggedInId);
         
         }
         /// <summary>
@@ -124,7 +124,8 @@ namespace flexli_erp_webapi.Controller
         [HttpPut("AddLabelToTask")]
         [Consumes("application/json")]
 
-        public async Task<SprintLabelTask> AddLabelToTask(string taskId, string label)
+        public async Task<TaskDetailEditModel> AddLabelToTask(string taskId, List<string> label)
+
         {
             return await _taskManagementService.AddLabelToTask(taskId, label);
         }

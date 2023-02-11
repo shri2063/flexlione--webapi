@@ -98,7 +98,7 @@ namespace flexli_erp_webapi
              services.AddScoped<ICheckListRepository, CheckListRepository>(); 
              services.AddScoped<IDependencyRepository, DependencyRepository>();
              services.AddScoped<ITaskHourCalculatorHandler, TaskSummaryManagementService>();
-             
+             services.AddScoped<IProfileRepository, ProfileRepository>();
             
              services.AddScoped<ISprintUnplannedTaskRepository, SprintUnplannedTaskRepository>();
              services.AddScoped<ITemplateRepository, TemplateRepository>();
@@ -114,7 +114,7 @@ namespace flexli_erp_webapi
              services.AddScoped<ISprintLifeCycleManagementService, SprintLifeCycleManagementService>();
              services.AddScoped<ICheckListRelationRepository, CheckListRelationRepository>();
              services.AddScoped<ITaskRankingManagementService, TaskRankingManagementService>();
-           
+             services.AddScoped<ITaskValidatorService, TaskValidatorService>();
              
              services.AddCors(options =>
             {
@@ -238,10 +238,10 @@ namespace flexli_erp_webapi
             app.UseStaticFiles(new StaticFileOptions()
             {
 
-                FileProvider = new PhysicalFileProvider("C:\\inetpub\\wwwroot"),
+             FileProvider = new PhysicalFileProvider("C:\\inetpub\\wwwroot"),
 
                 // RequestPath = new PathString("/Resources")
-               // FileProvider = new PhysicalFileProvider("/Users/rahulbahuguna/Data/Flexli/OM/inetpub/wwwroot"),
+                 // FileProvider = new PhysicalFileProvider("/Users/rahulbahuguna/Data/Flexli/OM/inetpub/wwwroot"),
                 
             });
             app.UseMvc();

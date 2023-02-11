@@ -15,7 +15,8 @@ using MongoDB.Bson;
 
 namespace flexli_erp_webapi.Services
 {
-    public class CheckListManagementService
+    public class 
+        CheckListManagementService
     {
         private readonly ITaskRepository _taskRepository;
         private readonly ISprintRepository _sprintRepository;
@@ -35,7 +36,8 @@ namespace flexli_erp_webapi.Services
         
        
 
-        public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel)
+        public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemEditModel, string loggedInId)
+
         {
 
             if (checkListItemEditModel.AssignmentType == EAssignmentType.Template)
@@ -65,7 +67,17 @@ namespace flexli_erp_webapi.Services
                     } 
                 }
                 
+                return _checkListRepository.CreateOrUpdateCheckListInDb(checkListItemEditModel);
+                
+                
             }
+            
+            //[Check]: if checklist description is updating in sprint request for approval stage
+            if (SprintStatusCheckForChecklistUpdate (checkListItemEditModel, checkList, sprint) )
+            {
+                throw new KeyNotFoundException("Checklist description can't updated after sending sprint for approval");
+            }
+            
             // [Check]: If result type is numeric then best and worst case and result params cannot be null
 
             if (checkListItemEditModel.ResultType == CResultType.Numeric)
@@ -83,7 +95,12 @@ namespace flexli_erp_webapi.Services
             // [check] Checklist params could be modified based upon sprint state
             var updatedCheckList = ApplySprintStatusBasedCheck(checkListItemEditModel, sprint != null ?sprint.Status: SStatus.Planning);
            
-        
+            // can be updated by task owner only
+            if (checkListItemEditModel.AssignmentType == EAssignmentType.Task &&  task.AssignedTo != loggedInId )
+            {
+                throw new Exception("Only task owner can update checklist");
+            }  
+
             
             updatedCheckList = _checkListRepository.CreateOrUpdateCheckListInDb(updatedCheckList);
             _taskRepository.UpdateEditedAtTimeStamp(updatedCheckList.TypeId);
@@ -125,7 +142,11 @@ namespace flexli_erp_webapi.Services
             return editCheckList;
         }
 
-       
+        private Boolean SprintStatusCheckForChecklistUpdate(CheckListItemEditModel newChecklist, CheckListItemEditModel oldChecklist, SprintEditModel sprint)
+        {
+            return ((newChecklist.Description != oldChecklist.Description) &&
+                    (sprint.Status != SStatus.Planning));
+        }
 
         public  void DeleteCheckListItem(string checkListItemId)
         {

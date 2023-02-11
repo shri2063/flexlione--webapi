@@ -46,9 +46,6 @@ namespace flexli_erp_webapi.Repository
         }
 
         
-
-        
-
         public async Task<List<String>> ReviseChildTaskRanking(string taskId, List<String> revisedList)
         {
             var taskAnchorExists =  await CheckIfTaskAnchorExisits(taskId);
@@ -124,5 +121,47 @@ namespace flexli_erp_webapi.Repository
         }
         
        
+        public async Task<List<String>> ReviseLabel(string taskId, List<String> revisedList)
+        {
+            var labels = await GetLabel(taskId);
+            var filter = Builders<TaskAnchor>.Filter.Eq(e => e.TaskId, taskId);
+            var update = Builders<TaskAnchor>.Update.Set(x => x.Label, revisedList);
+
+            if (labels.Count() == 0)
+            {
+                await _tagContext.TaskAnchor.FindOneAndUpdateAsync(filter, update);
+
+            }
+            
+            var mergedLabels = labels.Union(revisedList).ToList();
+
+            var updatedLabels = Builders<TaskAnchor>.Update.Set(x => x.Label, mergedLabels);
+            await _tagContext.TaskAnchor.FindOneAndUpdateAsync(filter, updatedLabels);
+            
+            return await GetLabel(taskId);
+        }
+        
+        public async Task<List<String>> GetLabel(string taskId)
+        {
+            List<String> labels = new List<string>();
+            
+            var taskHierarchy =  await _tagContext
+                .TaskAnchor
+                .Find(x => x.TaskId == taskId)
+                .FirstOrDefaultAsync();
+            if (taskHierarchy != null)
+            {
+                if (taskHierarchy.Label == null)
+                {
+                    return new List<String>();
+                }
+
+                labels = taskHierarchy.Label;
+            }
+
+            return labels;
+           // return taskHierarchy.Label;
+        }
+
     }
 }

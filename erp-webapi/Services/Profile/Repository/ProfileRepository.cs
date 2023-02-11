@@ -1,98 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using flexli_erp_webapi;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
-using flexli_erp_webapi.Repository.Interfaces;
-using flexli_erp_webapi.Services;
-using flexli_erp_webapi.Services.Interfaces;
+using m;
 
-namespace flexli_erp_webapi.Services
+namespace flexli_erp_webapi.Repository.Interfaces
 {
-    public class ProfileManagementService
-
+    public class ProfileRepository : IProfileRepository
     {
-        private readonly ISprintRelationRepository _sprintRelationRepository;
-        private readonly ISprintRepository _sprintRepository;
-        public ProfileManagementService(ISprintRelationRepository sprintRelationRepository, ISprintRepository sprintRepository)
-        {
-            _sprintRelationRepository = sprintRelationRepository;
-            _sprintRepository = sprintRepository;
-        }
-        public  ProfileEditModel GetProfileById(string profileId, string include = null)
-        {
-            ProfileEditModel profileEditModel = GetProfileByIdFromDb(profileId);
-
-            // [check]: Profile exists
-
-            if (profileEditModel == null)
-            {
-                return null;
-            }
-
-            if (include == "sprint")
-            {
-                profileEditModel.Sprints = _sprintRelationRepository.GetSprintsForProfileId(profileId);
-            }
-
-            profileEditModel.Managers = GetAllManagersForUser(profileId);
-            return profileEditModel;
-
-        }
-
-        private  List<ProfileManagerEditModel> GetAllManagersForUser(string profileId)
-        {
-            List<ProfileManagerEditModel> managers = new List<ProfileManagerEditModel>();
-            List<string> managerIds;
-            using (var db = new ErpContext())
-            {
-                managerIds = db.ProfileManager
-                    .Where(x => x.UserId == profileId)
-                    .Select(x => x.ManagerId)
-                    .ToList();
-
-                managerIds.ForEach(managerId =>
-                {
-                    ProfileManagerEditModel profileManagerEditModel = GetManagerForUser(profileId, managerId);
-                    managers.Add(profileManagerEditModel);
-                });
-            }
-
-            return managers;
-        }
-
-        public  List<ProfileEditModel> GetAllProfiles()
-        {
-            
-
-            List<ProfileEditModel> profiles = new List<ProfileEditModel>();
-
-            GetAllProfileIds()
-                .ForEach(x =>
-                    profiles.Add(GetProfileByIdFromDb(x)));
-
-                return profiles;
-        }
-
-
-    public  List<string> GetAllProfileIds()
-        {
-            using (var db = new ErpContext())
-            {
-               return db.Profile
-                    .Select(x => x.ProfileId)
-                    .ToList();
-            }
-        }
-
-        public  ProfileEditModel AddOrUpdateProfile(ProfileEditModel profileEditModel)
-        {
-            return AddOrUpdateProfileInDb(profileEditModel);
-
-        }
-        
-        
-        public  ProfileEditModel GetProfileByIdFromDb(string profileId)
+        public  ProfileEditModel GetProfileById(string profileId)
         {
             using (var db = new ErpContext())
             {
@@ -108,11 +26,11 @@ namespace flexli_erp_webapi.Services
 
                 ProfileEditModel profileEditModel = new ProfileEditModel()
                 {
-                   ProfileId = existingProfile.ProfileId,
-                   Name = existingProfile.Name,
-                   Type = existingProfile.Type,
-                   EmailId = existingProfile.EmailId,
-                   Password = existingProfile.Password
+                    ProfileId = existingProfile.ProfileId,
+                    Name = existingProfile.Name,
+                    Type = existingProfile.Type,
+                    EmailId = existingProfile.EmailId,
+                    Password = existingProfile.Password
                 };
 
                 return profileEditModel;
@@ -120,6 +38,15 @@ namespace flexli_erp_webapi.Services
 
         }
         
+        public  List<string> GetAllProfileIds()
+        {
+            using (var db = new ErpContext())
+            {
+                return db.Profile
+                    .Select(x => x.ProfileId)
+                    .ToList();
+            }
+        }
         
         public  ProfileEditModel AuthenticateProfile(string emailId, string password)
         {
@@ -129,10 +56,10 @@ namespace flexli_erp_webapi.Services
                 Profile existingProfile = db.Profile
                     .FirstOrDefault(x => x.EmailId == emailId && x.Password == password);
                 
-                // Case: Incorrect username or password
+                // Case: If not exist
                 if (existingProfile == null)
                 {
-                    throw  new Exception("Email Id or Password does not match");
+                    return null;
                 }
 
 
@@ -150,7 +77,8 @@ namespace flexli_erp_webapi.Services
 
         }
         
-        private  ProfileEditModel AddOrUpdateProfileInDb(ProfileEditModel profileEditModel)
+        
+        public  ProfileEditModel AddOrUpdateProfile(ProfileEditModel profileEditModel)
         {
             Profile profile;
             
@@ -186,7 +114,7 @@ namespace flexli_erp_webapi.Services
 
             return GetProfileById(profile.ProfileId);
         }
-
+        
         private static string GetNextAvailableId(string type)
         {
             int a = 0;
@@ -245,6 +173,20 @@ namespace flexli_erp_webapi.Services
             }
         }
 
+        public  List<string> GetManagerIds(string userId)
+        {
+            using (var db = new ErpContext())
+            {
+                List<string> managers = db.ProfileManager
+                    .Where(x => x.UserId == userId)
+                    .Select(x => x.ManagerId)
+                    .ToList();
+                
+
+                return managers;
+            }
+        }
+        
         public  ProfileManagerEditModel AddManager(string userId, string managerId)
         {
             // add manager
@@ -269,7 +211,19 @@ namespace flexli_erp_webapi.Services
             return GetManagerForUser(userId, managerId);
         }
         
-        public  void DeleteManager(string userId, string managerId)
+        private  ProfileManagerEditModel GetManagerForUser(string userId, string managerId)
+        {
+            ProfileManagerEditModel profileManagerEditModel = new ProfileManagerEditModel()
+            {
+                UserId = userId,
+                ManagerId = managerId
+            };
+
+            return profileManagerEditModel;
+        }
+
+
+        public void DeleteManager(string userId, string managerId)
         {
             using (var db = new ErpContext())
             {
@@ -284,37 +238,6 @@ namespace flexli_erp_webapi.Services
                     db.SaveChanges();
                 }
 
-            }
-        }
-
-        private  ProfileManagerEditModel GetManagerForUser(string userId, string managerId)
-        {
-            ProfileManagerEditModel profileManagerEditModel = new ProfileManagerEditModel()
-            {
-                UserId = userId,
-                ManagerId = managerId
-            };
-
-            return profileManagerEditModel;
-        }
-        
-        // CS1591.cs  
-        // compile with: /W:4 /doc:x.xml  
-  
-        /// Needed to approve Sprint
-        public static bool CheckManagerValidity(string userId, string managerId)
-        {
-            using (var db = new ErpContext())
-            {
-                List<string> managers = db.ProfileManager
-                    .Where(x => x.UserId == userId)
-                    .Select(x => x.ManagerId)
-                    .ToList();
-
-                if (managers.Contains(managerId))
-                    return true;
-
-                return false;
             }
         }
     }

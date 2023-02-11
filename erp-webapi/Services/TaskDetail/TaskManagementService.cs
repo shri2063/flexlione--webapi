@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using flexli_erp_webapi.BsonModels;
-using flexli_erp_webapi.DataModels;
+using flexli_erp_webapi.DataLayer.Interface;
 using flexli_erp_webapi.EditModels;
-using flexli_erp_webapi.LinkedListModel;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services.Interfaces;
 using flexli_erp_webapi.Shared;
 using m_sort_server.Repository.Interfaces;
 using mflexli_erp_webapi.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-
 
 namespace flexli_erp_webapi.Services
 {
     public class TaskManagementService
     {
-        
+        private readonly ITagContext _tagContext;
         private readonly TaskSearchResultRelationRepository _taskSearchResultRelationRepository;
         private readonly ILabelRelationRepository _labelRelationRepository;
         private readonly ITaskRepository _taskRepository;
@@ -28,14 +22,15 @@ namespace flexli_erp_webapi.Services
         private readonly ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
         private readonly ITaskRankingManagementService _taskRankingManagementService;
         private readonly ISprintRepository _sprintRepository;
-
+        private readonly ITaskAnchorRepository _taskAnchorRepository;
+        private readonly ITaskValidatorService _taskValidatorService;
+        
         public TaskManagementService(
             ILabelRelationRepository labelRelationRepository, TaskSearchResultRelationRepository taskSearchResultRelationRepository,
              ITaskRepository taskRepository, IDependencyRepository dependencyRepository,
             ITaskHierarchyRelationRepository taskHierarchyRelationRepository, ITaskRankingManagementService taskRankingManagementService,
-            ISprintRepository sprintRepository)
+            ISprintRepository sprintRepository, ITaskAnchorRepository taskAnchorRepository, ITaskValidatorService taskValidatorService)
         {
-        
             _labelRelationRepository = labelRelationRepository;
             _taskSearchResultRelationRepository = taskSearchResultRelationRepository;
             _taskRepository = taskRepository;
@@ -43,12 +38,11 @@ namespace flexli_erp_webapi.Services
             _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
             _taskRankingManagementService = taskRankingManagementService;
             _sprintRepository = sprintRepository;
-
+            _taskAnchorRepository = taskAnchorRepository;
+            _taskValidatorService = taskValidatorService;
         }
 
-       
-
-        public   TaskDetailEditModel GetTaskById(string taskId, string include = null)
+        public  TaskDetailEditModel GetTaskById(string taskId, string include = null)
         {
             TaskDetailEditModel taskDetail = _taskRepository.GetTaskById(taskId);
 
@@ -56,12 +50,12 @@ namespace flexli_erp_webapi.Services
             {
                     throw new KeyNotFoundException("Error in finding required taskDetail list");
             }
-
             if (include == null)
             {
+                // adding task labels
+                taskDetail.Label = _taskAnchorRepository.GetLabel(taskId).Result;
                 return taskDetail;
             }
-            
             if (include.Contains("children"))
             {
                 taskDetail.Children =  GetChildTaskRankingForTask(taskDetail.TaskId).Result;
@@ -70,7 +64,6 @@ namespace flexli_erp_webapi.Services
             { 
                 taskDetail.Siblings =    GetChildTaskRankingForTask(taskDetail.ParentTaskId).Result;
             }
-            
             if (include.Contains("dependency"))
             {
                 taskDetail.UpStreamDependencies = _dependencyRepository
@@ -82,18 +75,11 @@ namespace flexli_erp_webapi.Services
                 taskDetail.DownStreamDependencies.ForEach(x =>
                     x.TaskDetailEditModel =  _taskRepository.GetTaskById(x.DependentTaskId));
             }
-
             return taskDetail;
-
         }
-
-    
         
-       
-        public  async Task<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel)
+        public async Task<TaskDetailEditModel> CreateOrUpdateTask(TaskDetailEditModel taskDetailEditModel, string loggedInId)
         {
-
-           
             if (taskDetailEditModel.Deadline == null)
             {
                 taskDetailEditModel.Deadline = DateTime.Today;
@@ -110,6 +96,24 @@ namespace flexli_erp_webapi.Services
                     throw new Exception("Assignee cannot be changed. Already allocated in sprint");
                 }
                 
+                // task field lock if spent more than 2 min
+                if ( _taskValidatorService.GetPickedUpStatus(taskDetailEditModel) &&  _taskValidatorService.CheckUpdatedFields(taskDetailEditModel))
+                {
+                    throw new Exception("Assigned to, Created by & Task description can't be updated once the task has been picked up");
+                }
+                
+                // deadline field can be updated by manager only
+                if ( _taskValidatorService.CheckIfDeadlineUpdatedByManager(taskDetailEditModel, loggedInId))
+                {
+                    throw new Exception("Deadline can only be updated by manager");
+                }
+                
+                // If other than assignee updating the description
+                if ( _taskValidatorService.CheckValidAssigneeFields(taskDetailEditModel, existingTask, loggedInId))
+                {
+                    throw new Exception("only Assignee is allowed to update description & checklist");
+                }
+                
                 //[Action] If Sprint status = planning or Sprint not allocated then you can change acceptance criteria
                 if (existingTask.AcceptanceCriteria != taskDetailEditModel.AcceptanceCriteria)
                 {
@@ -121,8 +125,6 @@ namespace flexli_erp_webapi.Services
                         throw new Exception("Sprint Acceptance criteria cannot be modified once sprint is not in planning stage");
                     }
                 }
-                
-                
             }
             
             // All fields updated except rank
@@ -132,7 +134,6 @@ namespace flexli_erp_webapi.Services
             {
                 // Updating mongo db in a separate thread (if some error comes it will die down silently)
                 Task.Run(() =>  UpdateRankingOfTask(updatedTaskDetail));
-               
             }
 
             if (existingTask == null || (existingTask.ParentTaskId != taskDetailEditModel.ParentTaskId))
@@ -144,9 +145,7 @@ namespace flexli_erp_webapi.Services
             {
                 await _taskSearchResultRelationRepository.RemoveFromSearchResults(updatedTaskDetail.TaskId);
             }
-
-
-
+            
             if (existingTask == null || (existingTask.Description != taskDetailEditModel.Description))
             {
                 // Updating mongo db in a separate thread (if some error comes it will die down silently)
@@ -156,15 +155,11 @@ namespace flexli_erp_webapi.Services
             {
                 _taskSearchResultRelationRepository.UpdateTaskSearchViews(updatedTaskDetail);
             }
-
-           
             
             return  GetTaskById(updatedTaskDetail.TaskId);
 
         }
-
-
-
+        
 
         public void DeleteTaskById(string taskId)
         {
@@ -199,30 +194,37 @@ namespace flexli_erp_webapi.Services
             _taskRepository.RemoveTask(taskId);
             _taskRankingManagementService.RemoveRankingOfTask(task);
         }
+        
+        public async Task<TaskDetailEditModel> AddLabelToTask(string taskId, List<string> labels)
 
-
-       
-
-        public async Task<SprintLabelTask> AddLabelToTask(string taskId, string label)
         {
-            if (label == "sprint")
-            {
-                return await _labelRelationRepository.AddSprintLabelToTask(taskId);
-            }
+            foreach (var label in labels)
 
-            throw new ArgumentException("include has invalid label");
+                if (label == "sprint")
+                {
+                     await _labelRelationRepository.AddSprintLabelToTask(taskId);
+                }
+
+            // throw new ArgumentException("include has invalid label");}
+            
+            TaskDetailEditModel task = GetTaskById(taskId);
+
+            task.Label = await _taskAnchorRepository.ReviseLabel(taskId, labels);
+            
+            return  task;
+
         }
 
         public Task<List<TaskDetailEditModel>> GetChildTaskRankingForTask(string parentTaskId)
-        {
-            return _taskRankingManagementService
-                .GetChildTaskRankingForTask(parentTaskId);
-        }
-
+            {
+                return _taskRankingManagementService
+                    .GetChildTaskRankingForTask(parentTaskId);
+            }
+        
         public Task<List<string>> UpdateRankingOfTask(TaskDetailEditModel task)
-        {
-            return _taskRankingManagementService
-                .UpdateRankingOfTask(task.Clone());
-        }
+            {
+                return _taskRankingManagementService
+                    .UpdateRankingOfTask(task.Clone());
+            }
     }
 }

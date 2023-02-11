@@ -5,6 +5,7 @@ using System.Linq;
 using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
+using m;
 using mflexli_erp_webapi.Repository.Interfaces;
 
 namespace flexli_erp_webapi.Services
@@ -18,9 +19,11 @@ namespace flexli_erp_webapi.Services
         private readonly ITaskRelationRepository _taskRelationRepository;
         private readonly ITaskRepository _taskRepository;
         private readonly ICheckListRelationRepository _checkListRelationRepository;
+        private readonly IProfileRepository _profileRepository;
         public SprintReportManagementService(ISprintRepository sprintRepository, ICheckListRepository checkListRepository, 
             ISprintReportRepository sprintReportRepository, ITaskRelationRepository taskRelationRepository, 
-            ITaskRepository taskRepository, ICheckListRelationRepository checkListRelationRepository)
+            ITaskRepository taskRepository, ICheckListRelationRepository checkListRelationRepository,
+            IProfileRepository profileRepository)
         {
             _sprintRepository = sprintRepository;
             _checkListRepository = checkListRepository;
@@ -28,6 +31,7 @@ namespace flexli_erp_webapi.Services
             _taskRelationRepository = taskRelationRepository;
             _taskRepository = taskRepository;
             _checkListRelationRepository = checkListRelationRepository;
+            _profileRepository = profileRepository;
         }
         
         
@@ -45,8 +49,7 @@ namespace flexli_erp_webapi.Services
             var sprint = _sprintRepository.GetSprintById(existingSprintReportLineItem.SprintId);
             
             // [check] Approver id is valid
-
-            if (!ProfileManagementService.CheckManagerValidity(sprint.Owner, approverId))
+            if (!_profileRepository.GetManagerIds(sprint.Owner).Contains(approverId))
             {
                 throw new ConstraintException("Not valid approver Id: " + approverId);
             }

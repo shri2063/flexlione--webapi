@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -13,5 +14,7 @@ namespace flexli_erp_webapi.BsonModels
         
         [BsonElement("Task")]
         public TaskSearchView Task { get; set; }
+        
+       
     }
 }

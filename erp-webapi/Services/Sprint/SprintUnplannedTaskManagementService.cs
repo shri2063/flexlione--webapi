@@ -23,13 +23,14 @@ namespace m
    private ITaskRelationRepository _taskRelationRepository;
    private ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
    private ITaskScheduleRelationRepository _taskScheduleRelationRepository;
-  
+   private IProfileRepository _profileRepository;
     public SprintUnplannedTaskManagementService( ISprintRepository sprintRepository,
       ISprintUnplannedTaskRepository sprintUnplannedTaskRepository,
         ITaskRepository  taskRepository,
       ITaskRelationRepository taskRelationRepository,
       ITaskHierarchyRelationRepository taskHierarchyRelationRepository,
-      ITaskScheduleRelationRepository taskScheduleRelationRepository
+      ITaskScheduleRelationRepository taskScheduleRelationRepository,
+      IProfileRepository profileRepository
      )
     {
         _sprintRepository = sprintRepository;
@@ -38,9 +39,10 @@ namespace m
       _taskRelationRepository = taskRelationRepository;
       _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
       _taskScheduleRelationRepository = taskScheduleRelationRepository;
+      _profileRepository = profileRepository;
     }
 
-    public SprintUnplannedTaskScoreEditModel RequestHours(string sprintId, string taskId, int hours, string profileId)
+    public SprintUnplannedTaskDataEditModel RequestHours(string sprintId, string taskId, int hours, string profileId)
     {
 
         // check if sprint owner indeed is sending request
@@ -64,7 +66,7 @@ namespace m
         }
         
         //check if sending request first time
-        SprintUnplannedTaskScoreEditModel unplannedDb;
+        SprintUnplannedTaskDataEditModel unplannedDb;
         unplannedDb = _sprintUnplannedTaskRepository.GetUnplannedTaskScoreData(sprintId, taskId);
             
         if (unplannedDb != null && unplannedDb.ScoreStatus == EUnplannedTaskStatus.requested)
@@ -74,7 +76,7 @@ namespace m
 
         
         // var db = new ErpContext();
-        var newUnplanned = new SprintUnplannedTaskScoreEditModel()
+        var newUnplanned = new SprintUnplannedTaskDataEditModel()
         {
             SprintId = sprintId,
             TaskId = taskId,
@@ -99,12 +101,13 @@ namespace m
         
     }
 
-    public SprintUnplannedTaskScoreEditModel ApproveHours(string sprintId, string taskId, int hours, string profileId)
+    public SprintUnplannedTaskDataEditModel ApproveHours(string sprintId, string taskId, int hours, string profileId)
     {
 
         // check if manager is sending request
-      
-        if (!ProfileManagementService.CheckManagerValidity(_sprintRepository.GetSprintById(sprintId).Owner, profileId))
+        List<string> managers =  _profileRepository.GetManagerIds(_sprintRepository.GetSprintById(sprintId).Owner);
+        
+        if (!managers.Contains(profileId))
         {
             throw new ArgumentException("Id is not eligible to approve hours");
         }
@@ -125,7 +128,7 @@ namespace m
 
        
         
-            SprintUnplannedTaskScoreEditModel unplannedDb;
+            SprintUnplannedTaskDataEditModel unplannedDb;
             unplannedDb = _sprintUnplannedTaskRepository.GetUnplannedTaskScoreData(sprintId, taskId);
             
             if (unplannedDb == null)
@@ -213,6 +216,13 @@ namespace m
             
             
             unPlannedTaskIds.ForEach(x => unPlannedTasks.Add(_taskRepository.GetTaskById(x)));
+
+            // adding unplanned task data to task 
+            foreach (var unplannedTask in unPlannedTasks)
+            {
+                unplannedTask.UnplannedTaskData =
+                    _sprintUnplannedTaskRepository.GetUnplannedTaskScoreData(sprintId, unplannedTask.TaskId);
+            }
             return unPlannedTasks;
         }
 

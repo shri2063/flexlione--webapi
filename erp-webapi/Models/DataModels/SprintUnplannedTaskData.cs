@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace flexli_erp_webapi.DataModels
 {
     [Table("sprint_unplanned_tasks")]
-    public class SprintUnplannedTaskScore
+    public class SprintUnplannedTaskData
     {
         [Key][Column("id")]
         public string Id { get; set; }

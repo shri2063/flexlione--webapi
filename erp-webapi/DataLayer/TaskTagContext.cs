@@ -17,7 +17,7 @@ namespace flexli_erp_webapi.DataLayer
             var database = client.GetDatabase(configuration.GetValue<string>("MongoDbSetting:DatabaseName"));
             TaskSearchResult = database.GetCollection<TaskSearch>("task-search-result");
             SprintTasks = database.GetCollection<SprintLabelTask>("sprint-tasks");
-            TaskAnchor = database.GetCollection<TaskAnchor>("task-hierarchy");
+            TaskAnchor = database.GetCollection<TaskAnchor>("task-anchor");
         }
 
       

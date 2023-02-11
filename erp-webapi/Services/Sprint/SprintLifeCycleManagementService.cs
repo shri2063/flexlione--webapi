@@ -6,6 +6,7 @@ using flexli_erp_webapi.DataModels;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Repository.Interfaces;
 using flexli_erp_webapi.Services.Interfaces;
+using m;
 using mflexli_erp_webapi.Repository.Interfaces;
 
 namespace flexli_erp_webapi.Services
@@ -20,10 +21,11 @@ namespace flexli_erp_webapi.Services
         private readonly ISprintReportRepository _sprintReportRepository;
         private readonly ITaskRepository _taskRepository;
         private readonly ICheckListRelationRepository _checkListRelationRepository;
-        
+        private readonly IProfileRepository _profileRepository;
         public SprintLifeCycleManagementService(ISprintRepository sprintRepository, ITaskRelationRepository taskRelationRepository,
             IEnumerable<IScoreAllocationPolicy> calculateScoreForTaskPolicies, ICheckListRepository checkListRepository,
-            ISprintReportRepository sprintReportRepository, ICheckListRelationRepository checkListRelationRepository, ITaskRepository taskRepository)
+            ISprintReportRepository sprintReportRepository, IProfileRepository profileRepository,
+            ICheckListRelationRepository checkListRelationRepository, ITaskRepository taskRepository)
         {
             _sprintRepository = sprintRepository;
             _taskRelationRepository = taskRelationRepository;
@@ -32,6 +34,7 @@ namespace flexli_erp_webapi.Services
             _sprintReportRepository = sprintReportRepository;
             _checkListRelationRepository = checkListRelationRepository;
             _taskRepository = taskRepository;
+            _profileRepository = profileRepository;
         }
         public SprintEditModel RequestForApproval(string sprintId, string userId)
         {
@@ -46,34 +49,29 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new KeyNotFoundException("Sprint Id or User Id does not exist");
                 }
-
                 // [check] : if status is not planning
                 if (sprint.Status != SStatus.Planning.ToString())
                 {
                     throw new ConstraintException("status is not planning, hence request for approval can't be made");
                 }
-                
                 // [check] : total expected hours of sprint should not be more than 6 hours * working days between sprint
                 if (TotalExpectedHours(sprintId) > 6*ValidSprintDays(sprintId))
                 {
                     throw new ConstraintException("expected hours more then total sprint time");
                 }
-
                 sprint.Status = SStatus.RequestForApproval.ToString();
                 db.SaveChanges();
             }
 
             return _sprintRepository.GetSprintById(sprintId);
         }
-
         public SprintEditModel ApproveSprint(string sprintId, string approverId)
         {
             SprintEditModel sprint;
             
             sprint = _sprintRepository.GetSprintById(sprintId);
-                
-                // [check] : validate manager
-                if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
+               // [check] : validate manager
+                if(!CheckManagerValidity(sprint.Owner,approverId))
                 {
                     throw new ArgumentException("Approver id is not eligible to approve the sprint");
                 }
@@ -86,11 +84,9 @@ namespace flexli_erp_webapi.Services
                 
                 // Add entries in sprint report before changing status so that error is thrown before approved
                 new SprintReportManagementService(_sprintRepository,_checkListRepository,_sprintReportRepository, 
-                    _taskRelationRepository,_taskRepository, _checkListRelationRepository).AddSprintReportLineItemsForSprint(sprint.SprintId);
+                    _taskRelationRepository,_taskRepository, _checkListRelationRepository, _profileRepository).AddSprintReportLineItemsForSprint(sprint.SprintId);
                 _sprintRepository.UpdateSprintStatus(sprintId, SStatus.Approved.ToString());
-                
-            
-            
+              
             return _sprintRepository.GetSprintById(sprintId);
         }
 
@@ -125,7 +121,7 @@ namespace flexli_erp_webapi.Services
                 }
                 sprint.Score = 0;
                 
-                if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
+                if(!CheckManagerValidity(sprint.Owner,approverId))
                 {
                     throw new ArgumentException("Approver id is not eligible to close the sprint");
                 }
@@ -137,13 +133,7 @@ namespace flexli_erp_webapi.Services
 
                 var taskIds = _taskRelationRepository.GetTaskIdsForSprint(sprintId);
                 
-                
-                // [Action] - Update Provisional task Score
-                // taskIds.ForEach(x =>
-                // {
-                //     sprint.Score = sprint.Score + TaskManagementService.CalculateTaskScore(x,sprintId);
-                // });
-
+               
                 // Scoring according to scoring Policy
                 if (sprint.ScorePolicy != null)
                 {
@@ -157,23 +147,15 @@ namespace flexli_erp_webapi.Services
                 // [Action] - remove task link to sprint
                 var removedTask = new List<string>();
          
-                
-                    
-                    taskIds.ForEach(x =>
+                taskIds.ForEach(x =>
                     {
                         _taskRelationRepository.RemoveTaskFromSprint(x);
                         removedTask.Add(x);
                     });
                 
-                
-                
-                
-                // Provisional Score Sprint Report
+               // Provisional Score Sprint Report
                 SprintReportManagementService.UpdateProvisionalScoreInSprintReport(sprintId);
-
-
-            
-            
+         
             return _sprintRepository.GetSprintById(sprintId);
         }
         
@@ -188,7 +170,7 @@ namespace flexli_erp_webapi.Services
                 }
                 sprint.Score = 0;
                 
-                if(!ProfileManagementService.CheckManagerValidity(sprint.Owner,approverId))
+                if(!CheckManagerValidity(sprint.Owner,approverId))
                 {
                     throw new ArgumentException("Approver id is not eligible to review the sprint");
                 }
@@ -198,7 +180,6 @@ namespace flexli_erp_webapi.Services
                     throw new ConstraintException("Sprint cannot be reviewed as status is not closed");
                 }
                 var taskIds = _taskRelationRepository.GetTaskIdsForSprint(sprintId);
-                
                 
                 // [Action] - Update Actual task Score
                 taskIds.ForEach(x =>
@@ -210,12 +191,7 @@ namespace flexli_erp_webapi.Services
 
                 });
                 _sprintRepository.UpdateSprintStatus(sprintId, SStatus.Reviewed.ToString());
-
-             
-
-
-
-            
+                
             return _sprintRepository.GetSprintById(sprintId);
         }
         
@@ -261,5 +237,9 @@ namespace flexli_erp_webapi.Services
             }
         }
 
+       Boolean CheckManagerValidity(string user, string manager)
+        {
+           return _profileRepository.GetManagerIds(user).Contains(manager);
+        }
     }
 }

@@ -15,7 +15,9 @@ namespace flexli_erp_webapi.Repository.Interfaces
 
         Task<List<String>> ReviseSearchResults(string taskId,  List<String> revisedList);
 
-    
+        Task<List<String>> ReviseLabel(string taskId, List<String> revisedList);
+
+        Task<List<String>> GetLabel(string taskId);
 
 
     }

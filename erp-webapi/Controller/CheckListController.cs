@@ -53,9 +53,10 @@ namespace flexli_erp_webapi.Controller
         [HttpPut("CreateOrUpdateCheckListItem")]
         [Consumes("application/json")]
         
-        public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItemItem)
+        public CheckListItemEditModel CreateOrUpdateCheckListItem(CheckListItemEditModel checkListItem, string loggedInId)
         {
-            return _checkListManagementService.CreateOrUpdateCheckListItem(checkListItemItem);
+            return _checkListManagementService.CreateOrUpdateCheckListItem(checkListItem, loggedInId);
+
         }
         /// <summary>
         /// [R]Checklist can be deleted only if sprint is in planning stage/not linked to sprint

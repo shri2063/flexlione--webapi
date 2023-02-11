@@ -57,7 +57,7 @@ namespace flexli_erp_webapi.Repository
             TaskDetailEditModel task = _taskRepository.GetTaskById(taskId);
             
 
-            //[Check]: If task exist
+            //[Check]: If task doesn't exist
             if (task == null)
             {
                 throw new ArgumentException("Task don't exist for given taskId");
@@ -78,7 +78,11 @@ namespace flexli_erp_webapi.Repository
                 Status = task.Status.ToString(),
                 Description = task.Description,
                 CreatedAt = task.CreatedAt,
-                EditedAt = task.EditedAt
+                EditedAt = task.EditedAt,
+                Deadline = task.Deadline,
+                CreatedBy = task.CreatedBy,
+                IsRemoved = task.IsRemoved,
+                
             };
 
             SprintLabelTask newSprintLabelTask = new SprintLabelTask()

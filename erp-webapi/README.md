@@ -9,6 +9,16 @@ V 1.8
 4- Sprint score calculation according to policy
 
 
+V1.9
+
+1- permission management update
+2- Sprint score calculation updated. only approved Hrs used to calculate score in Unplanned tasks and for planned task, it will be as per checklists completed and scoring policy. Earlier version was using score field. 
+3- GetSprintByProfileId will send unplanned tak data
+4- MongoDb Tag feature
+
+V1.10
+1- Permission management bug fix
+2- Tag feature update and bug fix
 
 ```
 
