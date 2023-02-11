@@ -75,7 +75,8 @@ namespace flexli_erp_webapi.Controller
 
         public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId, DateTime stamp, string action, int? pageIndex = null, int? pageSize = null)
         {
-            return _taskSummaryManagementService.UpdateDailyTaskActualTime(profileId, taskSummaryId, stamp, action, pageIndex, pageSize);
+            return _taskSummaryManagementService.UpdateDailyTaskActualTime(profileId, taskSummaryId, Convert.ToDateTime(stamp),  action, pageIndex, pageSize);
+
         }
         
         [HttpDelete("DeleteTaskSummary")]

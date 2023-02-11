@@ -48,5 +48,11 @@ namespace flexli_erp_webapi.EditModels
         public List<DependencyEditModel> UpStreamDependencies { get; set; }
         
         public List<TaskDetailEditModel> Siblings { get; set; }
+        
+        public SprintUnplannedTaskDataEditModel UnplannedTaskData { get; set; }
+        
+        public List<string> Label { get; set; }
+
+
     }
 }

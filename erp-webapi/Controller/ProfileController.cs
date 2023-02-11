@@ -1,12 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using flexli_erp_webapi.EditModels;
 using flexli_erp_webapi.Services;
-using flexli_erp_webapi.BsonModels;
-using flexli_erp_webapi.DataModels;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 
 namespace flexli_erp_webapi.Controller
 {

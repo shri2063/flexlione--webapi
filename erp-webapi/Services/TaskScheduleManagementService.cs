@@ -84,6 +84,14 @@ namespace flexli_erp_webapi.Services
                 }
                 else
                 {
+                    // Can not plan stand up after 10.18,  only unplanned task can be added.
+                    if (taskScheduleEditModel.IsPlanned && DateTime.Now > taskScheduleEditModel.Date.AddHours(10).AddMinutes(18))
+
+                    {
+                        throw new Exception("Daily Stand up editing locked. Can not add planned task after 10:18 AM. Please schedule as unplanned task");
+                    }
+
+                    
                     taskSchedule = new TaskSchedule()
                     {
                         TaskScheduleId = GetNextAvailableId(),

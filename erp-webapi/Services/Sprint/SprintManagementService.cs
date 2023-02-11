@@ -116,11 +116,6 @@ namespace flexli_erp_webapi.Services
             return _sprintRepository.AddOrUpdateSprint(sprintEditModel);
 
         }
-
-
-        
-
-
         
         
         public  List<TaskDetailEditModel> GetPlannedTasksForSprint(string sprintId)
@@ -149,9 +144,9 @@ namespace flexli_erp_webapi.Services
         }
 
        
-        public SprintUnplannedTaskScoreEditModel UpdateUnplannedTaskHoursScore(string sprintId, string taskId, int hours, string profileId, string include)
+        public SprintUnplannedTaskDataEditModel UpdateUnplannedTaskHoursScore(string sprintId, string taskId, int hours, string profileId, string include)
         {
-            SprintUnplannedTaskScoreEditModel actualHoursUpdate = new SprintUnplannedTaskScoreEditModel();
+            SprintUnplannedTaskDataEditModel actualHoursUpdate = new SprintUnplannedTaskDataEditModel();
             if (include == "request")
                 
             {
@@ -232,14 +227,14 @@ namespace flexli_erp_webapi.Services
                 .ReviewCompleted(sprintId, approverId);
         }
 
-        public SprintUnplannedTaskScoreEditModel RequestHours(string sprintId, string taskId, int hours, string profileId)
+        public SprintUnplannedTaskDataEditModel RequestHours(string sprintId, string taskId, int hours, string profileId)
         {
             return _sprintUnplannedTaskManagementService
                 .RequestHours(
                     sprintId, taskId, hours, profileId);
         }
 
-        public SprintUnplannedTaskScoreEditModel ApproveHours(string sprintId, string taskId, int hours, string profileId)
+        public SprintUnplannedTaskDataEditModel ApproveHours(string sprintId, string taskId, int hours, string profileId)
         {
             return _sprintUnplannedTaskManagementService
                 .ApproveHours(

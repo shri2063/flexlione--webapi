@@ -4,9 +4,9 @@ namespace flexli_erp_webapi.Repository.Interfaces
 {
     public interface ISprintUnplannedTaskRepository
     {
-        SprintUnplannedTaskScoreEditModel GetUnplannedTaskScoreData(string sprintId, string taskId);
+        SprintUnplannedTaskDataEditModel GetUnplannedTaskScoreData(string sprintId, string taskId);
 
-        SprintUnplannedTaskScoreEditModel CreateOrUpdateSprintUnplannedTask(
-            SprintUnplannedTaskScoreEditModel unplannedTaskEdit);
+        SprintUnplannedTaskDataEditModel CreateOrUpdateSprintUnplannedTask(
+            SprintUnplannedTaskDataEditModel unplannedTaskEdit);
     }
 }

@@ -165,7 +165,7 @@ namespace flexli_erp_webapi.Controller
         [HttpPost("UpdateScore")]
         [Consumes("application/json")]
 
-        public SprintUnplannedTaskScoreEditModel RequestScoreForUnplannedTask(string sprintId, string taskId, string hours, string profileId, string include )
+        public SprintUnplannedTaskDataEditModel RequestScoreForUnplannedTask(string sprintId, string taskId, string hours, string profileId, string include )
         {
             return _sprintManagementService.UpdateUnplannedTaskHoursScore(sprintId, taskId, Convert.ToInt32(hours), profileId, include);
            

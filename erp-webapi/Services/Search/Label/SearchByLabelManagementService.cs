@@ -28,7 +28,8 @@ namespace flexli_erp_webapi.Services
                 {
                     // all sprint tasks for profileId
                     var sprintTask = await _labelRelationRepository.GetSprintLabelTaskForProfileId(profileId);
-                    
+
+                   
                     // if notCompleted also present then filter those who aren't complete
                     if (include.Contains("notCompleted"))
                     {
@@ -65,7 +66,8 @@ namespace flexli_erp_webapi.Services
             
             // include null then empty list return
             return new List<TaskSearchView>();
-        }
+            
+           }
 
         private List<TaskSearchView> PageOfTask(List<TaskSearchView> taskList, int? pageIndex, int? pageSize)
         {

@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace flexli_erp_webapi.BsonModels
 {
-    [BsonDiscriminator("task-hierarchy")]
+    [BsonDiscriminator("task-anchor")]
     
     public class TaskAnchor
     {
@@ -22,6 +22,6 @@ namespace flexli_erp_webapi.BsonModels
         public List<String> SearchResults { get; set; }
         
         [BsonElement("Label")]
-        public List<String> label { get; set; }
+        public List<String> Label { get; set; }
     }
 }

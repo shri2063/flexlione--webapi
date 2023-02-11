@@ -20,9 +20,7 @@ namespace flexli_erp_webapi.Repository
 
         }
 
-       
-
-
+        
         private  TaskSummaryEditModel GetTaskSummaryByIdFromDb (string taskSummaryId)
         {
             using (var db = new ErpContext())

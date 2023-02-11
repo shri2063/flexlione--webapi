@@ -243,6 +243,17 @@ namespace flexli_erp_webapi.Services
 
             if (taskSummary != null) // update
             {
+               
+                // actual update locked before mid night ie 23:59
+                if (taskSummaryEditModel.ActualOutput != taskSummary.ActualOutput
+                    && DateTime.Now > taskSummaryEditModel.Date.AddHours(23).AddMinutes(59))
+
+                {
+                    throw new Exception("Daily Stand up editing locked. Can not update after 11:59 PM for the day.");
+
+                }
+
+                
                 taskSummary.TaskId = taskSummaryEditModel.TaskId;
                 taskSummary.Date = taskSummaryEditModel.Date;
                 taskSummary.ExpectedHour = taskSummaryEditModel.ExpectedHour;
@@ -255,6 +266,8 @@ namespace flexli_erp_webapi.Services
 
             else
             {
+                
+                
                 taskSummary = new TaskSummary()
                 {
                     TaskSummaryId = GetNextAvailableId(),

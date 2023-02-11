@@ -32,7 +32,7 @@ namespace flexli_erp_webapi
         
         public DbSet<Template> Template { get; set; }
         
-        public DbSet<SprintUnplannedTaskScore> SprintUnplannedTaskScore { get; set; }
+        public DbSet<SprintUnplannedTaskData> SprintUnplannedTaskData { get; set; }
         
         public DbSet<TemplateRelation> TemplateRelation { get; set; }
         

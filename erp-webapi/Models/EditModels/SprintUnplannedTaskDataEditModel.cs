@@ -1,7 +1,7 @@
 namespace flexli_erp_webapi.EditModels
 {
     public enum EUnplannedTaskStatus { notRequested, requested, reviewed };
-    public class SprintUnplannedTaskScoreEditModel
+    public class SprintUnplannedTaskDataEditModel
     {
         public string Id { get; set; }
         

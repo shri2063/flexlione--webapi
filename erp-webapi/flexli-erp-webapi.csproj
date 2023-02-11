@@ -10,6 +10,7 @@
     <ItemGroup>
         <Folder Include="Models\ViewModels" />
         <Folder Include="Policy" />
+        <Folder Include="Services\Profile\Interface" />
         
         <Folder Include="wwwroot\" />
     </ItemGroup>

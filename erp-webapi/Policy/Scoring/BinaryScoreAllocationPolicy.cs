@@ -21,7 +21,7 @@ namespace flexli_erp_webapi.Services.Scoring
         private readonly ISprintUnplannedTaskRepository _sprintUnplannedTaskRepository;
         private ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
         private ITaskScheduleRelationRepository _taskScheduleRelationRepository;
-      
+        private IProfileRepository _profileRepository;
 
         public BinaryScoreAllocationPolicy(ITaskRepository taskRepository,
             ITaskRelationRepository taskRelationRepository, 
@@ -29,7 +29,8 @@ namespace flexli_erp_webapi.Services.Scoring
             ICheckListRepository checkListRepository,
             ISprintUnplannedTaskRepository sprintUnplannedTaskRepository,
             ITaskHierarchyRelationRepository taskHierarchyRelationRepository,
-            ITaskScheduleRelationRepository taskScheduleRelationRepository)
+            ITaskScheduleRelationRepository taskScheduleRelationRepository,
+            IProfileRepository profileRepository)
         {
             _taskRelationRepository = taskRelationRepository;
             _sprintRepository = sprintRepository;
@@ -38,7 +39,7 @@ namespace flexli_erp_webapi.Services.Scoring
             _sprintUnplannedTaskRepository = sprintUnplannedTaskRepository;
             _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
             _taskScheduleRelationRepository = taskScheduleRelationRepository;
-
+            _profileRepository = profileRepository;
         }
         
         
@@ -140,7 +141,7 @@ namespace flexli_erp_webapi.Services.Scoring
                 }
                 
                 var unplannedTasks = new SprintUnplannedTaskManagementService(_sprintRepository,_sprintUnplannedTaskRepository,
-                    _taskRepository,_taskRelationRepository,_taskHierarchyRelationRepository,_taskScheduleRelationRepository).GetUnPlannedTasksForSprint(sprintId);
+                    _taskRepository,_taskRelationRepository,_taskHierarchyRelationRepository,_taskScheduleRelationRepository, _profileRepository).GetUnPlannedTasksForSprint(sprintId);
                 
                 foreach (var unplannedTask in unplannedTasks)
                 {

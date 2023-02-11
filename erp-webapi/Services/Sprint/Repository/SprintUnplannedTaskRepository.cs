@@ -7,12 +7,12 @@ namespace flexli_erp_webapi.Repository.Interfaces
 {
     public class SprintUnplannedTaskRepository: ISprintUnplannedTaskRepository
     {
-        public SprintUnplannedTaskScoreEditModel GetUnplannedTaskScoreData(string sprintId, string taskId)
+        public SprintUnplannedTaskDataEditModel GetUnplannedTaskScoreData(string sprintId, string taskId)
         {
-            SprintUnplannedTaskScoreEditModel unplannedTaskData = new SprintUnplannedTaskScoreEditModel();
+            SprintUnplannedTaskDataEditModel unplannedTaskData = new SprintUnplannedTaskDataEditModel();
             using (var dbSaved = new ErpContext())
             {
-                SprintUnplannedTaskScore unplannedTask = dbSaved.SprintUnplannedTaskScore
+                SprintUnplannedTaskData unplannedTask = dbSaved.SprintUnplannedTaskData
                     .FirstOrDefault(y => y.TaskId == taskId && y.SprintId == sprintId);
                 if (unplannedTask != null)
                 {
@@ -32,12 +32,12 @@ namespace flexli_erp_webapi.Repository.Interfaces
             return unplannedTaskData;
         }
         
-        public SprintUnplannedTaskScoreEditModel CreateOrUpdateSprintUnplannedTask(SprintUnplannedTaskScoreEditModel unplannedTaskEdit )
+        public SprintUnplannedTaskDataEditModel CreateOrUpdateSprintUnplannedTask(SprintUnplannedTaskDataEditModel unplannedTaskEdit )
         {
             
             using (var db = new ErpContext())
             {
-                SprintUnplannedTaskScore unplannedTask = db.SprintUnplannedTaskScore
+                SprintUnplannedTaskData unplannedTask = db.SprintUnplannedTaskData
                     .FirstOrDefault(x => x.SprintId == unplannedTaskEdit.SprintId && x.TaskId == unplannedTaskEdit.TaskId);
                     
 
@@ -52,7 +52,7 @@ namespace flexli_erp_webapi.Repository.Interfaces
                 }
                 else // add new
                 {
-                    SprintUnplannedTaskScore unplanned = new SprintUnplannedTaskScore()
+                    SprintUnplannedTaskData unplanned = new SprintUnplannedTaskData()
                     {
                         Id = GetNextAvailableUnplannedId(),
                         TaskId = unplannedTaskEdit.TaskId,
@@ -63,7 +63,7 @@ namespace flexli_erp_webapi.Repository.Interfaces
                         ScoreStatus = unplannedTaskEdit.ScoreStatus.ToString(),
                         
                     };
-                    db.SprintUnplannedTaskScore.Add(unplanned);
+                    db.SprintUnplannedTaskData.Add(unplanned);
                     db.SaveChanges();
                 }
             }
@@ -75,7 +75,7 @@ namespace flexli_erp_webapi.Repository.Interfaces
          {
              using (var db = new ErpContext())
              {
-                 var a = db.SprintUnplannedTaskScore
+                 var a = db.SprintUnplannedTaskData
                      .Select(x => Convert.ToInt32(x.Id))
                      .DefaultIfEmpty(0)
                      .Max();
