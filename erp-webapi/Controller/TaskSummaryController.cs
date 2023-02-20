@@ -73,9 +73,9 @@ namespace flexli_erp_webapi.Controller
         [HttpPost("UpdateDailyTaskActualTime")]
         [Consumes("application/json")]
 
-        public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId, DateTime stamp, string action, int? pageIndex = null, int? pageSize = null)
+        public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string loggedInId, string taskSummaryId, DateTime stamp, string action, int? pageIndex = null, int? pageSize = null)
         {
-            return _taskSummaryManagementService.UpdateDailyTaskActualTime(profileId, taskSummaryId, Convert.ToDateTime(stamp),  action, pageIndex, pageSize);
+            return _taskSummaryManagementService.UpdateDailyTaskActualTime(profileId, loggedInId, taskSummaryId, Convert.ToDateTime(stamp),  action, pageIndex, pageSize);
 
         }
         

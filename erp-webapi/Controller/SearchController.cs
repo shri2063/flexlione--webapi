@@ -109,9 +109,9 @@ namespace flexli_erp_webapi.Controller
         [HttpPut("SearchByQuery")]
         [Consumes("application/json")]
 
-        public  List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery)
+        public  List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery, int ? pageIndex= null, int? pageSize = null)
         {
-            return  _taskSearchManagementService.GetTaskListForSearchQuery(searchQuery);
+            return  _taskSearchManagementService.GetTaskListForSearchQuery(searchQuery,  pageIndex, pageSize);
         }
 
         [HttpGet("GetIgnoreSearchWordList")]

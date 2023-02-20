@@ -85,7 +85,7 @@ namespace flexli_erp_webapi.Services
             // generate tag list from template description
             List<string> tags = task.Description
                 .ToLower()
-                .Split(new Char[] { ',', '\\', '\n' ,'-', ' '},
+                .Split(new Char[] { ',', '\\', '\n' ,'-', ' ', ':', ';', '.'},
                     StringSplitOptions.RemoveEmptyEntries)
                 .Distinct()
                 .ToList();

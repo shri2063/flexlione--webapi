@@ -181,16 +181,21 @@ namespace flexli_erp_webapi.Services.TaskSearch
                         {
                             TaskId = t.TaskId,
                             Description = t.Description,
-                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true)
+                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true),
+                            Deadline = t.Deadline
                         })
                         .ToList();
                 }
                 return db.TaskDetail
-                    .Where(t => t.ParentTaskId == parentTaskId)
+                    .Where(t => t.ParentTaskId == parentTaskId && t.IsRemoved == false)
+                    .OrderBy(x => x.Rank)
+                    .Skip(0).Take(25)
                     .Select(t => new TaskShortDetailEditModel()
                     {
                         TaskId = t.TaskId,
-                        Description = t.Description
+                        Description = t.Description,
+                        Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true),
+                        Deadline = t.Deadline
                     })
                     .ToList();
                 
@@ -231,7 +236,8 @@ namespace flexli_erp_webapi.Services.TaskSearch
                         {
                             TaskId = t.TaskId,
                             Description = t.Description,
-                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true)
+                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true),
+                            Deadline = t.Deadline
                         })
                         .OrderByDescending(x=>Convert.ToInt32(x.TaskId))
                         .Skip((pageIndex - 1) * pageSize)
@@ -241,11 +247,13 @@ namespace flexli_erp_webapi.Services.TaskSearch
                 else
                 {
                     taskShortDetailEditModels = db.TaskDetail
-                        .Where(t => t.ParentTaskId == parentTaskId)
+                        .Where(t => t.ParentTaskId == parentTaskId && t.IsRemoved == false)
                         .Select(t => new TaskShortDetailEditModel()
                         {
                             TaskId = t.TaskId,
-                            Description = t.Description
+                            Description = t.Description,
+                            Deadline = t.Deadline,
+                            Status = (EStatus) Enum.Parse(typeof(EStatus), t.Status, true),
                         })
                         .OrderByDescending(t=>Convert.ToInt32(t.TaskId))
                         .Skip((pageIndex - 1) * pageSize)

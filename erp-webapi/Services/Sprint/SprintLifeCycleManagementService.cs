@@ -54,6 +54,11 @@ namespace flexli_erp_webapi.Services
                 {
                     throw new ConstraintException("status is not planning, hence request for approval can't be made");
                 }
+                // [check] : if status has no task
+                if ( _taskRelationRepository.GetTaskIdsForSprint(sprintId).Count == 0)
+                {
+                    throw new ConstraintException("No task has been added to the sprint");
+                }
                 // [check] : total expected hours of sprint should not be more than 6 hours * working days between sprint
                 if (TotalExpectedHours(sprintId) > 6*ValidSprintDays(sprintId))
                 {
