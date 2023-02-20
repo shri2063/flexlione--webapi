@@ -13,17 +13,19 @@ namespace flexli_erp_webapi.Services
 
 
     {
-
+        private readonly ITaskScheduleRepository _taskScheduleRepository;
     private readonly ITaskRepository _taskRepository;
     private readonly ITaskHierarchyRelationRepository _taskHierarchyRelationRepository;
     private readonly ITaskSummaryRepository _taskSummaryRepository;
 
     public TaskSummaryManagementService(ITaskRepository taskRepository,
-        ITaskHierarchyRelationRepository taskHierarchyRelationRepository, ITaskSummaryRepository taskSummaryRepository)
+        ITaskHierarchyRelationRepository taskHierarchyRelationRepository, ITaskSummaryRepository taskSummaryRepository,
+        ITaskScheduleRepository taskScheduleRepository)
     {
         _taskRepository = taskRepository;
         _taskHierarchyRelationRepository = taskHierarchyRelationRepository;
         _taskSummaryRepository = taskSummaryRepository;
+        _taskScheduleRepository = taskScheduleRepository;
     }
 
 
@@ -321,9 +323,13 @@ namespace flexli_erp_webapi.Services
         }
     }
 
-    public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string taskSummaryId,
+    public List<TaskSummaryEditModel> UpdateDailyTaskActualTime(string profileId, string loggedInId, string taskSummaryId,
         DateTime stamp, string action, int? pageIndex = null, int? pageSize = null)
     {
+        if (_taskScheduleRepository.GetTaskScheduleByIdFromDb(_taskSummaryRepository.GetTaskSummaryById(taskSummaryId).TaskScheduleId).Owner != loggedInId)
+        {
+            throw new KeyNotFoundException("Only schedule owner can perform this action");
+        }
         if (_taskSummaryRepository.GetTaskSummaryById(taskSummaryId) == null)
         {
             throw new KeyNotFoundException("Error in finding taskSummaryId");

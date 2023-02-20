@@ -63,7 +63,7 @@ namespace m_sort_server.Repository
                 // Case: Task Schedule does not exist
                 if (existingTaskHierarchy == null)
                 {
-                  throw  new Exception("Task id hierarchy does not exist " + taskId);
+                  throw  new Exception("Task id hierarchy does not exist for taskId " + taskId);
                 }
 
                 TaskHierarchyEditModel taskHierarchyEditModel = new TaskHierarchyEditModel()

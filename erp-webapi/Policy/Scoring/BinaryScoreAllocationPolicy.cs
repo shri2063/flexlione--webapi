@@ -151,7 +151,8 @@ namespace flexli_erp_webapi.Services.Scoring
                 totalWorkHours = plannedHours + unPlannedHours;
                 
                 // scaling for 10
-                sprintScore = Math.Round( ( 10 * totalWorkHours / sprintHours  ), 1);
+                // if some one add a task with zero planned hrs [check]
+                sprintScore = sprintHours == 0 ? 0: Math.Round( ( 10 * totalWorkHours / sprintHours  ), 1);
             }
             
             return sprintScore;

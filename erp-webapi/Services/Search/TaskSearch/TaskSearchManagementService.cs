@@ -27,14 +27,16 @@ namespace flexli_erp_webapi.Services
 
        
         
-        public List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery)
+        public List<TaskDetailEditModel> GetTaskListForSearchQuery(SearchQueryEditModel searchQuery, int? pageIndex = null, int? pageSize = null)
         {
 
             List<TaskDetailEditModel> taskList = new List<TaskDetailEditModel>();
 
-            SearchFromDb(searchQuery).ForEach(x =>
+            SearchFromDb(searchQuery, pageIndex, pageSize).ForEach(x =>
                 taskList.Add(_taskRepository.GetTaskById(x.TaskId)));
-
+            
+            // Pagination
+           
 
             return taskList;
 
@@ -42,7 +44,7 @@ namespace flexli_erp_webapi.Services
 
 
 
-        public static List<DataModels.TaskDetail> SearchFromDb(SearchQueryEditModel searchQuery)
+        public static List<TaskDetail> SearchFromDb(SearchQueryEditModel searchQuery,int? pageIndex = null, int? pageSize = null)
         {
             using (var db = new ErpContext())
             {
@@ -83,9 +85,26 @@ namespace flexli_erp_webapi.Services
                 {
                     query = query.Where(row => row.IsRemoved != true);
                 }
+                query = query.OrderByDescending(t => t.EditedAt);
+                
+                if (pageIndex != null && pageSize != null)
+                {
+                    if (pageIndex <= 0 || pageSize <= 0)
+                        throw new ArgumentException("Incorrect value for pageIndex or pageSize");
+                    
+                    var queryList = query.Skip((int)((pageIndex - 1) * pageSize))
+                        .Take((int)pageSize)
+                        .ToList();
+                    
+                    if (queryList.Count == 0)
+                    {
+                        return new List<TaskDetail>();
+                    }
 
-                query = query.OrderByDescending(t => t.CreatedAt);
-                return query.Skip(0).Take(25).ToList();
+                    return queryList;
+                }
+                
+                return query.ToList();
 
             }
 
@@ -124,7 +143,9 @@ namespace flexli_erp_webapi.Services
 
                 if (pageTaskList.Count == 0)
                 {
-                    throw new ArgumentException("Sorry, Did not find any matching Tasks result for search query:  " + searchQuery);
+                    // sending 
+                    return new List<TaskDetailEditModel>();
+                   // throw new ArgumentException("Sorry, Did not find any matching Tasks result for search query:  " + searchQuery);
                 }
 
                 return pageTaskList;

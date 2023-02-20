@@ -238,10 +238,10 @@ namespace flexli_erp_webapi
             app.UseStaticFiles(new StaticFileOptions()
             {
 
-             FileProvider = new PhysicalFileProvider("C:\\inetpub\\wwwroot"),
+            //FileProvider = new PhysicalFileProvider("C:\\inetpub\\wwwroot"),
 
                 // RequestPath = new PathString("/Resources")
-                 // FileProvider = new PhysicalFileProvider("/Users/rahulbahuguna/Data/Flexli/OM/inetpub/wwwroot"),
+                   FileProvider = new PhysicalFileProvider("/Users/rahulbahuguna/Data/Flexli/OM/inetpub/wwwroot"),
                 
             });
             app.UseMvc();
