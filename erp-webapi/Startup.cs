@@ -178,7 +178,7 @@ namespace flexli_erp_webapi
                 {
                     Title = "ERP Server",
                     Description = "API for ERP server",
-                    Version = "v1.9"
+                    Version = "v1.10"
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
@@ -249,7 +249,7 @@ namespace flexli_erp_webapi
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("../swagger/v1.0/swagger.json", "Versioned Api v1.9");
+                c.SwaggerEndpoint("../swagger/v1.0/swagger.json", "Versioned Api v1.10");
                 c.DocExpansion(DocExpansion.None);
                 c.DefaultModelExpandDepth(0);
                 c.DefaultModelsExpandDepth(-1);
