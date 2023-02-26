@@ -4,6 +4,7 @@
     <attachedFolders>
       <Path>../../FlexliOneWebAPI</Path>
       <Path>../../erp-webapi</Path>
+      <Path>../../flexlione-webapi</Path>
     </attachedFolders>
     <explicitIncludes />
     <explicitExcludes />
