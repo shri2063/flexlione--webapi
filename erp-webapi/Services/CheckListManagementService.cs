@@ -73,7 +73,7 @@ namespace flexli_erp_webapi.Services
             }
             
             //[Check]: if checklist description is updating in sprint request for approval stage
-            if (SprintStatusCheckForChecklistUpdate (checkListItemEditModel, checkList, sprint) )
+            if (SprintStatusCheckForChecklistUpdate (checkListItemEditModel, checkList, sprint != null ?sprint.Status: SStatus.Planning) )
             {
                 throw new KeyNotFoundException("Checklist description can't updated after sending sprint for approval");
             }
@@ -93,7 +93,7 @@ namespace flexli_erp_webapi.Services
                 }
             }
             // [check] Checklist params could be modified based upon sprint state
-            var updatedCheckList = ApplySprintStatusBasedCheck(checkListItemEditModel, sprint != null ?sprint.Status: SStatus.Planning);
+            var updatedCheckList = ApplySprintStatusBasedCheck(checkListItemEditModel, sprint !=null ?sprint.Status: SStatus.Planning);
            
             // can be updated by task owner only
             if (checkListItemEditModel.AssignmentType == EAssignmentType.Task &&  task.AssignedTo != loggedInId )
@@ -142,10 +142,11 @@ namespace flexli_erp_webapi.Services
             return editCheckList;
         }
 
-        private Boolean SprintStatusCheckForChecklistUpdate(CheckListItemEditModel newChecklist, CheckListItemEditModel oldChecklist, SprintEditModel sprint)
+        private Boolean SprintStatusCheckForChecklistUpdate(CheckListItemEditModel newChecklist, CheckListItemEditModel oldChecklist, SStatus sprintStatus)
         {
-            return ((newChecklist.Description != oldChecklist.Description) &&
-                    (sprint.Status != SStatus.Planning));
+            return ((newChecklist.Description != oldChecklist.Description) 
+                    && (sprintStatus != SStatus.Planning)
+                    );
         }
 
         public  void DeleteCheckListItem(string checkListItemId)
